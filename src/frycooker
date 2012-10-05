@@ -1,0 +1,80 @@
+#!/env/python
+import argparse
+import json
+import sys
+
+from fabric.api import env
+from fabric.network import disconnect_all
+
+import cookbooks
+import recipes
+
+def get_args():
+    recipe_names = recipes.recipes.keys()
+    cookbook_names = cookbooks.cookbooks.keys()
+
+    parser = argparse.ArgumentParser(description='Setup machines.')
+    parser.add_argument('-r', '--recipe', dest='recipes', action='append',
+                        choices=recipe_names,
+                        help='recipe to process (can specify multiple times)')
+    parser.add_argument('-c', '--cookbook', dest='cookbooks', action='append',
+                        choices=cookbook_names,
+                        help='cookbook to process (can specify multiple times)')
+    parser.add_argument('-l', '--cleanup', action='store_true', default=False,
+                        help='cookbook to process (can specify multiple times)')
+    parser.add_argument('-d', '--dryrun', action='store_true', default=False,
+                        help='do not apply actions, just verify environment and see which hosts to apply to')
+    parser.add_argument('-u', '--user', help='user to ssh to host as')
+    parser.add_argument('-s', '--settings', default='settings.json',
+                        help='settings file')
+    parser.add_argument('target', nargs='+', help='computer or group to apply setup to')
+
+    args = parser.parse_args()
+    return args
+
+def main():
+    args = get_args()
+
+    settings = json.load(open(args.settings))
+    enviro = json.load(open('environment.json'))
+
+    parsed_hosts = []
+    for target in args.target:
+        if target in enviro['computers']:
+            parsed_hosts.append(target)
+        elif target in enviro['groups']:
+            parsed_hosts.extend(enviro['groups'][target]['computers'])
+        else:
+            print "Invalid target '%s' encountered" % target
+            sys.exit(2)
+
+    if args.dryrun:
+        print "actions would be applied to the following hosts: %s" % ', '.join(parsed_hosts)
+        sys.exit(0)
+
+    for host in parsed_hosts:
+        env.host_string = host
+        if args.user:
+            env.user = args.user
+
+        try:
+            if args.recipes:
+                for r in args.recipes:
+                    recipe = recipes.recipes[r](settings, enviro)
+                    if args.cleanup:
+                        recipe.run_cleanup(host)
+                    else:
+                        recipe.run_apply(host)
+
+            if args.cookbooks:
+                for c in args.cookbooks:
+                    cookbook = cookbooks.cookbooks[c](settings, enviro)
+                    if args.cleanup:
+                        cookbook.run_cleanup(host)
+                    else:
+                        cookbook.run_apply(host)
+        finally:
+            disconnect_all()
+
+if __name__=="__main__":
+    main()
