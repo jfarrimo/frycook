@@ -1,0 +1,8 @@
+127.0.0.1	localhost
+127.0.1.1	${host}
+
+% for sib in sibs:
+%   for addr in computers[sib]["private_ips"]:
+${addr}  ${computers[sib]["private_ips"][addr]}
+%   endfor
+% endfor

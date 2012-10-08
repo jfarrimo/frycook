@@ -1,0 +1,16 @@
+#
+# Shorewall version 4 - Interfaces File
+#
+# For information about entries in this file, type "man shorewall-interfaces"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-interfaces.html
+#
+###############################################################################
+#ZONE	INTERFACE	BROADCAST	OPTIONS
+% for iface in computer["public_ifaces"]:
+net     ${iface}        detect
+% endfor
+% for iface in computer["private_ifaces"]:
+loc     ${iface}        detect
+% endfor
