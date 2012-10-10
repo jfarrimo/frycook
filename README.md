@@ -37,7 +37,7 @@ A recipe describes how to install an individual package, such as postfix or ngin
 A cookbook is just a list of recipes to install.  You can add other logic to it, but basically it's just a list of recipes.  You need to put all your cookbooks in a module/package called 'cookbooks' 
 that's in the PYTHONPATH environment variable.
 
-## settings.json file
+### settings.json file
 
 There are a few configuration settings for frycook, and they're set here.
 
