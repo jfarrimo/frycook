@@ -6,6 +6,8 @@ Frycook is a thin layer on top of fabric, cuisine, and mako.  Frycook consists o
 
 The ideas embodied in frycook originally came from managing several hundred servers for a social gaming company, and then were augmented by time spent poring over the chef documentation.
 
+The best way to learn frycook is to look through the code in the frycook module and in the sample that's included with this repo.
+
 # environment.json
 
 Here you keep all the metadata about the users, computers, and groups for your installation.
@@ -16,7 +18,7 @@ A recipe describes how to install an individual package, such as postfix or ngin
 
 # cookbooks
 
-A cookbook is just a list of recipes to install.  You can add other logic to it, but basically it's just a list of recipes.
+A cookbook is just a list of recipes to install.  You can add other logic to it, but basically it's just a list of recipes.  You need to put all your cookbooks in a module/package called 'cookbooks' that's in the PYTHONPATH environment variable.
 
 # packages directory
 
