@@ -22,6 +22,33 @@ Although I didn't choose to use chef or puppet, I really liked some of their con
 
 What I ended up with was a package you install with pip and a directory structure for storing the metadata, config files, recipes, and cookbooks for my environment.  I couldn't think of a better name, so I ended up calling this directory structure and its contents a globule (frycooks deal with lots of grease).  The package you install has the base recipe and cookbook classes and a program to process everything (called, appropriately, frycooker).
 
+# Frycook
+
+## recipes
+
+A recipe is a python class that you subclass and override certain methods to hook in to different parts of the process that applies recipes.  The two main parts are apply and cleanup.
+
+### apply
+
+This is where you apply a recipe to a server.  There are three class methods that get called during the apply process. Generally you'll just override the apply method.  If you override pre_apply_checks, remember to call the base class method.
+
+pre_apply_checks -> apply -> post_apply_cleanup
+
+### cleanup
+
+This is where you cleanup old recipe configurations from a server.  An example is when I changed the home directory for my web server.  I first wrote a cleanup that cleaned-up the old configuration, 
+then an apply to apply the new configuration.  That way you can always run the apply in the future when building new machines and don't need the cleanup logic since the new machine never had the old configuration that had to get cleaned-up.
+
+## cookbooks
+
+## templates
+
+## idempotency
+
+One thing to keep in mind when creating recipes and cookbooks is idempotency.  By keeping idempotency in mind in general you can create recipes that you can run again and again to push out minor changes to a package.  This way your recipes become the only way that you modify your servers and can be a single chokepoint that you can monitor to make sure things happen properly.
+
+Lots of the cuisine functions you'll use have an "ensure" version that first checks to see if a condition is true before applying it, such as checking if a package is installed before trying to install it.  This is nice when things could cause undesired configuration changes or expensive operations that you don't want to happen every time.  These functions are a huge aid in writing idempotent recipes and cookbooks.
+
 # Globules
 
 A globule contains all the files and metadata that frycook will use to help create and manage your environment.
@@ -54,27 +81,3 @@ There are a few configuration settings for frycook, and they're set here.
 ## packages directory
 
 This directory keeps copies of all the files for each recipe.  One of the major things a recipe does is copy config files to the server, and here's where they live, one directory per package.  Plain files are copied verbatim, while files with a .tmplt extension are treated as mako templates and processed before being copied to the server.
-
-# recipes
-
-A recipe is a python class that you subclass and override certain methods to hook in to different parts of the process that applies recipes.  The two main parts are apply and cleanup.
-
-## apply
-
-This is where you apply a recipe to a server.  There are three class methods that get called during the apply process. Generally you'll just override the apply method.  If you override pre_apply_checks, remember to call the base class method.
-
-pre_apply_checks -> apply -> post_apply_cleanup
-
-## cleanup
-
-This is where you cleanup old recipe configurations from a server.  An example is when I changed the home directory for my web server.  I first wrote a cleanup that cleaned-up the old configuration, then an apply to apply the new configuration.  That way you can always run the apply in the future when building new machines and don't need the cleanup logic since the new machine never had the old configuration that had to get cleaned-up.
-
-# cookbooks
-
-# templates
-
-# idempotency
-
-One thing to keep in mind when creating recipes and cookbooks is idempotency.  By keeping idempotency in mind in general you can create recipes that you can run again and again to push out minor changes to a package.  This way your recipes become the only way that you modify your servers and can be a single chokepoint that you can monitor to make sure things happen properly.
-
-Lots of the cuisine functions you'll use have an "ensure" version that first checks to see if a condition is true before applying it, such as checking if a package is installed before trying to install it.  This is nice when things could cause undesired configuration changes or expensive operations that you don't want to happen every time.  These functions are a huge aid in writing idempotent recipes and cookbooks.
