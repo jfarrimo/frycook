@@ -20,9 +20,7 @@ Finally, I decided to bite the bullet and roll my own system.  I figured it woul
 
 Although I didn't choose to use chef or puppet, I really liked some of their concepts and I decided to make them part of the foundation for my system.  Chef has the nice concept of recipes for individual subsystems and cookbooks for building multiple subsystems into complete systems.  Chef also places a lot of value on idempotency, making sure that you can run the same setup script on a server multiple times and not cause yourself problems in the process.
 
-# frycooker
-
-This is the job runner.  It takes as arguments a recipe or cookbook to run and a list of computers and groups to push the packages to.  Groups are expanded to computers and the contents are pushed to each one.
+What I ended up with was a package you install with pip and a directory structure for storing the metadata, config files, recipes, and cookbooks for my environment.  I couldn't think of a better name, so I ended up calling this directory structure and its contents a globule (frycooks deal with lots of grease).  The package you install has the base recipe and cookbook classes and a program to process everything (called, appropriately, frycooker).
 
 # Globules
 
