@@ -22,7 +22,7 @@ Although I didn't choose to use chef or puppet, I really liked some of their con
 
 What I ended up with was a package you install with pip and a directory structure for storing the metadata, config files, recipes, and cookbooks for my environment.  I couldn't think of a better name, so I ended up calling this directory structure and its contents a globule (frycooks deal with lots of grease).  The package you install has the base recipe and cookbook classes and a program to process everything (called, appropriately, frycooker).
 
-# Frycook
+# The frycook Module
 
 ## recipes
 
@@ -41,7 +41,7 @@ then an apply to apply the new configuration.  That way you can always run the a
 
 ## cookbooks
 
-## templates
+## templates and files
 
 ## idempotency
 
@@ -61,10 +61,6 @@ The setup directory contains all the recipes, cookbooks, and metadata.
 
 Here you keep all the metadata about the users, computers, and groups for your installation.
 
-### runner.sh file
-
-This is just a wrapper around frycooker that sets the PYTHONPATH correctly before running frycooker.
-
 ### recipes directory
 
 A recipe describes how to install an individual package, such as postfix or nginx.  Frycook expects all your recipes to be in a module/package called 'recipes' that is accessible via the PYTHONPATH environment variable.  This module should export a list of recipe name and class tuples for use by the frycooker program.
@@ -73,6 +69,10 @@ A recipe describes how to install an individual package, such as postfix or ngin
 
 A cookbook is just a list of recipes to install.  You can add other logic to it, but basically it's just a list of recipes.  You need to put all your cookbooks in a module/package called 'cookbooks' 
 that's in the PYTHONPATH environment variable.
+
+### runner.sh file
+
+This is just a wrapper around frycooker that sets the PYTHONPATH correctly before running frycooker.
 
 ### settings.json file
 
