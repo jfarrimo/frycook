@@ -30,14 +30,20 @@ A recipe is a python class that you subclass and override certain methods to hoo
 
 ### apply
 
-This is where you apply a recipe to a server.  There are three class methods that get called during the apply process. Generally you'll just override the apply method.  If you override pre_apply_checks, remember to call the base class method.
+This is where you apply a recipe to a server.  There are two class methods that get called during the apply process. Generally you'll just override the apply method.  If you override pre_apply_checks, remember to call the base class method.  Here's the order that functions get called:
 
-pre_apply_checks -> apply -> post_apply_cleanup
+pre_apply_checks -> apply
 
 ### cleanup
 
 This is where you cleanup old recipe configurations from a server.  An example is when I changed the home directory for my web server.  I first wrote a cleanup that cleaned-up the old configuration, 
 then an apply to apply the new configuration.  That way you can always run the apply in the future when building new machines and don't need the cleanup logic since the new machine never had the old configuration that had to get cleaned-up.
+
+### file set copying
+
+The Recipe class defines a few helper functions for handling templates and copying files to servers.  It runs files with
+a .tmplt extension through make using the dictionary you pass
+to it.  Regular files just get copied.
 
 ## cookbooks
 
