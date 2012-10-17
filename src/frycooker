@@ -1,4 +1,7 @@
 #!/env/python
+'''
+Here's some module-level documentation.
+'''
 import argparse
 import json
 import sys

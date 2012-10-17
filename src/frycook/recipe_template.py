@@ -3,9 +3,57 @@ Recipes are the basic units of setup in frycook.  Generally a
 recipe corresponds to a package that needs to be installed
 or a subsystem that needs to be configured.
 
-Generally recipes are written to be idempotent so that they
-can be run over and over again on a server with no adverse
-effects.
+idempotence
+===========
+
+One thing to keep in mind when creating recipes and cookbooks 
+is idempotency.  By keeping idempotency in mind in general 
+you can create recipes that you can run again and again to 
+push out minor changes to a package.  This way your recipes 
+become the only way that you modify your servers and can be 
+a single chokepoint that you can monitor to make sure things 
+happen properly.
+
+Lots of the cuisine functions you'll use have an "ensure" 
+version that first checks to see if a condition is true 
+before applying it, such as checking if a package is 
+installed before trying to install it.  This is nice when 
+things could cause undesired configuration changes or 
+expensive operations that you don't want to happen every 
+time.  These functions are a huge aid in writing idempotent 
+recipes and cookbooks.
+
+
+apply
+=====
+
+This is where you apply a recipe to a server.  There are 
+two class methods that get called during the apply process. 
+Generally you'll just override the apply method.  If you 
+override pre_apply_checks, remember to call the base class 
+method.  Here's the order that functions get called:
+
+pre_apply_checks -> apply
+
+cleanup
+=======
+
+This is where you cleanup old recipe configurations from a 
+server.  An example is when I changed the home directory for 
+my web server.  I first wrote a cleanup that cleaned-up the 
+old configuration, then an apply to apply the new 
+configuration.  That way you can always run the apply in the 
+future when building new machines and don't need the cleanup 
+logic since the new machine never had the old configuration 
+that had to get cleaned-up.
+
+file set copying
+================
+
+The Recipe class defines a few helper functions for handling 
+templates and copying files to servers.  It runs files with
+a .tmplt extension through make using the dictionary you 
+pass to it.  Regular files just get copied.
 '''
 import os
 import os.path

@@ -1,5 +1,5 @@
 '''
-Cookbooks are generally sets of recipes to apply to a server
+Cookbooks are sets of recipes to apply to a server
 to create something that is made up of many packages.
 '''
 
@@ -17,9 +17,9 @@ class Cookbook(object):
     The recipes will be applied in the order they're defined
     in the list.
 
-    example:
+    example::
 
-    recipe_list = [AwesomeRecipe, WayCoolRecipe]
+      recipe_list = [AwesomeRecipe, WayCoolRecipe]
     '''
     recipe_list = []
 
