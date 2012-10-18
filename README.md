@@ -6,7 +6,7 @@ Frycook is a thin layer on top of fabric, cuisine, and mako.  Frycook consists o
 
 The ideas embodied in frycook originally came from managing several hundred servers for a social gaming company, and then were augmented by time spent poring over the chef documentation.
 
-The best way to learn frycook is to look through the code in the frycook module and in the sample globule that's included with this repo.
+The best way to learn frycook is to look through the code in the frycook module and in the sample globule that's included with this repo.  I've also generate API documentation from the somewhat extensive docstrings I've included in the source files.  You can acces those *here*.
 
 # Story
 
@@ -21,69 +21,3 @@ Finally, I decided to bite the bullet and roll my own system.  I figured it woul
 Although I didn't choose to use chef or puppet, I really liked some of their concepts and I decided to make them part of the foundation for my system.  Chef has the nice concept of recipes for individual subsystems and cookbooks for building multiple subsystems into complete systems.  Chef also places a lot of value on idempotency, making sure that you can run the same setup script on a server multiple times and not cause yourself problems in the process.
 
 What I ended up with was a package you install with pip and a directory structure for storing the metadata, config files, recipes, and cookbooks for my environment.  I couldn't think of a better name, so I ended up calling this directory structure and its contents a globule (frycooks deal with lots of grease).  The package you install has the base recipe and cookbook classes and a program to process everything (called, appropriately, frycooker).
-
-# The frycook Module
-
-## recipes
-
-A recipe is a python class that you subclass and override certain methods to hook in to different parts of the process that applies recipes.  The two main parts are apply and cleanup.
-
-### apply
-
-This is where you apply a recipe to a server.  There are two class methods that get called during the apply process. Generally you'll just override the apply method.  If you override pre_apply_checks, remember to call the base class method.  Here's the order that functions get called:
-
-pre_apply_checks -> apply
-
-### cleanup
-
-This is where you cleanup old recipe configurations from a server.  An example is when I changed the home directory for my web server.  I first wrote a cleanup that cleaned-up the old configuration, 
-then an apply to apply the new configuration.  That way you can always run the apply in the future when building new machines and don't need the cleanup logic since the new machine never had the old configuration that had to get cleaned-up.
-
-### file set copying
-
-The Recipe class defines a few helper functions for handling templates and copying files to servers.  It runs files with
-a .tmplt extension through make using the dictionary you pass
-to it.  Regular files just get copied.
-
-## cookbooks
-
-## templates and files
-
-## idempotency
-
-One thing to keep in mind when creating recipes and cookbooks is idempotency.  By keeping idempotency in mind in general you can create recipes that you can run again and again to push out minor changes to a package.  This way your recipes become the only way that you modify your servers and can be a single chokepoint that you can monitor to make sure things happen properly.
-
-Lots of the cuisine functions you'll use have an "ensure" version that first checks to see if a condition is true before applying it, such as checking if a package is installed before trying to install it.  This is nice when things could cause undesired configuration changes or expensive operations that you don't want to happen every time.  These functions are a huge aid in writing idempotent recipes and cookbooks.
-
-# Globules
-
-A globule contains all the files and metadata that frycook will use to help create and manage your environment.
-
-## setup directory
-
-The setup directory contains all the recipes, cookbooks, and metadata.
-
-### environment.json file
-
-Here you keep all the metadata about the users, computers, and groups for your installation.
-
-### recipes directory
-
-A recipe describes how to install an individual package, such as postfix or nginx.  Frycook expects all your recipes to be in a module/package called 'recipes' that is accessible via the PYTHONPATH environment variable.  This module should export a list of recipe name and class tuples for use by the frycooker program.
-
-### cookbooks directory
-
-A cookbook is just a list of recipes to install.  You can add other logic to it, but basically it's just a list of recipes.  You need to put all your cookbooks in a module/package called 'cookbooks' 
-that's in the PYTHONPATH environment variable.
-
-### runner.sh file
-
-This is just a wrapper around frycooker that sets the PYTHONPATH correctly before running frycooker.
-
-### settings.json file
-
-There are a few configuration settings for frycook, and they're set here.
-
-## packages directory
-
-This directory keeps copies of all the files for each recipe.  One of the major things a recipe does is copy config files to the server, and here's where they live, one directory per package.  Plain files are copied verbatim, while files with a .tmplt extension are treated as mako templates and processed before being copied to the server.

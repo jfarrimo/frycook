@@ -1,6 +1,104 @@
 #!/env/python
 '''
-Here's some module-level documentation.
+Frycooker is the program that takes all your carefully coded recipes
+and cookbooks and applies them to computers.
+
+Pre-requisites
+==============
+
+Frycooker depends on a few things to work properly.
+
+settings.json file
+------------------
+
+Contains the settings for the program, in JSON format.
+
+environment.json file
+---------------------
+
+Contains the environment for the program, in JSON format.
+
+packages directory
+------------------
+
+Contains all the packages files for the recipes.
+
+recipes package
+---------------
+
+This should be accessible via the PYTHONPATH so it can be imported.
+
+This needs the recipe list in the package, most likely defined
+in the __init__.py file::
+
+  from hosts import RecipeHosts
+  from nginx import RecipeNginx
+  from root import RecipeRootUser
+  from example_com import RecipeExampleCom
+
+  recipes = {
+      'hosts': RecipeHosts,
+      'nginx': RecipeNginx,
+      'root': RecipeRootUser,
+      'example_com': RecipeExacmpleCom
+      }
+
+cookbooks package
+-----------------
+
+This should be accessible via the PYTHONPATH so it can be imported.
+
+This needs the cookbook list in the package, most likely defined
+in the __init__.py file::
+
+  from base import CookbookBase
+  from web import CookbookWeb
+
+  cookbooks = {
+      'base': CookbookBase,
+      'web': CookbookWeb
+      }
+
+Globules
+========
+
+All the files necessary for frycooker to run are usually
+arranged in a directory structure that I call a I{globule}.
+Here's an example of that::
+
+  awesome_recipes           # root directory
+    packages                # directory for the package files
+      hosts                 # root for hosts package files
+        etc                 # corresponds to /etc on the target server
+          hosts.tmplt       # template that becomes /etc/hosts on the target server
+      nginx                 # root for nginx package files
+        etc                 # corresponds to /etc directory on the target server
+          default           # corresponds to /etc/default directory on the target server
+            nginx           # corresponds to /etc/default/nginx file on the target server
+          nginx             # corresponds to /etc/nginx directory on target server
+            nginx.conf      # corresponds to /etc/nginx/nginx.conf file on target server
+            conf.d          # corresponds to /etc/nginx/conf.d directory on target server
+            sites-available # corresponds to /etc/nginx/sites-available directory on target server
+              default       # corresponds to /etc/nginx/sites-available/default directory on target server
+            sites-enabled   # corresponds to /etc/nginx/sites-enable directory on target server
+        srv                 # corresponds to /srv directory on the target server
+          www               # corresponds to /srv/www directory on the target server
+            50x.html        # corresponds to /srv/www/50x.html file on target server
+            index.html      # corresponds to /srv/www/index.html file on target server
+    setup                   # directory for non-package files
+      runner.sh             # wrapper for frycooker that sets PYTHONPATH
+      settings.json         # settings file
+      environment.json      # environment file
+      cookbooks             # directory to hold the cookbooks package
+        __init__.py         # define the cookbook list here and import all cookbook classes
+        base.py             # cookbook referencing all the recipes for a base server setup
+        web.py              # cookbook for make a base server into a web server
+      recipes               # directory to hold the recipes package
+        __init__.py         # define the recipe list here and import all recipe classes
+        root.py             # recipe for setting the root user's authorized_keys file
+        hosts.py            # recipe for setting up the /etc/hosts file
+        nginx.py            # recipe for setting up nginx
+        example_com.py      # recipe for setting up example.com on a web server
 '''
 import argparse
 import json

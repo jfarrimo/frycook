@@ -75,16 +75,24 @@ Any files with a .tmplt extension will be processed as mako
 templates before being copied out to computers.  Here's an 
 example layout::
 
-  packages           # root packages directory
-    nginx            # nginx package
-      etc            # /etc target directory
-        nginx        # /etc/nginx directory
-          nginx.conf # /etc/nginx/nginx.conf file
-        default      # /etc/default directory
-          nginx      # /etc/default/nginx file
-    hosts            # hosts package
-      etc            # /etc directory
-        hosts.tmplt  # template that will become the /etc/hosts file
+    packages                # directory for the package files
+      hosts                 # root for hosts package files
+        etc                 # corresponds to /etc on the target server
+          hosts.tmplt       # template that becomes /etc/hosts on the target server
+      nginx                 # root for nginx package files
+        etc                 # corresponds to /etc directory on the target server
+          default           # corresponds to /etc/default directory on the target server
+            nginx           # corresponds to /etc/default/nginx file on the target server
+          nginx             # corresponds to /etc/nginx directory on target server
+            nginx.conf      # corresponds to /etc/nginx/nginx.conf file on target server
+            conf.d          # corresponds to /etc/nginx/conf.d directory on target server
+            sites-available # corresponds to /etc/nginx/sites-available directory on target server
+              default       # corresponds to /etc/nginx/sites-available/default directory on target server
+            sites-enabled   # corresponds to /etc/nginx/sites-enable directory on target server
+        srv                 # corresponds to /srv directory on the target server
+          www               # corresponds to /srv/www directory on the target server
+            50x.html        # corresponds to /srv/www/50x.html file on target server
+            index.html      # corresponds to /srv/www/index.html file on target server
 '''
 from cookbook_template import Cookbook
 from recipe_template import Recipe, RecipeException
