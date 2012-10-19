@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>script-frycooker</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Script&nbsp;frycooker
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="script-frycooker-module.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== SCRIPT DESCRIPTION ==================== -->
+<h1 class="epydoc">Script frycooker</h1><p class="nomargin-top"></p>
+<p>Frycooker is the program that takes all your carefully coded recipes 
+  and cookbooks and applies them to computers.</p>
+  <h1 class="heading">Pre-requisites</h1>
+    <p>Frycooker depends on a few things to work properly.</p>
+    <h2 class="heading">settings.json file</h2>
+      <p>Contains the settings for the program, in JSON format.</p>
+    <h2 class="heading">environment.json file</h2>
+      <p>Contains the environment for the program, in JSON format.</p>
+    <h2 class="heading">packages directory</h2>
+      <p>Contains all the packages files for the recipes.</p>
+    <h2 class="heading">recipes package</h2>
+      <p>This should be accessible via the PYTHONPATH so it can be 
+      imported.</p>
+      <p>This needs the recipe list in the package, most likely defined in 
+      the __init__.py file:</p>
+<pre class="literalblock">
+ from hosts import RecipeHosts
+ from nginx import RecipeNginx
+ from root import RecipeRootUser
+ from example_com import RecipeExampleCom
+
+ recipes = {
+     'hosts': RecipeHosts,
+     'nginx': RecipeNginx,
+     'root': RecipeRootUser,
+     'example_com': RecipeExacmpleCom
+     }
+</pre>
+    <h2 class="heading">cookbooks package</h2>
+      <p>This should be accessible via the PYTHONPATH so it can be 
+      imported.</p>
+      <p>This needs the cookbook list in the package, most likely defined 
+      in the __init__.py file:</p>
+<pre class="literalblock">
+ from base import CookbookBase
+ from web import CookbookWeb
+
+ cookbooks = {
+     'base': CookbookBase,
+     'web': CookbookWeb
+     }
+</pre>
+  <h1 class="heading">Globules</h1>
+    <p>All the files necessary for frycooker to run are usually arranged in
+    a directory structure that I call a <i>globule</i>. Here's an example 
+    of that:</p>
+<pre class="literalblock">
+ awesome_recipes           # root directory
+   packages                # directory for the package files
+     hosts                 # root for hosts package files
+       etc                 # corresponds to /etc on the target server
+         hosts.tmplt       # template that becomes /etc/hosts on the target server
+     nginx                 # root for nginx package files
+       etc                 # corresponds to /etc directory on the target server
+         default           # corresponds to /etc/default directory on the target server
+           nginx           # corresponds to /etc/default/nginx file on the target server
+         nginx             # corresponds to /etc/nginx directory on target server
+           nginx.conf      # corresponds to /etc/nginx/nginx.conf file on target server
+           conf.d          # corresponds to /etc/nginx/conf.d directory on target server
+           sites-available # corresponds to /etc/nginx/sites-available directory on target server
+             default       # corresponds to /etc/nginx/sites-available/default directory on target server
+           sites-enabled   # corresponds to /etc/nginx/sites-enable directory on target server
+       srv                 # corresponds to /srv directory on the target server
+         www               # corresponds to /srv/www directory on the target server
+           50x.html        # corresponds to /srv/www/50x.html file on target server
+           index.html      # corresponds to /srv/www/index.html file on target server
+   setup                   # directory for non-package files
+     runner.sh             # wrapper for frycooker that sets PYTHONPATH
+     settings.json         # settings file
+     environment.json      # environment file
+     cookbooks             # directory to hold the cookbooks package
+       __init__.py         # define the cookbook list here and import all cookbook classes
+       base.py             # cookbook referencing all the recipes for a base server setup
+       web.py              # cookbook for make a base server into a web server
+     recipes               # directory to hold the recipes package
+       __init__.py         # define the recipe list here and import all recipe classes
+       root.py             # recipe for setting the root user's authorized_keys file
+       hosts.py            # recipe for setting up the /etc/hosts file
+       nginx.py            # recipe for setting up nginx
+       example_com.py      # recipe for setting up example.com on a web server
+</pre>
+    <p>============</p>
+    <p>Copyright (c) James Yates Farrimond. All rights reserved.</p>
+    <p>Redistribution and use in source and binary forms, with or without 
+    Modification, are permitted provided that the following conditions are 
+    met:</p>
+    <p>Redistributions of source code must retain the above copyright 
+    notice, this list of conditions and the following disclaimer.</p>
+    <p>Redistributions in binary form must reproduce the above copyright 
+    notice, this list of conditions and the following disclaimer in the 
+    documentation and/or other materials provided with the 
+    distribution.</p>
+    <p>THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND ''AS IS'' AND ANY
+    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMES YATES FARRIMOND OR 
+    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
+    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
+    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+    <p>The views and conclusions contained in the software and 
+    documentation are those of the authors and should not be interpreted as
+    representing official policies, either expressed or implied, of James 
+    Yates Farrimond.</p>
+
+<!-- ==================== FUNCTIONS ==================== -->
+<a name="section-Functions"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Functions</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Functions"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_args"></a><span class="summary-sig-name">get_args</span>()</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="main"></a><span class="summary-sig-name">main</span>()</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Fri Oct 19 09:40:51 2012
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

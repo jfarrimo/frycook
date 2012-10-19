@@ -8,7 +8,7 @@ The ideas embodied in frycook originally came from managing several hundred serv
 
 The best way to learn frycook is to look through the code in the frycook module and in the sample globule that's included with this repo.  I've also generate API documentation from the somewhat extensive docstrings I've included in the source files.  You can acces those *here*.
 
-# Story
+# History
 
 When I build a server, I prefer to write a program to build the server instead of just logging in to the server and configuring things by hand.  This way, when the server eventually crashes (or I need to build a second copy to scale things up), I have a program that can quickly build a new copy of that server for me.  Later, when I need to change the configuration on the server, I just update the setup program and run that again.  That way my setup program is always up to date.  
 
@@ -21,3 +21,18 @@ Finally, I decided to bite the bullet and roll my own system.  I figured it woul
 Although I didn't choose to use chef or puppet, I really liked some of their concepts and I decided to make them part of the foundation for my system.  Chef has the nice concept of recipes for individual subsystems and cookbooks for building multiple subsystems into complete systems.  Chef also places a lot of value on idempotency, making sure that you can run the same setup script on a server multiple times and not cause yourself problems in the process.
 
 What I ended up with was a package you install with pip and a directory structure for storing the metadata, config files, recipes, and cookbooks for my environment.  I couldn't think of a better name, so I ended up calling this directory structure and its contents a globule (frycooks deal with lots of grease).  The package you install has the base recipe and cookbook classes and a program to process everything (called, appropriately, frycooker).
+
+---
+
+Copyright (c) James Yates Farrimond. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMES YATES FARRIMOND OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those of the authors and should not be interpreted as representing official policies, either expressed or implied, of James Yates Farrimond.
+
