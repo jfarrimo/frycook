@@ -6,7 +6,7 @@ Frycook is a thin layer on top of fabric, cuisine, and mako.  Frycook consists o
 
 The ideas embodied in frycook originally came from managing several hundred servers for a social gaming company, and then were augmented by time spent poring over the chef documentation.
 
-The best way to learn frycook is to look through the code in the frycook module and in the sample globule that's included with this repo.  I've also generate API documentation from the somewhat extensive docstrings I've included in the source files.  You can acces those *here*.
+The best way to learn frycook is to look through the code in the frycook module and in the sample globule that's included with this repo.  I've also generate API documentation from the somewhat extensive docstrings I've included in the source files.  You can acces those in the docs directory in the repo.
 
 # History
 
@@ -24,7 +24,7 @@ What I ended up with was a package you install with pip and a directory structur
 
 ---
 
-Copyright (c) James Yates Farrimond. All rights reserved.
+Copyright (c) 2012 James Yates Farrimond. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
