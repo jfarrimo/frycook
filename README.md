@@ -2,7 +2,7 @@
 
 Frycook is a quick and dirty alternative to Chef.  When a giant kitchen full of equipment and a full staff headed by a master chef are *WAY* more than you need, a frycook will do the trick nicely.  It'as also nice when you'd rather do things in Python than have to learn Ruby or some other proprietary DSL.
 
-Frycook is a thin layer on top of fabric, cuisine, and mako.  Frycook consists of the frycook package you install via pip and a set of recipes and metadata files you generate to describe your environment and how to build it.  I'll call this set of recipes and metadata a _globule_ in this document.  There is a sample globule in the sample directory that handles a base server setup and web domain setup for a simple web server, based on Ubuntu 12.04.
+Frycook is a thin layer on top of fabric, cuisine, and mako.  Frycook consists of the frycook package you install via pip and a set of recipes and metadata files you generate to describe your environment and how to build it.  I'll call this set of recipes and metadata a _globule_ in this document.  There is a sample globule in the sample directory that handles a base server setup and web domain setup for a simple web server, based on Ubuntu 12.04.  The frycooker script that comes with the frycook package takes care of applying the recipes to your computers.  This is all documented in the docs that are part of the repo if you clone it from github at https://github.com/jfarrimo/frycook.
 
 The ideas embodied in frycook originally came from managing several hundred servers for a social gaming company, and then were augmented by time spent poring over the chef documentation.
 
