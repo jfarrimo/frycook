@@ -256,3 +256,9 @@ class Recipe(object):
                     else:
                         self.push_file(os.path.join(work_dir, filename),
                                        os.path.join('/', filename))
+
+    def push_git_repo(self, git_url, target_path):
+        rsync_commang = 'rsync -qrlptz --delete --delete-excluded --exclude=.svn --exclude=.git'
+        tmp_path = os.path.join(self.settings["tmp_path"], 'push_git_repo/monitor'
+        cuisine.run_local('git clone -q %s %s' % (git_url, tmp_path))
+        cuisine.run_local('%s %s root@$host:%s' % (rsync_command, tmp_path, target_path))
