@@ -258,6 +258,18 @@ class Recipe(object):
                                        os.path.join('/', filename))
 
     def push_git_repo(self, git_url, target_path):
+        '''
+        Clone and rsync a git repo to a remote server.
+
+        This makes a local clone of the repo in the temp directory
+        specified in the settings file, then rsyncs this to the
+        remote path.
+
+        @type git_url: string
+        @param git_url: git url of repo (probably from github)
+        @type target_path: string
+        @param target_path: root path on remote server to copy git repo to
+        '''
         rsync_commang = 'rsync -qrlptz --delete --delete-excluded --exclude=.svn --exclude=.git'
         tmp_path = os.path.join(self.settings["tmp_path"], 'push_git_repo/monitor'
         cuisine.run_local('git clone -q %s %s' % (git_url, tmp_path))
