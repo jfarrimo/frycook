@@ -224,7 +224,7 @@ class Recipe(object):
         buff = mytemplate.render(**enviro)
         cuisine.file_write(out_path, buff, check=True)
 
-    def push_package_file_set(self, package_name, template_env):
+    def _push_package_file_set(self, package_name, template_env):
         ''' 
         Copy a set of files to a remote server, maintaining
         the same directory structure and processing any templates
@@ -256,6 +256,43 @@ class Recipe(object):
                     else:
                         self.push_file(os.path.join(work_dir, filename),
                                        os.path.join('/', filename))
+
+    def push_package_file_set(self, package_name, computer_name,
+                              host_env, aux_env=None):
+        ''' 
+        Copy a set of files to a remote server, maintaining
+        the same directory structure and processing any templates
+        it encounters.
+
+        This copies the files to the root of the destination,
+        so that things like /etc/hosts or /etc/nginx/nginx.conf
+        get put in the right place.  Just create a directory
+        structure that mirrors the target machine and all files
+        will get copied there in the correct place.
+
+        For template file processing, a default environment dictionary
+        will be passed in consisting of:
+
+          {"computer": host_env["computers"][computer_name]}
+
+        If aux_env is given, it will be added to the default dictionary
+        using dict.update(), after the default is constructed.  This
+        means that if you pass in an aux_env dictionary with a key called
+        "computer", that that key will over-write the default key of 
+        that name.
+
+        @type package_name: string
+        @param package_name: name of package to process, corresponds to directory in packages directory
+        @type template_env: dict
+        @param template_env: environment dictionary for template engine
+        @type host_env: dict
+        @param host_env: the entire dictionary from the environment.json file
+        @type aux_env: dict
+        @param aux_env: additional key/value pairs for the template environment
+        '''
+        template_env = host_env["computers"][computer_name]
+        template_env.update(aux_env)
+        self.push_package_file_set(package_name, computer_name, template_env)
 
     def push_git_repo(self, git_url, target_path):
         '''
