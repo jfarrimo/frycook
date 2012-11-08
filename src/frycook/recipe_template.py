@@ -308,6 +308,6 @@ class Recipe(object):
         @param target_path: root path on remote server to copy git repo to
         '''
         rsync_commang = 'rsync -qrlptz --delete --delete-excluded --exclude=.svn --exclude=.git'
-        tmp_path = os.path.join(self.settings["tmp_path"], 'push_git_repo/monitor'
+        tmp_path = os.path.join(self.settings["tmp_path"], 'push_git_repo/monitor')
         cuisine.run_local('git clone -q %s %s' % (git_url, tmp_path))
         cuisine.run_local('%s %s root@$host:%s' % (rsync_command, tmp_path, target_path))
