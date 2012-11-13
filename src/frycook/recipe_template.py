@@ -258,7 +258,7 @@ class Recipe(object):
                                        os.path.join('/', filename))
 
     def push_package_file_set(self, package_name, computer_name,
-                              host_env, aux_env=None):
+                              aux_env=None):
         ''' 
         Copy a set of files to a remote server, maintaining
         the same directory structure and processing any templates
@@ -285,12 +285,10 @@ class Recipe(object):
         @param package_name: name of package to process, corresponds to directory in packages directory
         @type template_env: dict
         @param template_env: environment dictionary for template engine
-        @type host_env: dict
-        @param host_env: the entire dictionary from the environment.json file
         @type aux_env: dict
         @param aux_env: additional key/value pairs for the template environment
         '''
-        template_env = host_env["computers"][computer_name]
+        template_env = self.environment["computers"][computer_name]
         template_env.update(aux_env)
         self.push_package_file_set(package_name, computer_name, template_env)
 
