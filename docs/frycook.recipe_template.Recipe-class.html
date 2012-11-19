@@ -263,9 +263,8 @@ object --+
         <span class="summary-sig-arg">package_name</span>,
         <span class="summary-sig-arg">computer_name</span>,
         <span class="summary-sig-arg">aux_env</span>=<span class="summary-sig-default">None</span>)</span><br />
-      Copy a set of files to a remote server, maintaining
-the same directory structure and processing any templates
-it encounters.</td>
+      Copy a set of files to a remote server, maintaining the same 
+      directory structure and processing any templates it encounters.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.push_package_file_set">source&nbsp;code</a></span>
             
@@ -405,7 +404,7 @@ it encounters.</td>
   checks that the designated computer exists in the environment dictionary.
   This is a good place to check other things in your environment dictionary
   that the apply function expects to be there.  Override this function in 
-  your subclass of Recipe if you have any checks to perform.  Be sure to 
+  your subclass of Recipe if you have any checks to perform. Be sure to 
   call the base class function to make sure its checks get done as 
   well.</p>
   <dl class="fields">
@@ -438,7 +437,7 @@ it encounters.</td>
   
   <p>Define the actions to take place when this recipe is applied to a 
   computer.  Override this function in your subclass of Recipe if you have 
-  any actions to apply. If you don't have any actions, then why are you 
+  any actions to apply.  If you don't have any actions, then why are you 
   creating a recipe?</p>
   <dl class="fields">
     <dt>Parameters:</dt>
@@ -599,8 +598,8 @@ it encounters.</td>
   <p>Copy a set of files to a remote server, maintaining the same directory
   structure and processing any templates it encounters.</p>
   <p>This copies the files to the root of the destination, so that things 
-  like /etc/hosts or /etc/nginx/nginx.conf get put in the right place.  
-  Just create a directory structure that mirrors the target machine and all
+  like /etc/hosts or /etc/nginx/nginx.conf get put in the right place. Just
+  create a directory structure that mirrors the target machine and all 
   files will get copied there in the correct place.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
@@ -629,38 +628,29 @@ it encounters.</td>
     </td>
   </tr></table>
   
-  <pre class="literalblock">
-
-Copy a set of files to a remote server, maintaining
-the same directory structure and processing any templates
-it encounters.
-
-This copies the files to the root of the destination,
-so that things like /etc/hosts or /etc/nginx/nginx.conf
-get put in the right place.  Just create a directory
-structure that mirrors the target machine and all files
-will get copied there in the correct place.
-
-For template file processing, a default environment dictionary
-will be passed in consisting of:
-
-  {&quot;computer&quot;: host_env[&quot;computers&quot;][computer_name]}
-
-If aux_env is given, it will be added to the default dictionary
-using dict.update(), after the default is constructed.  This
-means that if you pass in an aux_env dictionary with a key called
-&quot;computer&quot;, that that key will over-write the default key of 
-that name.
-
-@type package_name: string
-@param package_name: name of package to process, corresponds to directory in packages directory
-@type template_env: dict
-@param template_env: environment dictionary for template engine
-@type aux_env: dict
-@param aux_env: additional key/value pairs for the template environment
-
+  <p>Copy a set of files to a remote server, maintaining the same directory
+  structure and processing any templates it encounters.</p>
+  <p>This copies the files to the root of the destination, so that things 
+  like /etc/hosts or /etc/nginx/nginx.conf get put in the right place. Just
+  create a directory structure that mirrors the target machine and all 
+  files will get copied there in the correct place.</p>
+  <p>For template file processing, a default environment dictionary will be
+  passed in consisting of:</p>
+<pre class="literalblock">
+ {&quot;computer&quot;: host_env[&quot;computers&quot;][computer_name]}
 </pre>
+  <p>If aux_env is given, it will be added to the default dictionary using 
+  dict.update(), after the default is constructed.  This means that if you 
+  pass in an aux_env dictionary with a key called &quot;computer&quot;, 
+  that that key will over-write the default key of that name.</p>
   <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>package_name</code></strong> (string) - name of package to process, corresponds to directory in packages 
+          directory</li>
+        <li><strong class="pname"><code>template_env</code></strong> (dict) - environment dictionary for template engine</li>
+        <li><strong class="pname"><code>aux_env</code></strong> (dict) - additional key/value pairs for the template environment</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -716,7 +706,7 @@ that name.
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Tue Nov 13 09:31:26 2012
+    Generated by Epydoc 3.0.1 on Mon Nov 19 13:32:02 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
