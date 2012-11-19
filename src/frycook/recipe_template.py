@@ -1,28 +1,28 @@
 # Copyright (c) James Yates Farrimond. All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without 
+# Redistribution and use in source and binary forms, with or without
 # Modification, are permitted provided that the following conditions are met:
 #
-# Redistributions of source code must retain the above copyright notice, this 
+# Redistributions of source code must retain the above copyright notice, this
 # list of conditions and the following disclaimer.
 #
-# Redistributions in binary form must reproduce the above copyright notice, 
-# this list of conditions and the following disclaimer in the documentation 
+# Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
 # and/or other materials provided with the distribution.
 #
-# THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND ''AS IS'' AND ANY EXPRESS 
-# OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN 
-# NO EVENT SHALL JAMES YATES FARRIMOND OR CONTRIBUTORS BE LIABLE FOR ANY 
-# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND 
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF 
+# THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND ''AS IS'' AND ANY EXPRESS
+# OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+# NO EVENT SHALL JAMES YATES FARRIMOND OR CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# The views and conclusions contained in the software and documentation are 
-# those of the authors and should not be interpreted as representing official 
+# The views and conclusions contained in the software and documentation are
+# those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of James Yates Farrimond.
 
 '''
@@ -33,31 +33,31 @@ or a subsystem that needs to be configured.
 idempotence
 ===========
 
-One thing to keep in mind when creating recipes and cookbooks 
-is idempotency.  By keeping idempotency in mind in general 
-you can create recipes that you can run again and again to 
-push out minor changes to a package.  This way your recipes 
-become the only way that you modify your servers and can be 
-a single chokepoint that you can monitor to make sure things 
+One thing to keep in mind when creating recipes and cookbooks
+is idempotency.  By keeping idempotency in mind in general
+you can create recipes that you can run again and again to
+push out minor changes to a package.  This way your recipes
+become the only way that you modify your servers and can be
+a single chokepoint that you can monitor to make sure things
 happen properly.
 
-Lots of the cuisine functions you'll use have an "ensure" 
-version that first checks to see if a condition is true 
-before applying it, such as checking if a package is 
-installed before trying to install it.  This is nice when 
-things could cause undesired configuration changes or 
-expensive operations that you don't want to happen every 
-time.  These functions are a huge aid in writing idempotent 
+Lots of the cuisine functions you'll use have an "ensure"
+version that first checks to see if a condition is true
+before applying it, such as checking if a package is
+installed before trying to install it.  This is nice when
+things could cause undesired configuration changes or
+expensive operations that you don't want to happen every
+time.  These functions are a huge aid in writing idempotent
 recipes and cookbooks.
 
 
 apply
 =====
 
-This is where you apply a recipe to a server.  There are 
-two class methods that get called during the apply process. 
-Generally you'll just override the apply method.  If you 
-override pre_apply_checks, remember to call the base class 
+This is where you apply a recipe to a server.  There are
+two class methods that get called during the apply process.
+Generally you'll just override the apply method.  If you
+override pre_apply_checks, remember to call the base class
 method.  Here's the order that functions get called:
 
 pre_apply_checks -> apply
@@ -65,21 +65,21 @@ pre_apply_checks -> apply
 cleanup
 =======
 
-This is where you cleanup old recipe configurations from a 
-server.  An example is when I changed the home directory for 
-my web server.  I first wrote a cleanup that cleaned-up the 
-old configuration, then an apply to apply the new 
-configuration.  That way you can always run the apply in the 
-future when building new machines and don't need the cleanup 
-logic since the new machine never had the old configuration 
+This is where you cleanup old recipe configurations from a
+server.  An example is when I changed the home directory for
+my web server.  I first wrote a cleanup that cleaned-up the
+old configuration, then an apply to apply the new
+configuration.  That way you can always run the apply in the
+future when building new machines and don't need the cleanup
+logic since the new machine never had the old configuration
 that had to get cleaned-up.
 
 file set copying
 ================
 
-The Recipe class defines a few helper functions for handling 
+The Recipe class defines a few helper functions for handling
 templates and copying files to servers.  It runs files with
-a .tmplt extension through make using the dictionary you 
+a .tmplt extension through make using the dictionary you
 pass to it.  Regular files just get copied.
 '''
 import os
@@ -113,7 +113,7 @@ class Recipe(object):
         self.settings = settings
         self.environment = environment
         self.mylookup = TemplateLookup(
-            directories=[self.settings["package_dir"]], 
+            directories=[self.settings["package_dir"]],
             module_directory=self.settings["module_dir"])
 
     #######################
@@ -143,7 +143,7 @@ class Recipe(object):
     def apply(self, computer):
         '''
         Define the actions to take place when this recipe is
-        applied to a computer.  Override this function in your 
+        applied to a computer.  Override this function in your
         subclass of Recipe if you have any actions to apply.
         If you don't have any actions, then why are you creating
         a recipe?
@@ -169,7 +169,7 @@ class Recipe(object):
     #########################
 
     def cleanup(self, computer):
-        ''' 
+        '''
         Define cleanup actions that need to be taken on the
         designated computer.  Override this function in your
         sub-class of Recipe to do things.
@@ -180,9 +180,9 @@ class Recipe(object):
         pass
 
     def run_cleanup(self, computer):
-        ''' 
+        '''
         Run the cleanup function.  This is typically
-        called by frycooker. 
+        called by frycooker.
 
         @type computer: string
         @param computer: computer to apply recipe cleanup to
@@ -194,7 +194,7 @@ class Recipe(object):
     ###############################
 
     def push_file(self, local_name, remote_name):
-        ''' 
+        '''
         Copy a file to a remote server if the file is
         different or doesn't exist.
 
@@ -203,12 +203,12 @@ class Recipe(object):
         @type remote_name: string
         @param remote_name: remote path to write file to (path + filename)
         '''
-        cuisine.file_upload(remote_name, 
-                            os.path.join(self.settings["package_dir"], 
+        cuisine.file_upload(remote_name,
+                            os.path.join(self.settings["package_dir"],
                                          local_name))
 
     def push_template(self, templatename, out_path, enviro):
-        ''' 
+        '''
         Process a template file and push its contents
         to a remote server if it's different than what's
         already there.
@@ -225,7 +225,7 @@ class Recipe(object):
         cuisine.file_write(out_path, buff, check=True)
 
     def _push_package_file_set(self, package_name, template_env):
-        ''' 
+        '''
         Copy a set of files to a remote server, maintaining
         the same directory structure and processing any templates
         it encounters.
@@ -241,7 +241,7 @@ class Recipe(object):
         @type template_env: dict
         @param template_env: environment dictionary for template engine
         '''
-        work_dir = os.path.join(self.settings["package_dir"], 
+        work_dir = os.path.join(self.settings["package_dir"],
                                 package_name)
         os.chdir(work_dir)
         for root, dirs, files in os.walk('.'):
@@ -259,7 +259,7 @@ class Recipe(object):
 
     def push_package_file_set(self, package_name, computer_name,
                               aux_env=None):
-        ''' 
+        '''
         Copy a set of files to a remote server, maintaining
         the same directory structure and processing any templates
         it encounters.
@@ -278,7 +278,7 @@ class Recipe(object):
         If aux_env is given, it will be added to the default dictionary
         using dict.update(), after the default is constructed.  This
         means that if you pass in an aux_env dictionary with a key called
-        "computer", that that key will over-write the default key of 
+        "computer", that that key will over-write the default key of
         that name.
 
         @type package_name: string
@@ -288,9 +288,11 @@ class Recipe(object):
         @type aux_env: dict
         @param aux_env: additional key/value pairs for the template environment
         '''
-        template_env = self.environment["computers"][computer_name]
-        template_env.update(aux_env)
-        self.push_package_file_set(package_name, computer_name, template_env)
+        template_env = {"computer":
+                        self.environment["computers"][computer_name]}
+        if aux_env is not None:
+            template_env.update(aux_env)
+        self._push_package_file_set(package_name, template_env)
 
     def push_git_repo(self, git_url, target_path):
         '''
@@ -305,7 +307,10 @@ class Recipe(object):
         @type target_path: string
         @param target_path: root path on remote server to copy git repo to
         '''
-        rsync_command = 'rsync -qrlptz --delete --delete-excluded --exclude=.svn --exclude=.git'
-        tmp_path = os.path.join(self.settings["tmp_path"], 'push_git_repo/monitor')
+        rsync_command = ('rsync -qrlptz --delete --delete-excluded '
+                         '--exclude=.svn --exclude=.git')
+        tmp_path = os.path.join(self.settings["tmp_path"],
+                                'push_git_repo/monitor')
         cuisine.run_local('git clone -q %s %s' % (git_url, tmp_path))
-        cuisine.run_local('%s %s root@$host:%s' % (rsync_command, tmp_path, target_path))
+        cuisine.run_local('%s %s root@$host:%s' %
+                          (rsync_command, tmp_path, target_path))
