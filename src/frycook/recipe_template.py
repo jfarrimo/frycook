@@ -77,6 +77,7 @@ using the dictionary you pass to it.  Regular files just get copied.
 import os
 import os.path
 import re
+import stat
 
 import cuisine
 from mako.lookup import TemplateLookup
@@ -190,6 +191,26 @@ class Recipe(object):
     ######## FILE HANDLING ########
     ###############################
 
+    def ensure_file_mode(self, local_name, remote_name):
+        '''
+        Make sure the remote file has the same mode as the local file so that
+        permissions are correct.
+
+        @type local_name: string
+
+        @param local_name: path to file on local file system
+
+        @type remote_name: string
+
+        @param remote_name: path to file on remote file system
+        '''
+        bit_mode = stat.S_IMODE(os.stat(local_name).st_mode)
+        user_perms = (bit_mode & stat.S_IRWXU) >> 6
+        group_perms = (bit_mode & stat.S_IRWXG) >> 3
+        other_perms = bit_mode & stat.S_IRWXO
+        string_mode = "%s%s%s" % (user_perms, group_perms, other_perms)
+        cuisine.file_attribs(remote_name, mode=string_mode)
+
     def push_file(self, local_name, remote_name):
         '''
         Copy a file to a remote server if the file is different or doesn't
@@ -204,9 +225,9 @@ class Recipe(object):
 
         @param remote_name: remote path to write file to (path + filename)
         '''
-        cuisine.file_upload(remote_name,
-                            os.path.join(self.settings["package_dir"],
-                                         local_name))
+        local_name = os.path.join(self.settings["package_dir"], local_name)
+        cuisine.file_upload(remote_name, local_name)
+        self.ensure_file_mode(local_name, remote_name)
 
     def push_template(self, templatename, out_path, enviro):
         '''
@@ -230,6 +251,8 @@ class Recipe(object):
         mytemplate = self.mylookup.get_template(templatename)
         buff = mytemplate.render(**enviro)
         cuisine.file_write(out_path, buff, check=True)
+        local_name = os.path.join(self.settings["package_dir"], templatename)
+        self.ensure_file_mode(local_name, out_path)
 
     def _push_package_file_set(self, package_name, template_env):
         '''
@@ -254,6 +277,7 @@ class Recipe(object):
                                 package_name)
         os.chdir(work_dir)
         for root, dirs, files in os.walk('.'):
+            cuisine.dir_ensure(root.lstrip('.'))
             for f in files:
                 filename = os.path.join(root, f).lstrip('./')
                 if re.search(self.settings["file_ignores"], filename) is None:
