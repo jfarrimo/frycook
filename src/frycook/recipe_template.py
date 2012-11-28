@@ -329,7 +329,7 @@ class Recipe(object):
             template_env.update(aux_env)
         self._push_package_file_set(package_name, template_env)
 
-    def push_git_repo(self, git_url, target_path):
+    def push_git_repo(self, git_url, target_path, host):
         '''
         Clone and rsync a git repo to a remote server.
 
@@ -349,5 +349,5 @@ class Recipe(object):
         tmp_path = os.path.join(self.settings["tmp_dir"],
                                 'push_git_repo/repo')
         cuisine.run_local('git clone -q %s %s' % (git_url, tmp_path))
-        cuisine.run_local('%s %s root@$host:%s' %
-                          (rsync_command, tmp_path, target_path))
+        cuisine.run_local('%s %s root@$%s:%s' %
+                          (rsync_command, tmp_path, host, target_path))
