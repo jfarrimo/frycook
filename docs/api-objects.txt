@@ -24,6 +24,9 @@ frycook.recipe_template.Recipe.__init__	frycook.recipe_template.Recipe-class.htm
 frycook.recipe_template.Recipe.ensure_file_mode	frycook.recipe_template.Recipe-class.html#ensure_file_mode
 frycook.recipe_template.Recipe.cleanup	frycook.recipe_template.Recipe-class.html#cleanup
 frycook.recipe_template.Recipe.push_git_repo	frycook.recipe_template.Recipe-class.html#push_git_repo
+frycook.recipe_template.Recipe.ensure_git_repo	frycook.recipe_template.Recipe-class.html#ensure_git_repo
+frycook.recipe_template.Recipe.update_git_repo	frycook.recipe_template.Recipe-class.html#update_git_repo
+frycook.recipe_template.Recipe.clone_git_repo	frycook.recipe_template.Recipe-class.html#clone_git_repo
 frycook.recipe_template.Recipe.pre_apply_checks	frycook.recipe_template.Recipe-class.html#pre_apply_checks
 frycook.recipe_template.Recipe.push_package_file_set	frycook.recipe_template.Recipe-class.html#push_package_file_set
 frycook.recipe_template.Recipe._push_package_file_set	frycook.recipe_template.Recipe-class.html#_push_package_file_set

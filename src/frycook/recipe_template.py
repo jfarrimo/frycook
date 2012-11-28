@@ -80,6 +80,7 @@ import re
 import stat
 
 import cuisine
+from fabric.api import local
 from mako.lookup import TemplateLookup
 
 class RecipeException(Exception):
@@ -329,10 +330,8 @@ class Recipe(object):
             template_env.update(aux_env)
         self._push_package_file_set(package_name, template_env)
 
-    def push_git_repo(self, git_url, target_path, host):
+    def push_git_repo(self, computer, git_url, target_path):
         '''
-        Clone and rsync a git repo to a remote server.
-
         This makes a local clone of the repo in the temp directory specified in
         the settings file, then rsyncs this to the remote path.
 
@@ -347,7 +346,56 @@ class Recipe(object):
         rsync_command = ('rsync -qrlptz --delete --delete-excluded '
                          '--exclude=.svn --exclude=.git')
         tmp_path = os.path.join(self.settings["tmp_dir"],
-                                'push_git_repo/repo')
-        cuisine.run_local('git clone -q %s %s' % (git_url, tmp_path))
-        cuisine.run_local('%s %s root@$%s:%s' %
-                          (rsync_command, tmp_path, host, target_path))
+                                'push_git_repo/repo/')
+        if not os.path.exists(tmp_path):
+            local('git clone %s %s' % (git_url, tmp_path))
+        else:
+            local('cd %s && git pull' % tmp_path)
+        local('%s %s root@%s:%s' %
+              (rsync_command, tmp_path, computer, target_path))
+
+    def clone_git_repo(self, user, git_url, target_path):
+        '''
+        Clone a git repo on a remote server.
+
+        @type git_url: string
+
+        @param git_url: git url of repo (probably from github)
+
+        @type target_path: string
+
+        @param target_path: root path on remote server to clone git repo into
+        '''
+        cuisine.sudo('sudo -u %s git clone %s %s' %
+                     (user, git_url, target_path))
+
+    def update_git_repo(self, user, git_url, target_path):
+        '''
+        Update an existing git repo on a remote server.
+
+        @type git_url: string
+
+        @param git_url: git url of repo (probably from github)
+
+        @type target_path: string
+
+        @param target_path: root path on remote server to update git repo in
+        '''
+        cuisine.sudo('sudo -u %s cd %s && git pull' % (user, target_path))
+
+    def ensure_git_repo(self, user, git_url, target_path):
+        '''
+        Make sure a git repo exists on the remote computer and is up to date.
+
+        @type git_url: string
+
+        @param git_url: git url of repo (probably from github)
+
+        @type target_path: string
+
+        @param target_path: root path on remote server to check git repo
+        '''
+        if not cuisine.dir_exists(target_path):
+            self.clone_git_repo(user, git_url, target_path)
+        else:
+            self.update_git_repo(user, git_url, target_path)
