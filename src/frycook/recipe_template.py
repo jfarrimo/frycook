@@ -330,6 +330,10 @@ class Recipe(object):
             template_env.update(aux_env)
         self._push_package_file_set(package_name, template_env)
 
+    ##############################
+    ######## GIT HANDLING ########
+    ##############################
+
     def push_git_repo(self, computer, git_url, target_path):
         '''
         This makes a local clone of the repo in the temp directory specified in
@@ -366,7 +370,7 @@ class Recipe(object):
 
         @param target_path: root path on remote server to clone git repo into
         '''
-        cuisine.sudo('sudo -u %s git clone %s %s' %
+        cuisine.sudo('sudo -Hi -u %s git clone %s %s' %
                      (user, git_url, target_path))
 
     def update_git_repo(self, user, git_url, target_path):
@@ -381,7 +385,7 @@ class Recipe(object):
 
         @param target_path: root path on remote server to update git repo in
         '''
-        cuisine.sudo('sudo -u %s cd %s && git pull' % (user, target_path))
+        cuisine.sudo('cd %s && sudo -u %s git pull' % (target_path, user))
 
     def ensure_git_repo(self, user, git_url, target_path):
         '''
