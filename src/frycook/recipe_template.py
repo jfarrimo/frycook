@@ -398,8 +398,14 @@ class Recipe(object):
         @type target_path: string
 
         @param target_path: root path on remote server to check git repo
+
+        @rtype: boolean
+
+        @return: True if repo already existed, False if not
         '''
         if not cuisine.dir_exists(target_path):
             self.clone_git_repo(user, git_url, target_path)
+            return False
         else:
             self.update_git_repo(user, git_url, target_path)
+            return True
