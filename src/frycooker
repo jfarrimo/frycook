@@ -216,7 +216,7 @@ def get_args():
 def massage_enviro_paths(env):
     for k, v in env.iteritems():
         if isinstance(v, dict):
-            prep_enviro(v)
+            massage_enviro_paths(v)
         elif isinstance(k, basestring) and k.find('path') > -1:
             env[k] = v.replace('~', os.environ['HOME'])
 
