@@ -200,7 +200,9 @@ object --+
         <tr>
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#ensure_file_mode" class="summary-sig-name">ensure_file_mode</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">local_name</span>,
-        <span class="summary-sig-arg">remote_name</span>)</span><br />
+        <span class="summary-sig-arg">remote_name</span>,
+        <span class="summary-sig-arg">owner</span>,
+        <span class="summary-sig-arg">group</span>)</span><br />
       Make sure the remote file has the same mode as the local file so that
       permissions are correct.</td>
           <td align="right" valign="top">
@@ -220,7 +222,9 @@ object --+
         <tr>
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#push_file" class="summary-sig-name">push_file</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">local_name</span>,
-        <span class="summary-sig-arg">remote_name</span>)</span><br />
+        <span class="summary-sig-arg">remote_name</span>,
+        <span class="summary-sig-arg">owner</span>,
+        <span class="summary-sig-arg">group</span>)</span><br />
       Copy a file to a remote server if the file is different or doesn't 
       exist.</td>
           <td align="right" valign="top">
@@ -241,7 +245,9 @@ object --+
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#push_template" class="summary-sig-name">push_template</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">templatename</span>,
         <span class="summary-sig-arg">out_path</span>,
-        <span class="summary-sig-arg">enviro</span>)</span><br />
+        <span class="summary-sig-arg">enviro</span>,
+        <span class="summary-sig-arg">owner</span>,
+        <span class="summary-sig-arg">group</span>)</span><br />
       Process a template file and push its contents to a remote server if 
       it's different than what's already there.</td>
           <td align="right" valign="top">
@@ -613,7 +619,9 @@ object --+
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">ensure_file_mode</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">local_name</span>,
-        <span class="sig-arg">remote_name</span>)</span>
+        <span class="sig-arg">remote_name</span>,
+        <span class="sig-arg">owner</span>,
+        <span class="sig-arg">group</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.ensure_file_mode">source&nbsp;code</a></span>&nbsp;
@@ -627,6 +635,8 @@ object --+
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>local_name</code></strong> (string) - path to file on local file system</li>
         <li><strong class="pname"><code>remote_name</code></strong> (string) - path to file on remote file system</li>
+        <li><strong class="pname"><code>owner</code></strong> (string) - owner of the file</li>
+        <li><strong class="pname"><code>group</code></strong> (string) - group of the file</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -640,7 +650,9 @@ object --+
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">push_file</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">local_name</span>,
-        <span class="sig-arg">remote_name</span>)</span>
+        <span class="sig-arg">remote_name</span>,
+        <span class="sig-arg">owner</span>,
+        <span class="sig-arg">group</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.push_file">source&nbsp;code</a></span>&nbsp;
@@ -654,6 +666,8 @@ object --+
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>local_name</code></strong> (string) - path within packages dir of file to upload (path + filename)</li>
         <li><strong class="pname"><code>remote_name</code></strong> (string) - remote path to write file to (path + filename)</li>
+        <li><strong class="pname"><code>owner</code></strong> (string) - owner of the file</li>
+        <li><strong class="pname"><code>group</code></strong> (string) - group of the file</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -668,7 +682,9 @@ object --+
   <h3 class="epydoc"><span class="sig"><span class="sig-name">push_template</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">templatename</span>,
         <span class="sig-arg">out_path</span>,
-        <span class="sig-arg">enviro</span>)</span>
+        <span class="sig-arg">enviro</span>,
+        <span class="sig-arg">owner</span>,
+        <span class="sig-arg">group</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.push_template">source&nbsp;code</a></span>&nbsp;
@@ -684,6 +700,8 @@ object --+
           filename)</li>
         <li><strong class="pname"><code>out_path</code></strong> (string) - path on remote server to write file to (path + filename)</li>
         <li><strong class="pname"><code>enviro</code></strong> (dict) - environment dictionary for template engine</li>
+        <li><strong class="pname"><code>owner</code></strong> (string) - owner of the templated file</li>
+        <li><strong class="pname"><code>group</code></strong> (string) - group of the templated file</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -710,6 +728,10 @@ object --+
   like /etc/hosts or /etc/nginx/nginx.conf get put in the right place. Just
   create a directory structure that mirrors the target machine and all 
   files will get copied there in the correct place.</p>
+  <p>If a file named fck_ownership.txt is encountered in a directory, then 
+  it's expected to have contents of &lt;owner&gt;:&lt;group&gt; that 
+  specifies the owner and group of the directory it's in, all the files in 
+  that directory, and everything in its child directories.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -752,6 +774,10 @@ object --+
   dict.update(), after the default is constructed.  This means that if you 
   pass in an aux_env dictionary with a key called &quot;computer&quot;, 
   that that key will over-write the default key of that name.</p>
+  <p>If a file named fck_ownership.txt is encountered in a directory, then 
+  it's expected to have contents of &lt;owner&gt;:&lt;group&gt; that 
+  specifies the owner and group of the directory it's in, all the files in 
+  that directory, and everything in its child directories.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -899,7 +925,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Wed Dec  5 14:38:10 2012
+    Generated by Epydoc 3.0.1 on Mon Dec 10 18:33:26 2012
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

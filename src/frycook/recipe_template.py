@@ -83,12 +83,72 @@ import cuisine
 from fabric.api import local
 from mako.lookup import TemplateLookup
 
+
 class RecipeException(Exception):
     '''
     Exception raised for exceptional conditions encountered while using the
     Recipe class.
     '''
     pass
+
+class OwnershipTracker(object):
+    '''
+    Keep track of owner and group for directories during a push_package_fileset
+    operation.  This hinges on a file named fck_ownership.txt being encountered
+    in the directory being examined.  This file should have as its first line
+    the text <owner>:<group>, where <owner> is the owner's account name and
+    <group> is the group's name.
+    '''
+
+    tagfile = 'fck_ownership.txt'
+
+    def __init__(self):
+        '''
+        Start with no ownership info.
+        '''
+        self.ownership = {}
+
+    def check_directory(self, root, dirs, files):
+        '''
+        Get the ownership for the given directory.  Look for the
+        fck_ownership.txt in the directory, otherwise remember ownership from
+        previous calls.
+
+        The input parameters are what is returned from os.walk()
+
+        @type root: string
+
+        @param root: directory being examined
+
+        @type dirs: list of strings
+
+        @param dirs: list of sub-directories under the root directory
+
+        @type files: list of strings
+
+        @param files: list of the files in the root directory
+
+        @rtype: tuple of strings
+
+        @return: tuple containing (<owner>, <group>, )
+        '''
+        owner = None
+        group = None
+        if self.tagfile in files:
+            files.remove(self.tagfile)
+            parts = open(os.path.join(root, self.tagfile)).readline().split(':')
+            if len(parts) < 2:
+                raise RecipeException("invalid format for %s in directory %s" %
+                                      (self.tagfile, root))
+            owner = parts[0].strip()
+            group = parts[1].strip()
+            self.ownership[root] = (owner, group, )
+            for dn in dirs:
+                self.ownership[os.path.join(root, dn)] = (owner, group, )
+        if root in self.ownership:
+            owner, group = self.ownership[root]
+
+        return owner, group
 
 class Recipe(object):
     '''
@@ -192,7 +252,7 @@ class Recipe(object):
     ######## FILE HANDLING ########
     ###############################
 
-    def ensure_file_mode(self, local_name, remote_name):
+    def ensure_file_mode(self, local_name, remote_name, owner, group):
         '''
         Make sure the remote file has the same mode as the local file so that
         permissions are correct.
@@ -204,15 +264,24 @@ class Recipe(object):
         @type remote_name: string
 
         @param remote_name: path to file on remote file system
+
+        @type owner: string
+
+        @param owner: owner of the file
+
+        @type group: string
+
+        @param group: group of the file
         '''
         bit_mode = stat.S_IMODE(os.stat(local_name).st_mode)
         user_perms = (bit_mode & stat.S_IRWXU) >> 6
         group_perms = (bit_mode & stat.S_IRWXG) >> 3
         other_perms = bit_mode & stat.S_IRWXO
         string_mode = "%s%s%s" % (user_perms, group_perms, other_perms)
-        cuisine.file_attribs(remote_name, mode=string_mode)
+        cuisine.file_attribs(remote_name, mode=string_mode,
+                             owner=owner, group=group)
 
-    def push_file(self, local_name, remote_name):
+    def push_file(self, local_name, remote_name, owner, group):
         '''
         Copy a file to a remote server if the file is different or doesn't
         exist.
@@ -225,12 +294,20 @@ class Recipe(object):
         @type remote_name: string
 
         @param remote_name: remote path to write file to (path + filename)
+
+        @type owner: string
+
+        @param owner: owner of the file
+
+        @type group: string
+
+        @param group: group of the file
         '''
         local_name = os.path.join(self.settings["package_dir"], local_name)
         cuisine.file_upload(remote_name, local_name)
-        self.ensure_file_mode(local_name, remote_name)
+        self.ensure_file_mode(local_name, remote_name, owner, group)
 
-    def push_template(self, templatename, out_path, enviro):
+    def push_template(self, templatename, out_path, enviro, owner, group):
         '''
         Process a template file and push its contents to a remote server if
         it's different than what's already there.
@@ -248,12 +325,20 @@ class Recipe(object):
         @type enviro: dict
 
         @param enviro: environment dictionary for template engine
+
+        @type owner: string
+
+        @param owner: owner of the templated file
+
+        @type group: string
+
+        @param group: group of the templated file
         '''
         mytemplate = self.mylookup.get_template(templatename)
         buff = mytemplate.render(**enviro)
         cuisine.file_write(out_path, buff, check=True)
         local_name = os.path.join(self.settings["package_dir"], templatename)
-        self.ensure_file_mode(local_name, out_path)
+        self.ensure_file_mode(local_name, out_path, owner, group)
 
     def _push_package_file_set(self, package_name, template_env):
         '''
@@ -265,6 +350,11 @@ class Recipe(object):
         Just create a directory structure that mirrors the target machine and
         all files will get copied there in the correct place.
 
+        If a file named fck_ownership.txt is encountered in a directory, then
+        it's expected to have contents of <owner>:<group> that specifies the
+        owner and group of the directory it's in, all the files in that
+        directory, and everything in its child directories.
+
         @type package_name: string
 
         @param package_name: name of package to process, corresponds to
@@ -274,11 +364,12 @@ class Recipe(object):
 
         @param template_env: environment dictionary for template engine
         '''
-        work_dir = os.path.join(self.settings["package_dir"],
-                                package_name)
+        ownership = OwnershipTracker()
+        work_dir = os.path.join(self.settings["package_dir"], package_name)
         os.chdir(work_dir)
         for root, dirs, files in os.walk('.'):
-            cuisine.dir_ensure(root.lstrip('.'))
+            owner, group = ownership.check_directory(root, dirs, files)
+            cuisine.dir_ensure(root.lstrip('.'), owner=owner, group=group)
             for f in files:
                 filename = os.path.join(root, f).lstrip('./')
                 if re.search(self.settings["file_ignores"], filename) is None:
@@ -286,10 +377,10 @@ class Recipe(object):
                     if ext == '.tmplt':
                         self.push_template(os.path.join(package_name, filename),
                                            os.path.join('/', base_path),
-                                           template_env)
+                                           template_env, owner, group)
                     else:
                         self.push_file(os.path.join(work_dir, filename),
-                                       os.path.join('/', filename))
+                                       os.path.join('/', filename), owner, group)
 
     def push_package_file_set(self, package_name, computer_name, aux_env=None):
         '''
@@ -310,6 +401,11 @@ class Recipe(object):
         dict.update(), after the default is constructed.  This means that if
         you pass in an aux_env dictionary with a key called "computer", that
         that key will over-write the default key of that name.
+
+        If a file named fck_ownership.txt is encountered in a directory, then
+        it's expected to have contents of <owner>:<group> that specifies the
+        owner and group of the directory it's in, all the files in that
+        directory, and everything in its child directories.
 
         @type package_name: string
 

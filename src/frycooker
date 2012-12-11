@@ -186,7 +186,9 @@ import recipes
 
 def get_args():
     recipe_names = recipes.recipes.keys()
+    recipe_names.sort()
     cookbook_names = cookbooks.cookbooks.keys()
+    cookbook_names.sort()
 
     parser = argparse.ArgumentParser(description='Setup machines.')
     parser.add_argument('-r', '--recipe', dest='recipes', action='append',
