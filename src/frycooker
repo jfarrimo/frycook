@@ -206,7 +206,8 @@ def get_args():
                         default=False, dest='package_update',
                         help='update the package manager before '
                         'applying recipes/cookbooks')
-    parser.add_argument('-u', '--user', help='user to ssh to host as')
+    parser.add_argument('-u', '--user', default='root',
+                        help='user to ssh to host as')
     parser.add_argument('-s', '--settings', default='settings.json',
                         help='settings file')
     parser.add_argument('target', nargs='+',
