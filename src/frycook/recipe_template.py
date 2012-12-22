@@ -430,10 +430,22 @@ class Recipe(object):
     ######## GIT HANDLING ########
     ##############################
 
-    def push_git_repo(self, computer, git_url, target_path):
+    def push_git_repo(self, computer, user, group, git_url, target_path):
         '''
         This makes a local clone of the repo in the temp directory specified in
         the settings file, then rsyncs this to the remote path.
+
+        @type computer: string
+
+        @param computer: computer name to push to
+
+        @type user: string
+
+        @param user: user to own the files in the repo
+
+        @type group: string
+
+        @param group: group to own the files in the repo
 
         @type git_url: string
 
@@ -453,6 +465,7 @@ class Recipe(object):
             local('cd %s && git pull' % tmp_path)
         local('%s %s root@%s:%s' %
               (rsync_command, tmp_path, computer, target_path))
+        cuisine.sudo('chown -R %s:%s %s' % (user, group, target_path))
 
     def clone_git_repo(self, user, git_url, target_path):
         '''
