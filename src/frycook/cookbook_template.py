@@ -66,6 +66,14 @@ class Cookbook(object):
     ######## APPLY ########
     #######################
 
+    def handle_pre_apply_messages(self, computer):
+        for recipe in self.recipes:
+            recipe.handle_pre_apply_message(computer)
+
+    def handle_post_apply_messages(self, computer):
+        for recipe in self.recipes:
+            recipe.handle_post_apply_message(computer)
+
     def pre_apply_checks(self, computer):
         '''
         Runs the pre_apply_checks functions for all the recipes defined in
@@ -102,8 +110,14 @@ class Cookbook(object):
 
         @param computer: computer to apply recipe to
         '''
+        self.handle_pre_apply_messages(computer)
         self.pre_apply_checks(computer)
         self.apply(computer)
+        self.handle_post_apply_messages(computer)
+
+    def run_messages(self, computer):
+        self.handle_pre_apply_messages(computer)
+        self.handle_post_apply_messages(computer)
 
     #########################
     ######## CLEANUP ########

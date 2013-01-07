@@ -176,6 +176,28 @@ class Recipe(object):
     ######## APPLY ########
     #######################
 
+    pre_apply_message = ""
+
+    def handle_pre_apply_message(self, computer):
+        if self.pre_apply_message:
+            header = "pre-apply message from %s:" % self.__class__.__name__
+            print '=' * len(header)
+            print header
+            print '=' * len(header)
+            print self.pre_apply_message
+            raw_input('press enter to continue')
+
+    post_apply_message = ""
+
+    def handle_post_apply_message(self, computer):
+        if self.post_apply_message:
+            header = "post-apply message from %s:" % self.__class__.__name__
+            print '=' * len(header)
+            print header
+            print '=' * len(header)
+            print self.post_apply_message
+            raw_input('press enter to continue')
+
     def pre_apply_checks(self, computer):
         '''
         Define checks to run before applying the recipe.  The base class checks
@@ -220,8 +242,14 @@ class Recipe(object):
 
         @param computer: computer to apply recipe to
         '''
+        self.handle_pre_apply_message(computer)
         self.pre_apply_checks(computer)
         self.apply(computer)
+        self.handle_post_apply_message(computer)
+
+    def run_messages(self, computer):
+        self.handle_pre_apply_message(computer)
+        self.handle_post_apply_message(computer)
 
     #########################
     ######## CLEANUP ########

@@ -202,6 +202,8 @@ def get_args():
     parser.add_argument('-d', '--dryrun', action='store_true', default=False,
                         help='do not apply actions, just verify environment '
                         'and see which hosts to apply to')
+    parser.add_argument('-m', '--messages', action='store_true', default=False,
+                        help='do not apply actions, just print messages')
     parser.add_argument('-p', '--package-update', action='store_true',
                         default=False, dest='package_update',
                         help='update the package manager before '
@@ -210,6 +212,8 @@ def get_args():
                         help='user to ssh to host as')
     parser.add_argument('-s', '--settings', default='settings.json',
                         help='settings file')
+    parser.add_argument('-e', '--environment', default='environment.json',
+                        help='environment file')
     parser.add_argument('target', nargs='+',
                         help='computer or group to apply setup to')
 
@@ -230,7 +234,7 @@ def main():
 
     settings = json.load(open(args.settings))
     massage_enviro_paths(settings)
-    enviro = json.load(open('environment.json'))
+    enviro = json.load(open(args.environment))
     massage_enviro_paths(enviro)
 
     parsed_hosts = []
@@ -262,6 +266,8 @@ def main():
                     recipe = recipes.recipes[r](settings, enviro)
                     if args.cleanup:
                         recipe.run_cleanup(host)
+                    elif args.messages:
+                        recipe.run_messages(host)
                     else:
                         recipe.run_apply(host)
 
@@ -270,6 +276,8 @@ def main():
                     cookbook = cookbooks.cookbooks[c](settings, enviro)
                     if args.cleanup:
                         cookbook.run_cleanup(host)
+                    elif args.messages:
+                        cookbook.run_messages(host)
                     else:
                         cookbook.run_apply(host)
         finally:
