@@ -142,7 +142,7 @@ class FileMetaDataTracker(object):
 
         if self.tagfile in files:
             for line in open(os.path.join(root, self.tagfile)):
-                parts = self.tagfile.readline().split(':')
+                parts = line.split(':')
                 path = parts[0].strip()
                 if len(path) > 0 and path[0] != '#':
                     owner = parts[1].strip()
