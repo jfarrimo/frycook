@@ -106,6 +106,44 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#handle_pre_apply_message" class="summary-sig-name">handle_pre_apply_message</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">computer</span>)</span><br />
+      Print the pre-apply message to the user and wait for him/her to hit 
+      return before continuing.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.handle_pre_apply_message">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#handle_post_apply_message" class="summary-sig-name">handle_post_apply_message</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">computer</span>)</span><br />
+      Print the post-apply message to the user and wait for him/her to hit 
+      return before continuing.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.handle_post_apply_message">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#pre_apply_checks" class="summary-sig-name">pre_apply_checks</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">computer</span>)</span><br />
       Define checks to run before applying the recipe.</td>
@@ -161,6 +199,25 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#run_messages" class="summary-sig-name">run_messages</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">computer</span>)</span><br />
+      Print the pre and post apply messages only, as if the apply had been 
+      run.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.run_messages">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#cleanup" class="summary-sig-name">cleanup</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">computer</span>)</span><br />
       Define cleanup actions that need to be taken on the designated 
@@ -194,19 +251,15 @@ object --+
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">string</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#ensure_file_mode" class="summary-sig-name">ensure_file_mode</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">local_name</span>,
-        <span class="summary-sig-arg">remote_name</span>,
-        <span class="summary-sig-arg">owner</span>,
-        <span class="summary-sig-arg">group</span>)</span><br />
-      Make sure the remote file has the same mode as the local file so that
-      permissions are correct.</td>
+          <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#get_local_file_perms" class="summary-sig-name">get_local_file_perms</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">local_name</span>)</span><br />
+      Get a string of the permissions set on the local file.</td>
           <td align="right" valign="top">
-            <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.ensure_file_mode">source&nbsp;code</a></span>
+            <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.get_local_file_perms">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -224,7 +277,8 @@ object --+
         <span class="summary-sig-arg">local_name</span>,
         <span class="summary-sig-arg">remote_name</span>,
         <span class="summary-sig-arg">owner</span>,
-        <span class="summary-sig-arg">group</span>)</span><br />
+        <span class="summary-sig-arg">group</span>,
+        <span class="summary-sig-arg">perms</span>=<span class="summary-sig-default">None</span>)</span><br />
       Copy a file to a remote server if the file is different or doesn't 
       exist.</td>
           <td align="right" valign="top">
@@ -247,7 +301,8 @@ object --+
         <span class="summary-sig-arg">out_path</span>,
         <span class="summary-sig-arg">enviro</span>,
         <span class="summary-sig-arg">owner</span>,
-        <span class="summary-sig-arg">group</span>)</span><br />
+        <span class="summary-sig-arg">group</span>,
+        <span class="summary-sig-arg">perms</span>=<span class="summary-sig-default">None</span>)</span><br />
       Process a template file and push its contents to a remote server if 
       it's different than what's already there.</td>
           <td align="right" valign="top">
@@ -308,6 +363,8 @@ object --+
         <tr>
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#push_git_repo" class="summary-sig-name">push_git_repo</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">computer</span>,
+        <span class="summary-sig-arg">user</span>,
+        <span class="summary-sig-arg">group</span>,
         <span class="summary-sig-arg">git_url</span>,
         <span class="summary-sig-arg">target_path</span>)</span><br />
       This makes a local clone of the repo in the temp directory specified 
@@ -400,6 +457,38 @@ object --+
     </td>
   </tr>
 </table>
+<!-- ==================== CLASS VARIABLES ==================== -->
+<a name="section-ClassVariables"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Class Variables</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-ClassVariables"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="pre_apply_message"></a><span class="summary-name">pre_apply_message</span> = <code title="''"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a name="post_apply_message"></a><span class="summary-name">post_apply_message</span> = <code title="''"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></code>
+    </td>
+  </tr>
+</table>
 <!-- ==================== PROPERTIES ==================== -->
 <a name="section-Properties"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -470,6 +559,56 @@ object --+
     <dt>Overrides:
         object.__init__
     </dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="handle_pre_apply_message"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_pre_apply_message</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">computer</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.handle_pre_apply_message">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Print the pre-apply message to the user and wait for him/her to hit 
+  return before continuing.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe checks to</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="handle_post_apply_message"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_post_apply_message</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">computer</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.handle_post_apply_message">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Print the post-apply message to the user and wait for him/her to hit 
+  return before continuing.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe checks to</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -560,6 +699,31 @@ object --+
   </dl>
 </td></tr></table>
 </div>
+<a name="run_messages"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">run_messages</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">computer</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.run_messages">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Print the pre and post apply messages only, as if the apply had been 
+  run.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe to</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
 <a name="cleanup"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
@@ -610,34 +774,29 @@ object --+
   </dl>
 </td></tr></table>
 </div>
-<a name="ensure_file_mode"></a>
+<a name="get_local_file_perms"></a>
 <div>
 <table class="details" border="1" cellpadding="3"
        cellspacing="0" width="100%" bgcolor="white">
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">ensure_file_mode</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">local_name</span>,
-        <span class="sig-arg">remote_name</span>,
-        <span class="sig-arg">owner</span>,
-        <span class="sig-arg">group</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_local_file_perms</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">local_name</span>)</span>
   </h3>
   </td><td align="right" valign="top"
-    ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.ensure_file_mode">source&nbsp;code</a></span>&nbsp;
+    ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.get_local_file_perms">source&nbsp;code</a></span>&nbsp;
     </td>
   </tr></table>
   
-  <p>Make sure the remote file has the same mode as the local file so that 
-  permissions are correct.</p>
+  <p>Get a string of the permissions set on the local file.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>local_name</code></strong> (string) - path to file on local file system</li>
-        <li><strong class="pname"><code>remote_name</code></strong> (string) - path to file on remote file system</li>
-        <li><strong class="pname"><code>owner</code></strong> (string) - owner of the file</li>
-        <li><strong class="pname"><code>group</code></strong> (string) - group of the file</li>
     </ul></dd>
+    <dt>Returns: string</dt>
+        <dd>string containing perms of file, ie. '655'</dd>
   </dl>
 </td></tr></table>
 </div>
@@ -652,7 +811,8 @@ object --+
         <span class="sig-arg">local_name</span>,
         <span class="sig-arg">remote_name</span>,
         <span class="sig-arg">owner</span>,
-        <span class="sig-arg">group</span>)</span>
+        <span class="sig-arg">group</span>,
+        <span class="sig-arg">perms</span>=<span class="sig-default">None</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.push_file">source&nbsp;code</a></span>&nbsp;
@@ -668,6 +828,7 @@ object --+
         <li><strong class="pname"><code>remote_name</code></strong> (string) - remote path to write file to (path + filename)</li>
         <li><strong class="pname"><code>owner</code></strong> (string) - owner of the file</li>
         <li><strong class="pname"><code>group</code></strong> (string) - group of the file</li>
+        <li><strong class="pname"><code>perms</code></strong> (string) - permissions for the file</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -684,7 +845,8 @@ object --+
         <span class="sig-arg">out_path</span>,
         <span class="sig-arg">enviro</span>,
         <span class="sig-arg">owner</span>,
-        <span class="sig-arg">group</span>)</span>
+        <span class="sig-arg">group</span>,
+        <span class="sig-arg">perms</span>=<span class="sig-default">None</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.push_template">source&nbsp;code</a></span>&nbsp;
@@ -702,6 +864,7 @@ object --+
         <li><strong class="pname"><code>enviro</code></strong> (dict) - environment dictionary for template engine</li>
         <li><strong class="pname"><code>owner</code></strong> (string) - owner of the templated file</li>
         <li><strong class="pname"><code>group</code></strong> (string) - group of the templated file</li>
+        <li><strong class="pname"><code>perms</code></strong> (string) - permissions for the file</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -728,7 +891,7 @@ object --+
   like /etc/hosts or /etc/nginx/nginx.conf get put in the right place. Just
   create a directory structure that mirrors the target machine and all 
   files will get copied there in the correct place.</p>
-  <p>If a file named fck_ownership.txt is encountered in a directory, then 
+  <p>If a file named fck_metadata.txt is encountered in a directory, then 
   it's expected to have contents of &lt;owner&gt;:&lt;group&gt; that 
   specifies the owner and group of the directory it's in, all the files in 
   that directory, and everything in its child directories.</p>
@@ -774,10 +937,11 @@ object --+
   dict.update(), after the default is constructed.  This means that if you 
   pass in an aux_env dictionary with a key called &quot;computer&quot;, 
   that that key will over-write the default key of that name.</p>
-  <p>If a file named fck_ownership.txt is encountered in a directory, then 
-  it's expected to have contents of &lt;owner&gt;:&lt;group&gt; that 
-  specifies the owner and group of the directory it's in, all the files in 
-  that directory, and everything in its child directories.</p>
+  <p>If a file named fck_metadata.txt is encountered in a directory, then 
+  it's expected to have contents of lines consisting of 
+  &lt;path&gt;:&lt;owner&gt;:&lt;group&gt;:&lt;perms&gt; that specifies the
+  owner, group, and permissions for the path specified 
+  (directory-relative).</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -798,6 +962,8 @@ object --+
   <tr valign="top"><td>
   <h3 class="epydoc"><span class="sig"><span class="sig-name">push_git_repo</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">computer</span>,
+        <span class="sig-arg">user</span>,
+        <span class="sig-arg">group</span>,
         <span class="sig-arg">git_url</span>,
         <span class="sig-arg">target_path</span>)</span>
   </h3>
@@ -811,6 +977,9 @@ object --+
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>computer</code></strong> (string) - computer name to push to</li>
+        <li><strong class="pname"><code>user</code></strong> (string) - user to own the files in the repo</li>
+        <li><strong class="pname"><code>group</code></strong> (string) - group to own the files in the repo</li>
         <li><strong class="pname"><code>git_url</code></strong> (string) - git url of repo (probably from github)</li>
         <li><strong class="pname"><code>target_path</code></strong> (string) - root path on remote server to copy git repo to</li>
     </ul></dd>
@@ -925,7 +1094,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Mon Dec 10 18:33:26 2012
+    Generated by Epydoc 3.0.1 on Wed Jan  9 09:13:00 2013
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

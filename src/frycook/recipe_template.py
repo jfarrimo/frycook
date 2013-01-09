@@ -51,11 +51,12 @@ apply
 =====
 
 This is where you apply a recipe to a server.  There are two class methods that
-get called during the apply process.  Generally you'll just override the apply
-method.  If you override pre_apply_checks, remember to call the base class
-method.  Here's the order that functions get called:
+get called during the apply process, and possibly two messages that get
+displayed.  Generally you'll just override the apply method and sometimes add
+pre_apply or post_apply messages.  If you override pre_apply_checks, remember
+to call the base class method.  Here's the order that things happen:
 
-pre_apply_checks -> apply
+pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
 
 cleanup
 =======
@@ -72,7 +73,14 @@ file set copying
 
 The Recipe class defines a few helper functions for handling templates and
 copying files to servers.  It runs files with a .tmplt extension through make
-using the dictionary you pass to it.  Regular files just get copied.
+using the dictionary you pass to it.  Regular files just get copied.  You can
+specify owner, group, and permissions on a per-directory and per-file basis.
+
+git repo checkouts
+==================
+
+You can checkout a git repo onto the remote machine, or check it out locally
+and copy it to the remote machine.
 '''
 import os
 import os.path
@@ -91,28 +99,29 @@ class RecipeException(Exception):
     '''
     pass
 
-class OwnershipTracker(object):
+class FileMetaDataTracker(object):
     '''
-    Keep track of owner and group for directories during a push_package_fileset
-    operation.  This hinges on a file named fck_ownership.txt being encountered
-    in the directory being examined.  This file should have as its first line
-    the text <owner>:<group>, where <owner> is the owner's account name and
-    <group> is the group's name.
+    Keep track of owner, group, and perms for files and directories during a
+    push_package_fileset operation.  This hinges on a file named
+    fck_metadata.txt being encountered in the directory being examined.  This
+    file should have each line contain the text
+    <filename>:<owner>:<group>:<perms>, where <filename> is either a file name
+    or '.' for the directory itself, <owner> is the owner's account name,
+    <group> is the group's name, and <perms> is the permissions string..
     '''
 
-    tagfile = 'fck_ownership.txt'
+    tagfile = 'fck_metadata.txt'
 
     def __init__(self):
         '''
-        Start with no ownership info.
+        Start with no metadata info.
         '''
-        self.ownership = {}
+        self.metadata = {}
 
     def check_directory(self, root, dirs, files):
         '''
-        Get the ownership for the given directory.  Look for the
-        fck_ownership.txt in the directory, otherwise remember ownership from
-        previous calls.
+        Read in the metadata for the given directory from the fck_metadata.txt
+        file in the directory, otherwise remember metadata from previous calls.
 
         The input parameters are what is returned from os.walk()
 
@@ -127,28 +136,57 @@ class OwnershipTracker(object):
         @type files: list of strings
 
         @param files: list of the files in the root directory
+        '''
+        if root not in self.metadata:
+            self.metadata[root] = (None, None, None, )
+
+        if self.tagfile in files:
+            for line in open(os.path.join(root, self.tagfile)):
+                parts = self.tagfile.readline().split(':')
+                path = parts[0].strip()
+                if len(path) > 0 and path[0] != '#':
+                    owner = parts[1].strip()
+                    group = parts[2].strip()
+                    if len(parts) > 3:
+                        perms = parts[3].strip()
+                    else:
+                        perms = None
+
+                    if path == '.':
+                        self.metadata[root] = (owner, group, perms, )
+                        for dn in dirs:
+                            self.metadata[os.path.join(root, dn)] = (
+                                owner, group, perms, )
+                    else:
+                        self.metadata[os.path.join(root, path)] = (
+                                owner, group, perms, )
+
+    def get_metadata(self, path, filename=''):
+        '''
+        Get the owner, group, and permissions for the given path and filename.
+        If no filename is specified, the data is retrieved for the directory
+        specified in path.
+
+        @type path: string
+
+        @param path: path to file to get metadata for
+
+        @type filename: string
+
+        @param filename: name of file to get metadata for (leave blank if just
+        getting direcgtory metadata)
 
         @rtype: tuple of strings
 
-        @return: tuple containing (<owner>, <group>, )
+        @return: tuple containing (<owner>, <group>, <perms>, )
         '''
-        owner = None
-        group = None
-        if self.tagfile in files:
-            files.remove(self.tagfile)
-            parts = open(os.path.join(root, self.tagfile)).readline().split(':')
-            if len(parts) < 2:
-                raise RecipeException("invalid format for %s in directory %s" %
-                                      (self.tagfile, root))
-            owner = parts[0].strip()
-            group = parts[1].strip()
-            self.ownership[root] = (owner, group, )
-            for dn in dirs:
-                self.ownership[os.path.join(root, dn)] = (owner, group, )
-        if root in self.ownership:
-            owner, group = self.ownership[root]
-
-        return owner, group
+        fq = os.path.join(path, filename)
+        if fq in self.metadata:
+            return self.metadata[fq]
+        elif path in self.metadata:
+            return self.metadata[path]
+        else:
+            return None, None, None
 
 class Recipe(object):
     '''
@@ -179,6 +217,14 @@ class Recipe(object):
     pre_apply_message = ""
 
     def handle_pre_apply_message(self, computer):
+        '''
+        Print the pre-apply message to the user and wait for him/her to hit
+        return before continuing.
+
+        @type computer: string
+
+        @param computer: computer to apply recipe checks to
+        '''
         if self.pre_apply_message:
             header = "pre-apply message from %s:" % self.__class__.__name__
             print '=' * len(header)
@@ -190,6 +236,14 @@ class Recipe(object):
     post_apply_message = ""
 
     def handle_post_apply_message(self, computer):
+        '''
+        Print the post-apply message to the user and wait for him/her to hit
+        return before continuing.
+
+        @type computer: string
+
+        @param computer: computer to apply recipe checks to
+        '''
         if self.post_apply_message:
             header = "post-apply message from %s:" % self.__class__.__name__
             print '=' * len(header)
@@ -248,6 +302,14 @@ class Recipe(object):
         self.handle_post_apply_message(computer)
 
     def run_messages(self, computer):
+        '''
+        Print the pre and post apply messages only, as if the apply had
+        been run.
+
+        @type computer: string
+
+        @param computer: computer to apply recipe to
+        '''
         self.handle_pre_apply_message(computer)
         self.handle_post_apply_message(computer)
 
@@ -272,6 +334,7 @@ class Recipe(object):
         Run the cleanup function.  This is typically called by frycooker.
 
         @type computer: string
+
         @param computer: computer to apply recipe cleanup to
         '''
         self.cleanup(computer)
@@ -280,36 +343,26 @@ class Recipe(object):
     ######## FILE HANDLING ########
     ###############################
 
-    def ensure_file_mode(self, local_name, remote_name, owner, group):
+    def get_local_file_perms(self, local_name):
         '''
-        Make sure the remote file has the same mode as the local file so that
-        permissions are correct.
+        Get a string of the permissions set on the local file.
 
         @type local_name: string
 
         @param local_name: path to file on local file system
 
-        @type remote_name: string
+        @rtype: string
 
-        @param remote_name: path to file on remote file system
-
-        @type owner: string
-
-        @param owner: owner of the file
-
-        @type group: string
-
-        @param group: group of the file
+        @return: string containing perms of file, ie. '655'
         '''
         bit_mode = stat.S_IMODE(os.stat(local_name).st_mode)
         user_perms = (bit_mode & stat.S_IRWXU) >> 6
         group_perms = (bit_mode & stat.S_IRWXG) >> 3
         other_perms = bit_mode & stat.S_IRWXO
-        string_mode = "%s%s%s" % (user_perms, group_perms, other_perms)
-        cuisine.file_attribs(remote_name, mode=string_mode,
-                             owner=owner, group=group)
+        string_perms = "%s%s%s" % (user_perms, group_perms, other_perms)
+        return string_perms
 
-    def push_file(self, local_name, remote_name, owner, group):
+    def push_file(self, local_name, remote_name, owner, group, perms=None):
         '''
         Copy a file to a remote server if the file is different or doesn't
         exist.
@@ -330,12 +383,20 @@ class Recipe(object):
         @type group: string
 
         @param group: group of the file
+
+        @type perms: string
+
+        @param perms: permissions for the file
         '''
         local_name = os.path.join(self.settings["package_dir"], local_name)
         cuisine.file_upload(remote_name, local_name)
-        self.ensure_file_mode(local_name, remote_name, owner, group)
+        if not perms:
+            perms = self.get_local_file_perms(local_name)
+        cuisine.file_attribs(
+            remote_name, mode=perms, owner=owner, group=group)
 
-    def push_template(self, templatename, out_path, enviro, owner, group):
+    def push_template(self, templatename, out_path, enviro,
+                      owner, group, perms=None):
         '''
         Process a template file and push its contents to a remote server if
         it's different than what's already there.
@@ -361,12 +422,19 @@ class Recipe(object):
         @type group: string
 
         @param group: group of the templated file
+
+        @type perms: string
+
+        @param perms: permissions for the file
         '''
         mytemplate = self.mylookup.get_template(templatename)
         buff = mytemplate.render(**enviro)
         cuisine.file_write(out_path, buff, check=True)
         local_name = os.path.join(self.settings["package_dir"], templatename)
-        self.ensure_file_mode(local_name, out_path, owner, group)
+        if not perms:
+            perms = self.get_local_file_perms(local_name)
+        cuisine.file_attribs(
+            out_path, mode=perms, owner=owner, group=group)
 
     def _push_package_file_set(self, package_name, template_env):
         '''
@@ -378,7 +446,7 @@ class Recipe(object):
         Just create a directory structure that mirrors the target machine and
         all files will get copied there in the correct place.
 
-        If a file named fck_ownership.txt is encountered in a directory, then
+        If a file named fck_metadata.txt is encountered in a directory, then
         it's expected to have contents of <owner>:<group> that specifies the
         owner and group of the directory it's in, all the files in that
         directory, and everything in its child directories.
@@ -392,23 +460,27 @@ class Recipe(object):
 
         @param template_env: environment dictionary for template engine
         '''
-        ownership = OwnershipTracker()
+        metadata = FileMetaDataTracker()
         work_dir = os.path.join(self.settings["package_dir"], package_name)
         os.chdir(work_dir)
         for root, dirs, files in os.walk('.'):
-            owner, group = ownership.check_directory(root, dirs, files)
-            cuisine.dir_ensure(root.lstrip('.'), owner=owner, group=group)
+            metadata.check_directory(root, dirs, files)
+            owner, group, perms = metadata.get_metadata(root)
+            cuisine.dir_ensure(
+                root.lstrip('.'), owner=owner, group=group, mode=perms)
             for f in files:
                 filename = os.path.join(root, f).lstrip('./')
                 if re.search(self.settings["file_ignores"], filename) is None:
+                    owner, group, perms = metadata.get_metadata(root, f)
                     base_path, ext = os.path.splitext(filename)
                     if ext == '.tmplt':
                         self.push_template(os.path.join(package_name, filename),
                                            os.path.join('/', base_path),
-                                           template_env, owner, group)
+                                           template_env, owner, group, perms)
                     else:
                         self.push_file(os.path.join(work_dir, filename),
-                                       os.path.join('/', filename), owner, group)
+                                       os.path.join('/', filename),
+                                       owner, group, perms)
 
     def push_package_file_set(self, package_name, computer_name, aux_env=None):
         '''
@@ -430,10 +502,10 @@ class Recipe(object):
         you pass in an aux_env dictionary with a key called "computer", that
         that key will over-write the default key of that name.
 
-        If a file named fck_ownership.txt is encountered in a directory, then
-        it's expected to have contents of <owner>:<group> that specifies the
-        owner and group of the directory it's in, all the files in that
-        directory, and everything in its child directories.
+        If a file named fck_metadata.txt is encountered in a directory, then
+        it's expected to have contents of lines consisting of
+        <path>:<owner>:<group>:<perms> that specifies the owner, group, and
+        permissions for the path specified (directory-relative).
 
         @type package_name: string
 
