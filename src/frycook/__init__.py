@@ -26,8 +26,10 @@
 # policies, either expressed or implied, of James Yates Farrimond.
 
 '''
-Frycook depends on several things.  You'll see these things passed to the
-classes and referenced from the classes.
+Frycook depends on recipes and cookbooks to define how systems are built.
+Recipes and cookbooks in turn use settings, environments, and packages to do
+their work.  The settings and environments are passed around as dictionaries and
+refer to the packages, which live on the disk as directories and files.
 
 settings dict
 =============
@@ -44,21 +46,39 @@ template handling
 
 I{file_ignores}: file patterns to ignore while copying package files
 
-environment dict
-================
+For any key containing 'dir' or 'path', if you include a tilde (~) in the value,
+it will be replaced with the home directory of the user running frycooker, just
+like in bash.  For this example, that would be the "package_dir" and
+"module_dir" keys.
 
-This contains all the metadata about the computers the recipes and cookbooks
-will be applied to.  Most of its data is directly relevant to specific recipes
-and is filled in depending on the recipes' needs.  It's a dictionary with three
-main sections that should always be there:
+example::
 
-I{users}: a list of the users recipes could reference, with such things as
+  {
+  "package_dir": "~/bigawesomecorp/admin/packages/",
+  "module_dir": "/tmp/bigawesomecorp/mako_modules",
+  "tmp_dir": "/tmp",
+  "file_ignores": ".*~"
+  }
+
+environment dictionary
+======================
+
+This contains all the metadata about the computers that the recipes and
+cookbooks will be applied to.  Most of its data is directly relevant to
+specific recipes and is filled in depending on the recipes' needs.  It's a
+dictionary with three main sections that should always be there:
+
+I{users}: a list of the users that recipes could reference, with such things as
 public ssh keys and email addresses for them
 
 I{computers}: a list of computers in the system, with such things as ip
 addresses
 
 I{groups}: groups of computers that will be addressed as a unit
+
+Just like for the settings dictionary, any key containing 'dir' or 'path' and
+including a tilde (~) in the value will have the tilde replaced with the home
+directory of the user running frycooker.
 
 example::
 
@@ -92,41 +112,46 @@ example::
 packages directory
 ==================
 
-This contains all the files needed by the recipes.  These are laid out the
-exact same as they will be on the target systems.  Any files with a .tmplt
-extension will be processed as mako templates before being copied out to
-computers.  Here's an example layout::
+This contains all the files needed by the recipes.  There is one sub-directory
+per package, and each package generally corresponds to a recipe.  Within each
+package the directories and files are laid out the exact same as they will be
+on the target systems.  Any files with a .tmplt extension will be processed as
+mako templates before being copied out to computers.  The fck_metadata.txt
+files define the ownership and permissions for the files and directories when
+they're copied to the target system.  Here's an example layout::
 
-    packages                # directory for the package files
-      hosts                 # root for hosts package files
-        etc                 # corresponds to /etc on the target server
-          hosts.tmplt       # template that becomes /etc/hosts on the target
-                            # server
-      nginx                 # root for nginx package files
-        etc                 # corresponds to /etc directory on the target server
-          default           # corresponds to /etc/default directory on the
-                            # target server
-            nginx           # corresponds to /etc/default/nginx file on the
-                            # target server
-          nginx             # corresponds to /etc/nginx directory on target
-                            # server
-            nginx.conf      # corresponds to /etc/nginx/nginx.conf file on
-                            # target server
-            conf.d          # corresponds to /etc/nginx/conf.d directory on
-                            # target server
-            sites-available # corresponds to /etc/nginx/sites-available
-                            # directory on target server
-              default       # corresponds to /etc/nginx/sites-available/default
-                            # directory on target server
-            sites-enabled   # corresponds to /etc/nginx/sites-enable directory
-                            # on target server
-        srv                 # corresponds to /srv directory on the target server
-          www               # corresponds to /srv/www directory on the target
-                            # server
-            50x.html        # corresponds to /srv/www/50x.html file on target
-                            # server
-            index.html      # corresponds to /srv/www/index.html file on target
-                            # server
+    packages                 # directory for the package files
+      hosts                  # root for hosts package files
+        etc                  # corresponds to /etc on the target server
+          hosts.tmplt        # template that becomes /etc/hosts on the target
+                             # server
+      nginx                  # root for nginx package files
+        etc                  # corresponds to /etc directory on the target server
+          default            # corresponds to /etc/default directory on the
+                             # target server
+            nginx            # corresponds to /etc/default/nginx file on the
+                             # target server
+          nginx              # corresponds to /etc/nginx directory on target
+                             # server
+            fck_metadata.txt # define ownership and perms for the /etc/nginx
+                             # directory on the server
+            nginx.conf       # corresponds to /etc/nginx/nginx.conf file on
+                             # target server
+            conf.d           # corresponds to /etc/nginx/conf.d directory on
+                             # target server
+            sites-available  # corresponds to /etc/nginx/sites-available
+                             # directory on target server
+              default        # corresponds to /etc/nginx/sites-available/default
+                             # directory on target server
+            sites-enabled    # corresponds to /etc/nginx/sites-enable directory
+                             # on target server
+        srv                  # corresponds to /srv directory on the target server
+          www                # corresponds to /srv/www directory on the target
+                             # server
+            50x.html         # corresponds to /srv/www/50x.html file on target
+                             # server
+            index.html       # corresponds to /srv/www/index.html file on target
+                             # server
 
 ============
 

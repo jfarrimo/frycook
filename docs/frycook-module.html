@@ -52,8 +52,11 @@
 </table>
 <!-- ==================== PACKAGE DESCRIPTION ==================== -->
 <h1 class="epydoc">Package frycook</h1><p class="nomargin-top"><span class="codelink"><a href="frycook-pysrc.html">source&nbsp;code</a></span></p>
-<p>Frycook depends on several things.  You'll see these things passed to 
-  the classes and referenced from the classes.</p>
+<p>Frycook depends on recipes and cookbooks to define how systems are 
+  built. Recipes and cookbooks in turn use settings, environments, and 
+  packages to do their work.  The settings and environments are passed 
+  around as dictionaries and refer to the packages, which live on the disk 
+  as directories and files.</p>
   <h1 class="heading">settings dict</h1>
     <p>There are a few settings that frycook depends on.  They're contained
     in a dictionary called settings that's passed to the constructors for 
@@ -64,18 +67,34 @@
     modules during template handling</p>
     <p><i>file_ignores</i>: file patterns to ignore while copying package 
     files</p>
-  <h1 class="heading">environment dict</h1>
-    <p>This contains all the metadata about the computers the recipes and 
-    cookbooks will be applied to.  Most of its data is directly relevant to
-    specific recipes and is filled in depending on the recipes' needs.  
-    It's a dictionary with three main sections that should always be 
-    there:</p>
-    <p><i>users</i>: a list of the users recipes could reference, with such
-    things as public ssh keys and email addresses for them</p>
+    <p>For any key containing 'dir' or 'path', if you include a tilde (~) 
+    in the value, it will be replaced with the home directory of the user 
+    running frycooker, just like in bash.  For this example, that would be 
+    the &quot;package_dir&quot; and &quot;module_dir&quot; keys.</p>
+    <p>example:</p>
+<pre class="literalblock">
+ {
+ &quot;package_dir&quot;: &quot;~/bigawesomecorp/admin/packages/&quot;,
+ &quot;module_dir&quot;: &quot;/tmp/bigawesomecorp/mako_modules&quot;,
+ &quot;tmp_dir&quot;: &quot;/tmp&quot;,
+ &quot;file_ignores&quot;: &quot;.*~&quot;
+ }
+</pre>
+  <h1 class="heading">environment dictionary</h1>
+    <p>This contains all the metadata about the computers that the recipes 
+    and cookbooks will be applied to.  Most of its data is directly 
+    relevant to specific recipes and is filled in depending on the recipes'
+    needs.  It's a dictionary with three main sections that should always 
+    be there:</p>
+    <p><i>users</i>: a list of the users that recipes could reference, with
+    such things as public ssh keys and email addresses for them</p>
     <p><i>computers</i>: a list of computers in the system, with such 
     things as ip addresses</p>
     <p><i>groups</i>: groups of computers that will be addressed as a 
     unit</p>
+    <p>Just like for the settings dictionary, any key containing 'dir' or 
+    'path' and including a tilde (~) in the value will have the tilde 
+    replaced with the home directory of the user running frycooker.</p>
     <p>example:</p>
 <pre class="literalblock">
  &quot;users&quot;: {
@@ -105,41 +124,47 @@
  }
 </pre>
   <h1 class="heading">packages directory</h1>
-    <p>This contains all the files needed by the recipes.  These are laid 
-    out the exact same as they will be on the target systems.  Any files 
-    with a .tmplt extension will be processed as mako templates before 
-    being copied out to computers.  Here's an example layout:</p>
+    <p>This contains all the files needed by the recipes.  There is one 
+    sub-directory per package, and each package generally corresponds to a 
+    recipe.  Within each package the directories and files are laid out the
+    exact same as they will be on the target systems.  Any files with a 
+    .tmplt extension will be processed as mako templates before being 
+    copied out to computers.  The fck_metadata.txt files define the 
+    ownership and permissions for the files and directories when they're 
+    copied to the target system.  Here's an example layout:</p>
 <pre class="literalblock">
-   packages                # directory for the package files
-     hosts                 # root for hosts package files
-       etc                 # corresponds to /etc on the target server
-         hosts.tmplt       # template that becomes /etc/hosts on the target
-                           # server
-     nginx                 # root for nginx package files
-       etc                 # corresponds to /etc directory on the target server
-         default           # corresponds to /etc/default directory on the
-                           # target server
-           nginx           # corresponds to /etc/default/nginx file on the
-                           # target server
-         nginx             # corresponds to /etc/nginx directory on target
-                           # server
-           nginx.conf      # corresponds to /etc/nginx/nginx.conf file on
-                           # target server
-           conf.d          # corresponds to /etc/nginx/conf.d directory on
-                           # target server
-           sites-available # corresponds to /etc/nginx/sites-available
-                           # directory on target server
-             default       # corresponds to /etc/nginx/sites-available/default
-                           # directory on target server
-           sites-enabled   # corresponds to /etc/nginx/sites-enable directory
-                           # on target server
-       srv                 # corresponds to /srv directory on the target server
-         www               # corresponds to /srv/www directory on the target
-                           # server
-           50x.html        # corresponds to /srv/www/50x.html file on target
-                           # server
-           index.html      # corresponds to /srv/www/index.html file on target
-                           # server
+   packages                 # directory for the package files
+     hosts                  # root for hosts package files
+       etc                  # corresponds to /etc on the target server
+         hosts.tmplt        # template that becomes /etc/hosts on the target
+                            # server
+     nginx                  # root for nginx package files
+       etc                  # corresponds to /etc directory on the target server
+         default            # corresponds to /etc/default directory on the
+                            # target server
+           nginx            # corresponds to /etc/default/nginx file on the
+                            # target server
+         nginx              # corresponds to /etc/nginx directory on target
+                            # server
+           fck_metadata.txt # define ownership and perms for the /etc/nginx
+                            # directory on the server
+           nginx.conf       # corresponds to /etc/nginx/nginx.conf file on
+                            # target server
+           conf.d           # corresponds to /etc/nginx/conf.d directory on
+                            # target server
+           sites-available  # corresponds to /etc/nginx/sites-available
+                            # directory on target server
+             default        # corresponds to /etc/nginx/sites-available/default
+                            # directory on target server
+           sites-enabled    # corresponds to /etc/nginx/sites-enable directory
+                            # on target server
+       srv                  # corresponds to /srv directory on the target server
+         www                # corresponds to /srv/www directory on the target
+                            # server
+           50x.html         # corresponds to /srv/www/50x.html file on target
+                            # server
+           index.html       # corresponds to /srv/www/index.html file on target
+                            # server
 </pre>
     <p>============</p>
     <p>Copyright (c) James Yates Farrimond. All rights reserved.</p>
@@ -188,8 +213,9 @@
   <tr><td class="summary">
   <ul class="nomargin">
     <li> <strong class="uidlink"><a href="frycook.cookbook_template-module.html">frycook.cookbook_template</a></strong>: <em class="summary">Cookbooks are sets of recipes to apply to a server to create 
-        something that is made up of many packages.</em>    </li>
-    <li> <strong class="uidlink"><a href="frycook.recipe_template-module.html">frycook.recipe_template</a></strong>: <em class="summary">Recipes are the basic units of setup in frycook.</em>    </li>
+        systems made up of subsystems.</em>    </li>
+    <li> <strong class="uidlink"><a href="frycook.recipe_template-module.html">frycook.recipe_template</a></strong>: <em class="summary">Recipes define subsystems that are distinct parts of larger 
+        systems.</em>    </li>
   </ul></td></tr>
 </table>
 
@@ -242,7 +268,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Wed Jan  9 09:13:00 2013
+    Generated by Epydoc 3.0.1 on Fri Jan 11 09:36:57 2013
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

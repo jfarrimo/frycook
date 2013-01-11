@@ -26,9 +26,9 @@
 # policies, either expressed or implied, of James Yates Farrimond.
 
 '''
-Recipes are the basic units of setup in frycook.  Generally a recipe
-corresponds to a package that needs to be installed or a subsystem that needs
-to be configured.
+Recipes define subsystems that are distinct parts of larger systems.  They are
+the basic units of setup in frycook.  Generally a recipe corresponds to a
+package that needs to be installed or configured.
 
 idempotence
 ===========

@@ -26,8 +26,8 @@
 # policies, either expressed or implied, of James Yates Farrimond.
 
 '''
-Cookbooks are sets of recipes to apply to a server to create something that is
-made up of many packages.
+Cookbooks are sets of recipes to apply to a server to create systems made up of
+subsystems.
 '''
 
 class Cookbook(object):
