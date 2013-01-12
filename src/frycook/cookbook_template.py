@@ -32,24 +32,31 @@ subsystems.
 
 class Cookbook(object):
     '''
-    Base object for all cookbooks to be created from.  Subclass this for your
-    own cookbooks.  Generally you'll just define a list of recipes to run in
-    recipe_list.  If you over-ride any of the functions, be sure to call the
-    base class functions so that all the good stuff still happens.
+    The Cookbook class is the base class for all cookbooks to be created from.
+    If you over-ride any of the functions, be sure to call the base class
+    functions so that all the good stuff still happens.
 
-    In your overridden class you'll fill recipe_list with class objects for
-    recipes that you want run when applying the cookbook.  It's best to define
-    this at the class level.  The recipes will be applied in the order they're
-    defined in the list.
+    In your subclass you will fill the class-level variable recipe_list with
+    class objects for recipes that you want to run when applying the cookbook.
+    The recipes will be applied in the order they're defined in the list.
 
     example::
 
-      recipe_list = [AwesomeRecipe, WayCoolRecipe]
+      from frycook import Cookbook
+      from recipes import AwesomeRecipe, WayCoolRecipe
+
+      class MyOwnCookbook(Cookbook):
+
+          recipe_list = [AwesomeRecipe,
+                         WayCoolRecipe]
     '''
     recipe_list = []
 
     def __init__(self, settings, environment):
         '''
+        Initialize the cookbook object with the settings and environment
+        dictionaries.
+
         @type settings: dict
 
         @param settings: settings dictionary
@@ -67,16 +74,34 @@ class Cookbook(object):
     #######################
 
     def handle_pre_apply_messages(self, computer):
+        '''
+        Run the pre_apply_message function for all the recipes defined in
+        recipe_list. Override this if there are cookbook-level messages you
+        would like to add.  Be sure to call the base if you subclass this.
+
+        @type computer: string
+
+        @param computer: computer to apply recipe checks to
+        '''
         for recipe in self.recipes:
             recipe.handle_pre_apply_message(computer)
 
     def handle_post_apply_messages(self, computer):
+        '''
+        Run the post_apply_message function for all the recipes defined in
+        recipe_list. Override this if there are cookbook-level messages you
+        would like to add.  Be sure to call the base if you subclass this.
+
+        @type computer: string
+
+        @param computer: computer to apply recipe checks to
+        '''
         for recipe in self.recipes:
             recipe.handle_post_apply_message(computer)
 
     def pre_apply_checks(self, computer):
         '''
-        Runs the pre_apply_checks functions for all the recipes defined in
+        Run the pre_apply_checks function for all the recipes defined in
         recipe_list. Override this if there's something you need to check above
         and beyond the recipe-level data.  Be sure to call the base if you
         subclass this.
@@ -90,7 +115,7 @@ class Cookbook(object):
 
     def apply(self, computer):
         '''
-        Runs the apply functions for all the recipes defined in recipe_list.
+        Run the apply functions for all the recipes defined in recipe_list.
         Override this if there's something you need to do besides just running
         all the recipes.  Be sure to call the base class if you subclass this.
 
@@ -116,6 +141,16 @@ class Cookbook(object):
         self.handle_post_apply_messages(computer)
 
     def run_messages(self, computer):
+        '''
+        Run the handle_pre_apply_messages and handle_post_apply_messages
+        functions for all the recipes defined in recipe_list. This is useful to
+        display all the possible messages to the user without actually applying
+        the cookbook.  This is usually just called from frycooker.
+
+        @type computer: string
+
+        @param computer: computer to show messages for
+        '''
         self.handle_pre_apply_messages(computer)
         self.handle_post_apply_messages(computer)
 

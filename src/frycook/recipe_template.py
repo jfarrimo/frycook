@@ -54,7 +54,7 @@ This is where you apply a recipe to a server.  There are two class methods that
 get called during the apply process, and possibly two messages that get
 displayed.  Generally you'll just override the apply method and sometimes add
 pre_apply or post_apply messages.  If you override pre_apply_checks, remember
-to call the base class method.  Here's the order that things happen:
+to call the base class method.  Here's the order that things happen in:
 
 pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
 
@@ -63,8 +63,8 @@ cleanup
 
 This is where you cleanup old recipe configurations from a server.  An example
 is when I changed the home directory for my web server.  I first wrote a
-cleanup that cleaned-up the old configuration, then an apply to apply the new
-configuration.  That way you can always run the apply in the future when
+cleanup that cleaned-up the old configuration, then an apply that applied the
+new configuration.  This way I can always run the apply in the future when
 building new machines and don't need the cleanup logic since the new machine
 never had the old configuration that had to get cleaned-up.
 
@@ -72,15 +72,17 @@ file set copying
 ================
 
 The Recipe class defines a few helper functions for handling templates and
-copying files to servers.  It runs files with a .tmplt extension through make
+copying files to servers.  It runs files with a .tmplt extension through Mako,
 using the dictionary you pass to it.  Regular files just get copied.  You can
 specify owner, group, and permissions on a per-directory and per-file basis.
 
 git repo checkouts
 ==================
 
+The Recipe class also defines some helper functions for working with git repos.
 You can checkout a git repo onto the remote machine, or check it out locally
-and copy it to the remote machine.
+and copy it to the remote machine if you don't want to setup the remote machine
+to be able to do checkouts.
 '''
 import os
 import os.path
@@ -94,17 +96,17 @@ from mako.lookup import TemplateLookup
 
 class RecipeException(Exception):
     '''
-    Exception raised for exceptional conditions encountered while using the
-    Recipe class.
+    A RecipeException exception is raised for exceptional conditions
+    encountered while using the Recipe class.
     '''
     pass
 
 class FileMetaDataTracker(object):
     '''
-    Keep track of owner, group, and perms for files and directories during a
-    push_package_fileset operation.  This hinges on a file named
-    fck_metadata.txt being encountered in the directory being examined.  This
-    file should have each line contain the text
+    A FileMetaDataTracker object keeps track of owner, group, and perms for
+    files and directories during a push_package_fileset operation.  This hinges
+    on a file named fck_metadata.txt being encountered in the directory being
+    examined.  This file should have each line contain the text
     <filename>:<owner>:<group>:<perms>, where <filename> is either a file name
     or '.' for the directory itself, <owner> is the owner's account name,
     <group> is the group's name, and <perms> is the permissions string..
@@ -114,14 +116,15 @@ class FileMetaDataTracker(object):
 
     def __init__(self):
         '''
-        Start with no metadata info.
+        Start with a blank metadata dictionary.
         '''
         self.metadata = {}
 
     def check_directory(self, root, dirs, files):
         '''
         Read in the metadata for the given directory from the fck_metadata.txt
-        file in the directory, otherwise remember metadata from previous calls.
+        file in the directory, or remember metadata from previous calls if no
+        fck_metadata.txt file is encountered.
 
         The input parameters are what is returned from os.walk()
 
@@ -174,7 +177,7 @@ class FileMetaDataTracker(object):
         @type filename: string
 
         @param filename: name of file to get metadata for (leave blank if just
-        getting direcgtory metadata)
+        getting directory metadata)
 
         @rtype: tuple of strings
 
@@ -190,12 +193,16 @@ class FileMetaDataTracker(object):
 
 class Recipe(object):
     '''
-    Base object for all recipes to subclass.  It defines the framework for
-    recipes and some helper functions.  By itself it doesn't do much.
+    The Recipe class is the base class for all recipes to subclass.  It defines
+    the framework for recipes and some helper functions.  By itself it doesn't
+    do much.
     '''
 
     def __init__(self, settings, environment):
         '''
+        Initialize the recipe object with the settings and environment
+        dictionaries.
+
         @type settings: dict
 
         @param settings: settings dictionary
@@ -218,7 +225,7 @@ class Recipe(object):
 
     def handle_pre_apply_message(self, computer):
         '''
-        Print the pre-apply message to the user and wait for him/her to hit
+        Print the pre-apply message for the user and wait for him/her to hit
         return before continuing.
 
         @type computer: string
@@ -237,7 +244,7 @@ class Recipe(object):
 
     def handle_post_apply_message(self, computer):
         '''
-        Print the post-apply message to the user and wait for him/her to hit
+        Print the post-apply message for the user and wait for him/her to hit
         return before continuing.
 
         @type computer: string
@@ -259,8 +266,9 @@ class Recipe(object):
         This is a good place to check other things in your environment
         dictionary that the apply function expects to be there.  Override this
         function in your subclass of Recipe if you have any checks to perform.
-        Be sure to call the base class function to make sure its checks get
-        done as well.
+        Raise a RecipeException if you encounter exceptional conditions.  Be
+        sure to call the base class function to make sure its checks get done
+        as well.
 
         @type computer: string
 
@@ -292,6 +300,10 @@ class Recipe(object):
         Run the apply sequence of functions.  This is typically called by
         frycooker.
 
+        Sequence::
+
+          pre_apply_message -> pre_apply_checks -> apply -> post_apply_message
+
         @type computer: string
 
         @param computer: computer to apply recipe to
@@ -303,8 +315,8 @@ class Recipe(object):
 
     def run_messages(self, computer):
         '''
-        Print the pre and post apply messages only, as if the apply had
-        been run.
+        Print the pre and post apply messages only, as if the apply had been
+        run.
 
         @type computer: string
 
