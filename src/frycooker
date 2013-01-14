@@ -49,7 +49,7 @@ Contains the environment for the program, in JSON format.
 packages directory
 ------------------
 
-Contains all the packages files for the recipes.
+Contains all the package files for the recipes.
 
 recipes package
 ---------------

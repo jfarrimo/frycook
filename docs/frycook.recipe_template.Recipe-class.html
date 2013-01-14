@@ -64,6 +64,16 @@ object --+
 <p>The Recipe class is the base class for all recipes to subclass.  It 
   defines the framework for recipes and some helper functions.  By itself 
   it doesn't do much.</p>
+  <p>This example implements a basic recipe that pushes a package 
+  fileset:</p>
+<pre class="literalblock">
+ from frycook import Recipe
+
+ class MyOwnRecipe(Recipe):
+
+     def apply(self, computer):
+         self.push_package_file_set('my_own', computer)
+</pre>
 
 <!-- ==================== INSTANCE METHODS ==================== -->
 <a name="section-InstanceMethods"></a>
@@ -325,8 +335,8 @@ object --+
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#_push_package_file_set" class="summary-sig-name" onclick="show_private();">_push_package_file_set</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">package_name</span>,
         <span class="summary-sig-arg">template_env</span>)</span><br />
-      Copy a set of files to a remote server, maintaining the same 
-      directory structure and processing any templates it encounters.</td>
+      Implement the file copying portion of the push_package_file_set 
+      operation.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe._push_package_file_set">source&nbsp;code</a></span>
             
@@ -347,7 +357,7 @@ object --+
         <span class="summary-sig-arg">computer_name</span>,
         <span class="summary-sig-arg">aux_env</span>=<span class="summary-sig-default">None</span>)</span><br />
       Copy a set of files to a remote server, maintaining the same 
-      directory structure and processing any templates it encounters.</td>
+      directory structure and processing any templates encountered.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.push_package_file_set">source&nbsp;code</a></span>
             
@@ -892,16 +902,9 @@ object --+
     </td>
   </tr></table>
   
-  <p>Copy a set of files to a remote server, maintaining the same directory
-  structure and processing any templates it encounters.</p>
-  <p>This copies the files to the root of the destination, so that things 
-  like /etc/hosts or /etc/nginx/nginx.conf get put in the right place. Just
-  create a directory structure that mirrors the target machine and all 
-  files will get copied there in the correct place.</p>
-  <p>If a file named fck_metadata.txt is encountered in a directory, then 
-  it's expected to have contents of &lt;owner&gt;:&lt;group&gt; that 
-  specifies the owner and group of the directory it's in, all the files in 
-  that directory, and everything in its child directories.</p>
+  <p>Implement the file copying portion of the push_package_file_set 
+  operation.  The calling function sets up the template environment, then 
+  calls this one.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -930,20 +933,24 @@ object --+
   </tr></table>
   
   <p>Copy a set of files to a remote server, maintaining the same directory
-  structure and processing any templates it encounters.</p>
-  <p>This copies the files to the root of the destination, so that things 
-  like /etc/hosts or /etc/nginx/nginx.conf get put in the right place. Just
-  create a directory structure that mirrors the target machine and all 
-  files will get copied there in the correct place.</p>
+  structure and processing any templates encountered. This copies the files
+  to the root of the destination, so that things like /etc/hosts or 
+  /etc/nginx/nginx.conf get put in the right place.</p>
+  <p>First create a directory with the same name as package_name in your 
+  root packages directory.  Then create a directory structure under that 
+  that mirrors the target machine and all files will get copied there in 
+  the correct place.</p>
   <p>For template file processing, a default environment dictionary will be
   passed in consisting of:</p>
 <pre class="literalblock">
  {&quot;computer&quot;: host_env[&quot;computers&quot;][computer_name]}
 </pre>
+  <p>Template files have a .tmplt extension.</p>
   <p>If aux_env is given, it will be added to the default dictionary using 
-  dict.update(), after the default is constructed.  This means that if you 
-  pass in an aux_env dictionary with a key called &quot;computer&quot;, 
-  that that key will over-write the default key of that name.</p>
+  dict.update() after the default dictionary is constructed.  This means 
+  that if you pass in an aux_env dictionary with a key called 
+  &quot;computer&quot;, that that key will over-write the default key of 
+  that name.</p>
   <p>If a file named fck_metadata.txt is encountered in a directory, then 
   it's expected to have contents of lines consisting of 
   &lt;path&gt;:&lt;owner&gt;:&lt;group&gt;:&lt;perms&gt; that specifies the
@@ -1101,7 +1108,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Fri Jan 11 20:04:38 2013
+    Generated by Epydoc 3.0.1 on Mon Jan 14 09:32:05 2013
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

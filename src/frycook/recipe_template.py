@@ -103,10 +103,10 @@ class RecipeException(Exception):
 
 class FileMetaDataTracker(object):
     '''
-    A FileMetaDataTracker object keeps track of owner, group, and perms for
-    files and directories during a push_package_fileset operation.  This hinges
-    on a file named fck_metadata.txt being encountered in the directory being
-    examined.  This file should have each line contain the text
+    A FileMetaDataTracker object keeps track of owner, group, and permissions
+    for files and directories during a push_package_fileset operation.  This
+    hinges on a file named fck_metadata.txt being encountered in the directory
+    being examined.  This file should have each line contain the text
     <filename>:<owner>:<group>:<perms>, where <filename> is either a file name
     or '.' for the directory itself, <owner> is the owner's account name,
     <group> is the group's name, and <perms> is the permissions string..
@@ -196,6 +196,15 @@ class Recipe(object):
     The Recipe class is the base class for all recipes to subclass.  It defines
     the framework for recipes and some helper functions.  By itself it doesn't
     do much.
+
+    This example implements a basic recipe that pushes a package fileset::
+
+      from frycook import Recipe
+
+      class MyOwnRecipe(Recipe):
+
+          def apply(self, computer):
+              self.push_package_file_set('my_own', computer)
     '''
 
     def __init__(self, settings, environment):
@@ -450,18 +459,9 @@ class Recipe(object):
 
     def _push_package_file_set(self, package_name, template_env):
         '''
-        Copy a set of files to a remote server, maintaining the same directory
-        structure and processing any templates it encounters.
-
-        This copies the files to the root of the destination, so that things
-        like /etc/hosts or /etc/nginx/nginx.conf get put in the right place.
-        Just create a directory structure that mirrors the target machine and
-        all files will get copied there in the correct place.
-
-        If a file named fck_metadata.txt is encountered in a directory, then
-        it's expected to have contents of <owner>:<group> that specifies the
-        owner and group of the directory it's in, all the files in that
-        directory, and everything in its child directories.
+        Implement the file copying portion of the push_package_file_set
+        operation.  The calling function sets up the template environment, then
+        calls this one.
 
         @type package_name: string
 
@@ -497,22 +497,26 @@ class Recipe(object):
     def push_package_file_set(self, package_name, computer_name, aux_env=None):
         '''
         Copy a set of files to a remote server, maintaining the same directory
-        structure and processing any templates it encounters.
+        structure and processing any templates encountered. This copies the
+        files to the root of the destination, so that things like /etc/hosts or
+        /etc/nginx/nginx.conf get put in the right place.
 
-        This copies the files to the root of the destination, so that things
-        like /etc/hosts or /etc/nginx/nginx.conf get put in the right place.
-        Just create a directory structure that mirrors the target machine and
-        all files will get copied there in the correct place.
+        First create a directory with the same name as package_name in your
+        root packages directory.  Then create a directory structure under that
+        that mirrors the target machine and all files will get copied there in
+        the correct place.
 
         For template file processing, a default environment dictionary will be
         passed in consisting of::
 
           {"computer": host_env["computers"][computer_name]}
 
+        Template files have a .tmplt extension.
+
         If aux_env is given, it will be added to the default dictionary using
-        dict.update(), after the default is constructed.  This means that if
-        you pass in an aux_env dictionary with a key called "computer", that
-        that key will over-write the default key of that name.
+        dict.update() after the default dictionary is constructed.  This means
+        that if you pass in an aux_env dictionary with a key called "computer",
+        that that key will over-write the default key of that name.
 
         If a file named fck_metadata.txt is encountered in a directory, then
         it's expected to have contents of lines consisting of
