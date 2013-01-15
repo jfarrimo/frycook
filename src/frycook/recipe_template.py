@@ -205,6 +205,24 @@ class Recipe(object):
 
           def apply(self, computer):
               self.push_package_file_set('my_own', computer)
+
+    All recipe files should live in a single recipes package.  The __init__.py
+    file for this package should import all recipes and have a list of them so
+    they can easily be imported by the frycooker program.
+
+    Example::
+
+      from hosts import RecipeHosts
+      from nginx import RecipeNginx
+      from root import RecipeRootUser
+      from example_com import RecipeExampleCom
+
+      recipes = {
+          'hosts': RecipeHosts,
+          'nginx': RecipeNginx,
+          'root': RecipeRootUser,
+          'example_com': RecipeExacmpleCom
+      }
     '''
 
     def __init__(self, settings, environment):

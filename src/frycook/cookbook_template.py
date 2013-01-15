@@ -40,7 +40,7 @@ class Cookbook(object):
     class objects for recipes that you want to run when applying the cookbook.
     The recipes will be applied in the order they're defined in the list.
 
-    example::
+    Example::
 
       from frycook import Cookbook
       from recipes import AwesomeRecipe, WayCoolRecipe
@@ -49,6 +49,20 @@ class Cookbook(object):
 
           recipe_list = [AwesomeRecipe,
                          WayCoolRecipe]
+
+    All cookbook files should live in a single cookbooks package.  The
+    __init__.py file for this package should import all cookbooks and have a
+    list of them so they can easily be imported by the frycooker program.
+
+    Example::
+
+      from base import CookbookBase
+      from web import CookbookWeb
+
+      cookbooks = {
+          'base': CookbookBase,
+          'web': CookbookWeb
+      }
     '''
     recipe_list = []
 
