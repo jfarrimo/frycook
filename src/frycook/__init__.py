@@ -44,7 +44,8 @@ look in
 I{module_dir}: temporary directory for holding compiled mako modules during
 template handling
 
-I{file_ignores}: file patterns to ignore while copying package files
+I{file_ignores}: regex pattern for filenames to ignore while copying package
+files
 
 For any key containing 'dir' or 'path', if you include a tilde (~) in the value,
 it will be replaced with the home directory of the user running frycooker, just
@@ -69,7 +70,7 @@ specific recipes and is filled in depending on the recipes' needs.  It's a
 dictionary with three main sections that should always be there:
 
 I{users}: a list of the users that recipes could reference, with such things as
-public ssh keys and email addresses for them
+public ssh keys
 
 I{computers}: a list of computers in the system, with such things as ip
 addresses
@@ -117,7 +118,7 @@ packages directory
 This contains all the files needed by the recipes.  There is one sub-directory
 per package, and each package generally corresponds to a recipe.  Within each
 package the directories and files are laid out the exact same as they will be
-on the target systems.  Any files with a .tmplt extension will be processed as
+on the target systems.  Any files with .tmplt extensions will be processed as
 mako templates before being copied out to computers.  The fck_metadata.txt
 files define the ownership and permissions for the files and directories when
 they're copied to the target system.  Here's an example layout::

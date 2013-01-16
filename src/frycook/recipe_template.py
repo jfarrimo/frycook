@@ -126,7 +126,8 @@ class FileMetaDataTracker(object):
         file in the directory, or remember metadata from previous calls if no
         fck_metadata.txt file is encountered.
 
-        The input parameters are what is returned from os.walk()
+        The input parameters are expected to be the values returned from a call
+        to os.walk()
 
         @type root: string
 
@@ -197,7 +198,8 @@ class Recipe(object):
     the framework for recipes and some helper functions.  By itself it doesn't
     do much.
 
-    This example implements a basic recipe that pushes a package fileset::
+    Here is an example that implements a basic recipe to push a package
+    fileset::
 
       from frycook import Recipe
 
@@ -257,7 +259,7 @@ class Recipe(object):
 
         @type computer: string
 
-        @param computer: computer to apply recipe checks to
+        @param computer: computer to print pre-apply message for
         '''
         if self.pre_apply_message:
             header = "pre-apply message from %s:" % self.__class__.__name__
@@ -276,7 +278,7 @@ class Recipe(object):
 
         @type computer: string
 
-        @param computer: computer to apply recipe checks to
+        @param computer: computer to print post-apply message for
         '''
         if self.post_apply_message:
             header = "post-apply message from %s:" % self.__class__.__name__
@@ -329,7 +331,7 @@ class Recipe(object):
 
         Sequence::
 
-          pre_apply_message -> pre_apply_checks -> apply -> post_apply_message
+          pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
 
         @type computer: string
 
@@ -347,7 +349,7 @@ class Recipe(object):
 
         @type computer: string
 
-        @param computer: computer to apply recipe to
+        @param computer: computer to show messages for
         '''
         self.handle_pre_apply_message(computer)
         self.handle_post_apply_message(computer)
@@ -384,7 +386,7 @@ class Recipe(object):
 
     def get_local_file_perms(self, local_name):
         '''
-        Get a string of the permissions set on the local file.
+        Get a string of the permissions set on a local file.
 
         @type local_name: string
 
@@ -464,7 +466,7 @@ class Recipe(object):
 
         @type perms: string
 
-        @param perms: permissions for the file
+        @param perms: permissions for the templated file
         '''
         mytemplate = self.mylookup.get_template(templatename)
         buff = mytemplate.render(**enviro)
@@ -566,8 +568,8 @@ class Recipe(object):
 
     def push_git_repo(self, computer, user, group, git_url, target_path):
         '''
-        This makes a local clone of the repo in the temp directory specified in
-        the settings file, then rsyncs this to the remote path.
+        Make a local clone of the repo in git_url into the temp directory
+        specified in the settings file, then rsync it to the remote path.
 
         @type computer: string
 

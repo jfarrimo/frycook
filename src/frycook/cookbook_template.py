@@ -52,7 +52,8 @@ class Cookbook(object):
 
     All cookbook files should live in a single cookbooks package.  The
     __init__.py file for this package should import all cookbooks and have a
-    list of them so they can easily be imported by the frycooker program.
+    list of them called cookbooks so they can easily be imported by the
+    frycooker program.
 
     Example::
 
@@ -89,9 +90,9 @@ class Cookbook(object):
 
     def handle_pre_apply_messages(self, computer):
         '''
-        Run the pre_apply_message function for all the recipes defined in
+        Run the pre_apply_message functions for all the recipes defined in
         recipe_list. Override this if there are cookbook-level messages you
-        would like to add.  Be sure to call the base if you subclass this.
+        would like to add.  Be sure to call the base if you override this.
 
         @type computer: string
 
@@ -102,9 +103,9 @@ class Cookbook(object):
 
     def handle_post_apply_messages(self, computer):
         '''
-        Run the post_apply_message function for all the recipes defined in
+        Run the post_apply_message functions for all the recipes defined in
         recipe_list. Override this if there are cookbook-level messages you
-        would like to add.  Be sure to call the base if you subclass this.
+        would like to add.  Be sure to call the base if you override this.
 
         @type computer: string
 
@@ -115,10 +116,10 @@ class Cookbook(object):
 
     def pre_apply_checks(self, computer):
         '''
-        Run the pre_apply_checks function for all the recipes defined in
+        Run the pre_apply_checks functions for all the recipes defined in
         recipe_list. Override this if there's something you need to check above
         and beyond the recipe-level data.  Be sure to call the base if you
-        subclass this.
+        override this.
 
         @type computer: string
 
@@ -131,7 +132,7 @@ class Cookbook(object):
         '''
         Run the apply functions for all the recipes defined in recipe_list.
         Override this if there's something you need to do besides just running
-        all the recipes.  Be sure to call the base class if you subclass this.
+        all the recipes.  Be sure to call the base class if you override this.
 
         @type computer: string
 
