@@ -46,17 +46,6 @@ could cause undesired configuration changes or expensive operations that you
 don't want to happen every time.  These functions are a huge aid in writing
 idempotent recipes and cookbooks.
 
-apply
-=====
-
-This is where you apply a recipe to a server.  There are two class methods that
-get called during the apply process, and possibly two messages that get
-displayed.  Generally you'll just override the apply method and sometimes add
-pre_apply or post_apply messages.  If you override pre_apply_checks, remember
-to call the base class method.  Here's the order that things happen in:
-
-pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
-
 file set copying
 ================
 
@@ -72,6 +61,17 @@ The Recipe class also defines some helper functions for working with git repos.
 You can checkout a git repo onto the remote machine, or check it out locally
 and copy it to the remote machine if you don't want to setup the remote machine
 to be able to do checkouts.
+
+apply process
+=============
+
+This is where you apply a recipe to a server.  There are two class methods that
+get called during the apply process, and possibly two messages that get
+displayed.  Generally you'll just override the apply method and sometimes add
+pre_apply or post_apply messages.  If you override pre_apply_checks, remember
+to call the base class method.  Here's the order that things happen in:
+
+pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
 '''
 import os
 import os.path
