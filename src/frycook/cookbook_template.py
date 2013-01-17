@@ -168,19 +168,3 @@ class Cookbook(object):
         '''
         self.handle_pre_apply_messages(computer)
         self.handle_post_apply_messages(computer)
-
-    #########################
-    ######## CLEANUP ########
-    #########################
-
-    def run_cleanup(self, computer):
-        '''
-        Run the cleanup process for the computer.  This is usually just called
-        from frycooker.
-
-        @type computer: string
-
-        @param computer: computer to apply recipe cleanup to
-        '''
-        for recipe in self.recipes:
-            recipe.run_cleanup(computer)

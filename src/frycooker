@@ -173,8 +173,6 @@ def get_args():
     parser.add_argument('-c', '--cookbook', dest='cookbooks', action='append',
                         choices=cookbook_names,
                         help='cookbook to process (can specify multiple times)')
-    parser.add_argument('-l', '--cleanup', action='store_true', default=False,
-                        help='run cleanup routines (alternate to apply)')
     parser.add_argument('-d', '--dryrun', action='store_true', default=False,
                         help='do not apply actions, just verify environment '
                         'and see which hosts to apply to')
@@ -240,9 +238,7 @@ def main():
             if args.recipes:
                 for r in args.recipes:
                     recipe = recipes.recipes[r](settings, enviro)
-                    if args.cleanup:
-                        recipe.run_cleanup(host)
-                    elif args.messages:
+                    if args.messages:
                         recipe.run_messages(host)
                     else:
                         recipe.run_apply(host)
@@ -250,9 +246,7 @@ def main():
             if args.cookbooks:
                 for c in args.cookbooks:
                     cookbook = cookbooks.cookbooks[c](settings, enviro)
-                    if args.cleanup:
-                        cookbook.run_cleanup(host)
-                    elif args.messages:
+                    if args.messages:
                         cookbook.run_messages(host)
                     else:
                         cookbook.run_apply(host)

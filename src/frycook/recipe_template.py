@@ -46,7 +46,6 @@ could cause undesired configuration changes or expensive operations that you
 don't want to happen every time.  These functions are a huge aid in writing
 idempotent recipes and cookbooks.
 
-
 apply
 =====
 
@@ -57,16 +56,6 @@ pre_apply or post_apply messages.  If you override pre_apply_checks, remember
 to call the base class method.  Here's the order that things happen in:
 
 pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
-
-cleanup
-=======
-
-This is where you cleanup old recipe configurations from a server.  An example
-is when I changed the home directory for my web server.  I first wrote a
-cleanup that cleaned-up the old configuration, then an apply that applied the
-new configuration.  This way I can always run the apply in the future when
-building new machines and don't need the cleanup logic since the new machine
-never had the old configuration that had to get cleaned-up.
 
 file set copying
 ================
@@ -353,32 +342,6 @@ class Recipe(object):
         '''
         self.handle_pre_apply_message(computer)
         self.handle_post_apply_message(computer)
-
-    #########################
-    ######## CLEANUP ########
-    #########################
-
-    def cleanup(self, computer):
-        '''
-        Define cleanup actions that need to be taken on the designated
-        computer.  Override this function in your sub-class of Recipe to do
-        things.
-
-        @type computer: string
-
-        @param computer: computer to apply recipe cleanup to
-        '''
-        pass
-
-    def run_cleanup(self, computer):
-        '''
-        Run the cleanup function.  This is typically called by frycooker.
-
-        @type computer: string
-
-        @param computer: computer to apply recipe cleanup to
-        '''
-        self.cleanup(computer)
 
     ###############################
     ######## FILE HANDLING ########
