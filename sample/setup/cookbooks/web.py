@@ -4,5 +4,5 @@ from recipes import RecipeNginx
 from recipes import RecipeExampleCom
 
 class CookbookWeb(Cookbook):
-    recipe_list = [RecipeNginx, 
+    recipe_list = [RecipeNginx,
                    RecipeExampleCom]

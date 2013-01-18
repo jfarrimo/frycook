@@ -15,6 +15,6 @@ class RecipeNginx(Recipe):
 
         tmp_env = {"name": computer,
                    "computer": self.environment['computers'][computer]}
-        self.push_package_file_set('nginx', tmp_env)
+        self.push_package_file_set('nginx', computer, tmp_env)
 
         cuisine.sudo("service nginx restart")

@@ -10,6 +10,6 @@ class RecipeHosts(Recipe):
         tmp_env = {"host": computer,
                    "sibs": sibs,
                    "computers": self.environment["computers"]}
-        self.push_package_file_set('hosts', tmp_env)
+        self.push_package_file_set('hosts', computer, tmp_env)
 
         cuisine.sudo("service hostname restart")

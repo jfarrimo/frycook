@@ -11,7 +11,7 @@ class RecipePostfix(Recipe):
 
         tmp_env = {"name": computer,
                    "computer": self.environment['computers'][computer]}
-        self.push_package_file_set('postfix', tmp_env)
+        self.push_package_file_set('postfix', computer, tmp_env)
 
         cuisine.sudo("/usr/bin/newaliases")
         cuisine.sudo("service postfix restart")

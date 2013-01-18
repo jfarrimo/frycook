@@ -13,7 +13,7 @@ recipes = {
     'nginx': RecipeNginx,
     'postfix': RecipePostfix,
     'root_user': RecipeRootUser,
-    'example_com': RecipeExacmpleCom,
+    'example_com': RecipeExampleCom,
     'shorewall': RecipeShorewall,
     'ssh': RecipeSSH
     }

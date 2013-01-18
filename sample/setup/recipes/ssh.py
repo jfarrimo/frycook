@@ -8,6 +8,6 @@ class RecipeSSH(Recipe):
         # be able to run all the fabric/cuisine stuff
 
         tmp_env = {"computer": self.environment['computers'][computer]}
-        self.push_package_file_set('ssh', tmp_env)
+        self.push_package_file_set('ssh', computer, tmp_env)
 
         cuisine.sudo("service ssh restart")
