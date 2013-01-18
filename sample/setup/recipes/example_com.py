@@ -30,8 +30,6 @@ class RecipeExampleCom(Recipe):
         cuisine.file_link('/home/example_com/www',
                           '/srv/www/example_com')
 
-        tmp_env = {"name": computer,
-                   "computer": self.environment['computers'][computer]}
         self.push_package_file_set('example_com', computer, tmp_env)
 
         cuisine.file_link('/etc/nginx/sites-available/example_com',

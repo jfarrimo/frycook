@@ -7,7 +7,6 @@ class RecipeShorewall(Recipe):
         cuisine.package_ensure('shorewall')
         cuisine.package_ensure('shorewall-doc')
 
-        tmp_env = {"computer": self.environment['computers'][computer]}
         self.push_package_file_set('shorewall', computer, tmp_env)
 
         cuisine.sudo("service shorewall restart")

@@ -97,10 +97,11 @@ example::
       "test1": {
         "domain_name": "fubu.example",
         "host_group": "test",
-        "public_ifaces": ["eth1"],
-        "public_ips": {"172.20.10.14": "test1.fubu.example"},
-        "private_ifaces": ["eth0"],
-        "private_ips": {"192.168.56.10": "test1"}
+        "public_ifaces": ["eth0", "eth1"],
+        "public_ips": {"192.168.56.10": "test1.fubu.example",
+                       "192.168.56.11": "test2.fubu.example"},
+        "private_ifaces": ["eth2"],
+        "private_ips": {"192.168.1.126": "test1"}
       }
     },
 

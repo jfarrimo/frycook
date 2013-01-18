@@ -187,15 +187,16 @@ class Recipe(object):
     the framework for recipes and some helper functions.  By itself it doesn't
     do much.
 
-    Here is an example that implements a basic recipe to push a package
-    fileset::
+    Here is an example that implements a basic recipe to make sure a package is
+    installed::
+
+      import cuisine
 
       from frycook import Recipe
 
-      class MyOwnRecipe(Recipe):
-
+      class RecipeFail2ban(Recipe):
           def apply(self, computer):
-              self.push_package_file_set('my_own', computer)
+              cuisine.package_ensure('fail2ban')
 
     All recipe files should live in a single recipes package.  The __init__.py
     file for this package should import all recipes and have a list of them so
@@ -203,17 +204,25 @@ class Recipe(object):
 
     Example::
 
+      from fail2ban import RecipeFail2ban
       from hosts import RecipeHosts
       from nginx import RecipeNginx
-      from root import RecipeRootUser
+      from postfix import RecipePostfix
+      from root_user import RecipeRootUser
       from example_com import RecipeExampleCom
+      from shorewall import RecipeShorewall
+      from ssh import RecipeSSH
 
       recipes = {
+          'fail2ban': RecipeFail2ban,
           'hosts': RecipeHosts,
           'nginx': RecipeNginx,
-          'root': RecipeRootUser,
-          'example_com': RecipeExacmpleCom
-      }
+          'postfix': RecipePostfix,
+          'root_user': RecipeRootUser,
+          'example_com': RecipeExampleCom,
+          'shorewall': RecipeShorewall,
+          'ssh': RecipeSSH
+          }
     '''
 
     def __init__(self, settings, environment):

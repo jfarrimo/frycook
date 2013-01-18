@@ -43,12 +43,13 @@ class Cookbook(object):
     Example::
 
       from frycook import Cookbook
-      from recipes import AwesomeRecipe, WayCoolRecipe
 
-      class MyOwnCookbook(Cookbook):
+      from recipes import RecipeNginx
+      from recipes import RecipeExampleCom
 
-          recipe_list = [AwesomeRecipe,
-                         WayCoolRecipe]
+      class CookbookWeb(Cookbook):
+          recipe_list = [RecipeNginx,
+                         RecipeExampleCom]
 
     All cookbook files should live in a single cookbooks package.  The
     __init__.py file for this package should import all cookbooks and have a
@@ -63,7 +64,7 @@ class Cookbook(object):
       cookbooks = {
           'base': CookbookBase,
           'web': CookbookWeb
-      }
+          }
     '''
     recipe_list = []
 
