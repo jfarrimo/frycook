@@ -167,27 +167,30 @@ def get_args():
     cookbook_names.sort()
 
     parser = argparse.ArgumentParser(description='Setup machines.')
-    parser.add_argument('-r', '--recipe', dest='recipes', action='append',
-                        choices=recipe_names,
-                        help='recipe to process (can specify multiple times)')
     parser.add_argument('-c', '--cookbook', dest='cookbooks', action='append',
                         choices=cookbook_names,
                         help='cookbook to process (can specify multiple times)')
     parser.add_argument('-d', '--dryrun', action='store_true', default=False,
                         help='do not apply actions, just verify environment '
                         'and see which hosts to apply to')
+    parser.add_argument('-e', '--environment', default='environment.json',
+                        help='environment file')
     parser.add_argument('-m', '--messages', action='store_true', default=False,
                         help='do not apply actions, just print messages')
+    parser.add_argument('-O', '--ok-to-be-rude', action='store_true',
+                        default=False, dest='ok_to_be_rude',
+                        help='ok to be rude to your users')
     parser.add_argument('-p', '--package-update', action='store_true',
                         default=False, dest='package_update',
                         help='update the package manager before '
                         'applying recipes/cookbooks')
-    parser.add_argument('-u', '--user', default='root',
-                        help='user to ssh to host as')
+    parser.add_argument('-r', '--recipe', dest='recipes', action='append',
+                        choices=recipe_names,
+                        help='recipe to process (can specify multiple times)')
     parser.add_argument('-s', '--settings', default='settings.json',
                         help='settings file')
-    parser.add_argument('-e', '--environment', default='environment.json',
-                        help='environment file')
+    parser.add_argument('-u', '--user', default='root',
+                        help='user to ssh to host as')
     parser.add_argument('target', nargs='+',
                         help='computer or group to apply setup to')
 
@@ -237,7 +240,8 @@ def main():
         try:
             if args.recipes:
                 for r in args.recipes:
-                    recipe = recipes.recipes[r](settings, enviro)
+                    recipe = recipes.recipes[r](
+                        settings, enviro, args.ok_to_be_rude)
                     if args.messages:
                         recipe.run_messages(host)
                     else:
@@ -245,7 +249,8 @@ def main():
 
             if args.cookbooks:
                 for c in args.cookbooks:
-                    cookbook = cookbooks.cookbooks[c](settings, enviro)
+                    cookbook = cookbooks.cookbooks[c](
+                        settings, enviro, args.ok_to_be_rude)
                     if args.messages:
                         cookbook.run_messages(host)
                     else:

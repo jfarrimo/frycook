@@ -68,7 +68,7 @@ class Cookbook(object):
     '''
     recipe_list = []
 
-    def __init__(self, settings, environment):
+    def __init__(self, settings, environment, ok_to_be_rude):
         '''
         Initialize the cookbook object with the settings and environment
         dictionaries.
@@ -80,10 +80,15 @@ class Cookbook(object):
         @type environment: dict
 
         @param environment: metadata dictionary
+
+        @type ok_to_be_rude: boolean
+
+        @param ok_to_be_rude: is it ok to interrupt your users?
         '''
         self.recipes = []
+        self.ok_to_be_rude = ok_to_be_rude
         for recipe in self.recipe_list:
-            self.recipes.append(recipe(settings, environment))
+            self.recipes.append(recipe(settings, environment, ok_to_be_rude))
 
     #######################
     ######## APPLY ########

@@ -46,6 +46,15 @@ could cause undesired configuration changes or expensive operations that you
 don't want to happen every time.  These functions are a huge aid in writing
 idempotent recipes and cookbooks.
 
+rudeness
+========
+
+Another thing to keep in mind is that some actions performed in recipes can
+affect the end users of the systems, in effect being rude to them.  This might
+cause an outage or otherwise mess them up.  The recipe class keeps track of
+whether or not this is ok in its 'ok_to_be_rude' variable so you can know what
+actions are acceptable.  Consult this before doing rude things.
+
 file set copying
 ================
 
@@ -225,7 +234,7 @@ class Recipe(object):
           }
     '''
 
-    def __init__(self, settings, environment):
+    def __init__(self, settings, environment, ok_to_be_rude):
         '''
         Initialize the recipe object with the settings and environment
         dictionaries.
@@ -237,9 +246,14 @@ class Recipe(object):
         @type environment: dict
 
         @param environment: metadata dictionary
+
+        @type ok_to_be_rude: boolean
+
+        @param ok_to_be_rude: is it ok to interrupt your users?
         '''
         self.settings = settings
         self.environment = environment
+        self.ok_to_be_rude = ok_to_be_rude
         self.mylookup = TemplateLookup(
             directories=[self.settings["package_dir"]],
             module_directory=self.settings["module_dir"])
