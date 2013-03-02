@@ -226,7 +226,7 @@ def output_pre_apply_messages(enviro, settings, args):
         for r in args.recipes:
             recipe = recipes.recipes[r](
                 settings, enviro, args.ok_to_be_rude)
-            recipe.handle_pre_apply_messages()
+            recipe.handle_pre_apply_message()
 
     if args.cookbooks:
         for c in args.cookbooks:
@@ -239,7 +239,7 @@ def output_post_apply_messages(enviro, settings, args):
         for r in args.recipes:
             recipe = recipes.recipes[r](
                 settings, enviro, args.ok_to_be_rude)
-            recipe.handle_post_apply_messages()
+            recipe.handle_post_apply_message()
 
     if args.cookbooks:
         for c in args.cookbooks:
@@ -261,19 +261,13 @@ def apply_recipes_cookbooks(enviro, settings, args, host_list):
                 for r in args.recipes:
                     recipe = recipes.recipes[r](
                         settings, enviro, args.ok_to_be_rude)
-                    if args.messages:
-                        recipe.run_messages(host)
-                    else:
-                        recipe.run_apply(host)
+                    recipe.run_apply(host)
 
             if args.cookbooks:
                 for c in args.cookbooks:
                     cookbook = cookbooks.cookbooks[c](
                         settings, enviro, args.ok_to_be_rude)
-                    if args.messages:
-                        cookbook.run_messages(host)
-                    else:
-                        cookbook.run_apply(host)
+                    cookbook.run_apply(host)
         finally:
             disconnect_all()
 
