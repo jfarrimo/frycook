@@ -206,30 +206,49 @@ def massage_enviro_paths(env):
               (k.find('path') > -1 or k.find('dir') > -1)):
             env[k] = v.replace('~', os.environ['HOME'])
 
-def main():
-    args = get_args()
+class InvalidTarget(Exception):
+    pass
 
-    settings = json.load(open(args.settings))
-    massage_enviro_paths(settings)
-    enviro = json.load(open(args.environment))
-    massage_enviro_paths(enviro)
-
-    parsed_hosts = []
+def generate_target_list(enviro, args):
+    host_list = []
     for target in args.target:
         if target in enviro['computers']:
-            parsed_hosts.append(target)
+            host_list.append(target)
         elif target in enviro['groups']:
-            parsed_hosts.extend(enviro['groups'][target]['computers'])
+            host_list.extend(enviro['groups'][target]['computers'])
         else:
-            print "Invalid target '%s' encountered" % target
+            raise InvalidTarget("Invalid target '%s' encountered" % target)
             sys.exit(2)
+    return host_list
 
-    if args.dryrun:
-        print ("actions would be applied to the following hosts: %s" %
-               ', '.join(parsed_hosts))
-        sys.exit(0)
+def output_pre_apply_messages(enviro, settings, args):
+    if args.recipes:
+        for r in args.recipes:
+            recipe = recipes.recipes[r](
+                settings, enviro, args.ok_to_be_rude)
+            recipe.handle_pre_apply_messages()
 
-    for host in parsed_hosts:
+    if args.cookbooks:
+        for c in args.cookbooks:
+            cookbook = cookbooks.cookbooks[c](
+                settings, enviro, args.ok_to_be_rude)
+            cookbook.handle_pre_apply_messages()
+
+def output_post_apply_messages(enviro, settings, args):
+    if args.recipes:
+        for r in args.recipes:
+            recipe = recipes.recipes[r](
+                settings, enviro, args.ok_to_be_rude)
+            recipe.handle_post_apply_messages()
+
+    if args.cookbooks:
+        for c in args.cookbooks:
+            cookbook = cookbooks.cookbooks[c](
+                settings, enviro, args.ok_to_be_rude)
+            cookbook.handle_post_apply_messages()
+
+def apply_recipes_cookbooks(enviro, settings, args, host_list):
+    for host in host_list:
         env.host_string = host
         if args.user:
             env.user = args.user
@@ -257,6 +276,30 @@ def main():
                         cookbook.run_apply(host)
         finally:
             disconnect_all()
+
+def main():
+    args = get_args()
+
+    settings = json.load(open(args.settings))
+    massage_enviro_paths(settings)
+    enviro = json.load(open(args.environment))
+    massage_enviro_paths(enviro)
+
+    try:
+        host_list = generate_target_list(enviro, args)
+
+        if args.dryrun:
+            print ("actions would be applied to the following hosts: %s" %
+                   ', '.join(host_list))
+            sys.exit(0)
+
+        output_pre_apply_messages(enviro, settings, args)
+        if not args.messages:
+            apply_recipes_cookbooks(enviro, settings, args, host_list)
+        output_post_apply_messages(enviro, settings, args)
+    except Exception, e:
+        print e
+        sys.exit(2)
 
 if __name__=="__main__":
     main()

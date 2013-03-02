@@ -94,31 +94,23 @@ class Cookbook(object):
     ######## APPLY ########
     #######################
 
-    def handle_pre_apply_messages(self, computer):
+    def handle_pre_apply_messages(self):
         '''
         Run the pre_apply_message functions for all the recipes defined in
         recipe_list. Override this if there are cookbook-level messages you
         would like to add.  Be sure to call the base if you override this.
-
-        @type computer: string
-
-        @param computer: computer to apply recipe checks to
         '''
         for recipe in self.recipes:
-            recipe.handle_pre_apply_message(computer)
+            recipe.handle_pre_apply_message()
 
-    def handle_post_apply_messages(self, computer):
+    def handle_post_apply_messages(self):
         '''
         Run the post_apply_message functions for all the recipes defined in
         recipe_list. Override this if there are cookbook-level messages you
         would like to add.  Be sure to call the base if you override this.
-
-        @type computer: string
-
-        @param computer: computer to apply recipe checks to
         '''
         for recipe in self.recipes:
-            recipe.handle_post_apply_message(computer)
+            recipe.handle_post_apply_message()
 
     def pre_apply_checks(self, computer):
         '''
@@ -156,21 +148,17 @@ class Cookbook(object):
 
         @param computer: computer to apply recipe to
         '''
-        self.handle_pre_apply_messages(computer)
+        self.handle_pre_apply_messages()
         self.pre_apply_checks(computer)
         self.apply(computer)
-        self.handle_post_apply_messages(computer)
+        self.handle_post_apply_messages()
 
-    def run_messages(self, computer):
+    def run_messages(self):
         '''
         Run the handle_pre_apply_messages and handle_post_apply_messages
         functions for all the recipes defined in recipe_list. This is useful to
         display all the possible messages to the user without actually applying
         the cookbook.  This is usually just called from frycooker.
-
-        @type computer: string
-
-        @param computer: computer to show messages for
         '''
-        self.handle_pre_apply_messages(computer)
-        self.handle_post_apply_messages(computer)
+        self.handle_pre_apply_messages()
+        self.handle_post_apply_messages()

@@ -190,6 +190,42 @@ class FileMetaDataTracker(object):
         else:
             return None, None, None
 
+class FileDeleter(object):
+    '''
+    A FileDeleter object deletes unwanted files from a directory.  This hinges
+    on a file named fck_delete.txt being encountered in the directory being
+    examined.  This file should have each line contain the name of a file to be
+    deleted.
+    '''
+
+    tagfile = 'fck_delete.txt'
+
+    def check_directory(self, root, files, remote_rootpath):
+        '''
+        Examine the given directory, check for a fck_delete.txt file in the
+        directory, and delete all files named in fck_delete.txt.
+
+        The first of the input parameters are expected to be values returned
+        from a call to os.walk()
+
+        @type root: string
+
+        @param root: directory being examined
+
+        @type files: list of strings
+
+        @param files: list of the files in the root directory
+
+        @type remote_rootpath: string
+
+        @param remote_rootpath: path on remote server to delete files from
+        '''
+
+        if self.tagfile in files:
+            for line in open(os.path.join(root, self.tagfile)):
+                delfile = os.path.join(remote_rootpath, line.strip())
+                cuisine.file_unlink(delfile)
+
 class Recipe(object):
     '''
     The Recipe class is the base class for all recipes to subclass.  It defines
@@ -264,14 +300,10 @@ class Recipe(object):
 
     pre_apply_message = ""
 
-    def handle_pre_apply_message(self, computer):
+    def handle_pre_apply_message(self):
         '''
         Print the pre-apply message for the user and wait for him/her to hit
         return before continuing.
-
-        @type computer: string
-
-        @param computer: computer to print pre-apply message for
         '''
         if self.pre_apply_message:
             header = "pre-apply message from %s:" % self.__class__.__name__
@@ -283,14 +315,10 @@ class Recipe(object):
 
     post_apply_message = ""
 
-    def handle_post_apply_message(self, computer):
+    def handle_post_apply_message(self):
         '''
         Print the post-apply message for the user and wait for him/her to hit
         return before continuing.
-
-        @type computer: string
-
-        @param computer: computer to print post-apply message for
         '''
         if self.post_apply_message:
             header = "post-apply message from %s:" % self.__class__.__name__
@@ -349,22 +377,18 @@ class Recipe(object):
 
         @param computer: computer to apply recipe to
         '''
-        self.handle_pre_apply_message(computer)
+        self.handle_pre_apply_message()
         self.pre_apply_checks(computer)
         self.apply(computer)
-        self.handle_post_apply_message(computer)
+        self.handle_post_apply_message()
 
-    def run_messages(self, computer):
+    def run_messages(self):
         '''
         Print the pre and post apply messages only, as if the apply had been
         run.
-
-        @type computer: string
-
-        @param computer: computer to show messages for
         '''
-        self.handle_pre_apply_message(computer)
-        self.handle_post_apply_message(computer)
+        self.handle_pre_apply_message()
+        self.handle_post_apply_message()
 
     ###############################
     ######## FILE HANDLING ########
@@ -465,9 +489,9 @@ class Recipe(object):
 
     def _push_package_file_set(self, package_name, template_env):
         '''
-        Implement the file copying portion of the push_package_file_set
-        operation.  The calling function sets up the template environment, then
-        calls this one.
+        Implement the file copying and deleting portion of the
+        push_package_file_set operation.  The calling function sets up the
+        template environment, then calls this one.
 
         @type package_name: string
 
@@ -479,26 +503,32 @@ class Recipe(object):
         @param template_env: environment dictionary for template engine
         '''
         metadata = FileMetaDataTracker()
+        deleter = FileDeleter()
         work_dir = os.path.join(self.settings["package_dir"], package_name)
         os.chdir(work_dir)
         for root, dirs, files in os.walk('.'):
             metadata.check_directory(root, dirs, files)
             owner, group, perms = metadata.get_metadata(root)
+            remote_root = root.lstrip('.')
             cuisine.dir_ensure(
-                root.lstrip('.'), owner=owner, group=group, mode=perms)
-            for f in files:
-                filename = os.path.join(root, f).lstrip('./')
-                if re.search(self.settings["file_ignores"], filename) is None:
-                    owner, group, perms = metadata.get_metadata(root, f)
-                    base_path, ext = os.path.splitext(filename)
+                remote_root, owner=owner, group=group, mode=perms)
+            for filename in files:
+                fq_filename = os.path.join(remote_root, filename).lstrip('/')
+                if (re.search(self.settings["file_ignores"], filename) is None
+                    and filename != metadata.tagfile
+                    and filename != deleter.tagfile):
+                    owner, group, perms = metadata.get_metadata(root, filename)
+                    base_path, ext = os.path.splitext(fq_filename)
                     if ext == '.tmplt':
-                        self.push_template(os.path.join(package_name, filename),
+                        self.push_template(os.path.join(package_name,
+                                                        fq_filename),
                                            os.path.join('/', base_path),
                                            template_env, owner, group, perms)
                     else:
-                        self.push_file(os.path.join(work_dir, filename),
-                                       os.path.join('/', filename),
+                        self.push_file(os.path.join(work_dir, fq_filename),
+                                       os.path.join('/', fq_filename),
                                        owner, group, perms)
+            deleter.check_directory(root, files, remote_root)
 
     def push_package_file_set(self, package_name, computer_name, aux_env=None):
         '''
@@ -528,6 +558,11 @@ class Recipe(object):
         it's expected to have contents of lines consisting of
         <path>:<owner>:<group>:<perms> that specifies the owner, group, and
         permissions for the path specified (directory-relative).
+
+        If a file named fck_delete.txt is encountered in a directory, then it's
+        expected to have contents of lines containing names of files to delete,
+        one per line.  This way you can clean out a directory as well as copy
+        files to it.
 
         @type package_name: string
 
