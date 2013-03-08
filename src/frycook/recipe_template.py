@@ -377,10 +377,8 @@ class Recipe(object):
 
         @param computer: computer to apply recipe to
         '''
-        self.handle_pre_apply_message()
         self.pre_apply_checks(computer)
         self.apply(computer)
-        self.handle_post_apply_message()
 
     def run_messages(self):
         '''

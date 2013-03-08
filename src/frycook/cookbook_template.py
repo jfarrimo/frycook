@@ -148,10 +148,8 @@ class Cookbook(object):
 
         @param computer: computer to apply recipe to
         '''
-        self.handle_pre_apply_messages()
         self.pre_apply_checks(computer)
         self.apply(computer)
-        self.handle_post_apply_messages()
 
     def run_messages(self):
         '''
