@@ -302,6 +302,8 @@ def main():
         if not args.messages:
             apply_recipes_cookbooks(enviro, settings, args, host_list)
         output_post_apply_messages(enviro, settings, args)
+
+        print "actions completed successfully"
     except Exception, e:
         print "EXITING EARLY DUE TO AN EXCEPTION:"
         print e
