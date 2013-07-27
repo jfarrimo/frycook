@@ -99,6 +99,7 @@ class RecipeException(Exception):
     '''
     pass
 
+
 class FileMetaDataTracker(object):
     '''
     A FileMetaDataTracker object keeps track of owner, group, and permissions
@@ -161,7 +162,7 @@ class FileMetaDataTracker(object):
                                 owner, group, perms, )
                     else:
                         self.metadata[os.path.join(root, path)] = (
-                                owner, group, perms, )
+                            owner, group, perms, )
 
     def get_metadata(self, path, filename=''):
         '''
@@ -189,6 +190,7 @@ class FileMetaDataTracker(object):
             return self.metadata[path]
         else:
             return None, None, None
+
 
 class FileDeleter(object):
     '''
@@ -225,6 +227,7 @@ class FileDeleter(object):
             for line in open(os.path.join(root, self.tagfile)):
                 delfile = os.path.join(remote_rootpath, line.strip())
                 cuisine.file_unlink(delfile)
+
 
 class Recipe(object):
     '''
@@ -477,7 +480,11 @@ class Recipe(object):
         @param perms: permissions for the templated file
         '''
         mytemplate = self.mylookup.get_template(templatename)
-        buff = mytemplate.render(**enviro)
+        try:
+            buff = mytemplate.render(**enviro)
+        except Exception, e:
+            raise RecipeException(
+                "Error rendering template %s: %s" % (templatename, e))
         cuisine.file_write(out_path, buff, check=True)
         local_name = os.path.join(self.settings["package_dir"], templatename)
         if not perms:
@@ -513,8 +520,8 @@ class Recipe(object):
             for filename in files:
                 fq_filename = os.path.join(remote_root, filename).lstrip('/')
                 if (re.search(self.settings["file_ignores"], filename) is None
-                    and filename != metadata.tagfile
-                    and filename != deleter.tagfile):
+                        and filename != metadata.tagfile
+                        and filename != deleter.tagfile):
                     owner, group, perms = metadata.get_metadata(root, filename)
                     base_path, ext = os.path.splitext(fq_filename)
                     if ext == '.tmplt':

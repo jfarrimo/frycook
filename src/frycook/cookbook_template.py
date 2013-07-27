@@ -30,6 +30,7 @@ Cookbooks are sets of recipes to apply to a server to create systems made up of
 subsystems.
 '''
 
+
 class Cookbook(object):
     '''
     The Cookbook class is the base class for all cookbooks to be created from.

@@ -28,8 +28,8 @@
 '''
 Frycook depends on recipes and cookbooks to define how systems are built.
 Recipes and cookbooks in turn use settings, environments, and packages to do
-their work.  The settings and environments are passed around as dictionaries and
-refer to the packages, which live on the disk as directories and files.
+their work.  The settings and environments are passed around as dictionaries
+and refer to the packages, which live on the disk as directories and files.
 
 settings dictionary
 ===================
@@ -47,10 +47,10 @@ template handling
 I{file_ignores}: regex pattern for filenames to ignore while copying package
 files
 
-For any key containing 'dir' or 'path', if you include a tilde (~) in the value,
-it will be replaced with the home directory of the user running frycooker, just
-like in bash.  For this example, that would be the "package_dir" and
-"module_dir" keys.
+For any key containing 'dir' or 'path', if you include a tilde (~) in the
+value, it will be replaced with the home directory of the user running
+frycooker, just like in bash.  For this example, that would be the
+"package_dir" and "module_dir" keys.
 
 example::
 
@@ -86,10 +86,10 @@ example::
   {
     "users": {
       "root": {
-        "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"
+        "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"  # noqa
       },
       "example_com": {
-        "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"
+        "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"  # noqa
       }
     },
 
@@ -130,7 +130,8 @@ they're copied to the target system.  Here's an example layout::
           hosts.tmplt        # template that becomes /etc/hosts on the target
                              # server
       nginx                  # root for nginx package files
-        etc                  # corresponds to /etc directory on the target server
+        etc                  # corresponds to /etc directory on the
+                             # target server
           default            # corresponds to /etc/default directory on the
                              # target server
             nginx            # corresponds to /etc/default/nginx file on the
@@ -145,17 +146,19 @@ they're copied to the target system.  Here's an example layout::
                              # target server
             sites-available  # corresponds to /etc/nginx/sites-available
                              # directory on target server
-              default        # corresponds to /etc/nginx/sites-available/default
+              default        # corresponds to
+                             # /etc/nginx/sites-available/default
                              # directory on target server
             sites-enabled    # corresponds to /etc/nginx/sites-enable directory
                              # on target server
-        srv                  # corresponds to /srv directory on the target server
+        srv                  # corresponds to /srv directory on the
+                             # target server
           www                # corresponds to /srv/www directory on the target
                              # server
             50x.html         # corresponds to /srv/www/50x.html file on target
                              # server
-            index.html       # corresponds to /srv/www/index.html file on target
-                             # server
+            index.html       # corresponds to /srv/www/index.html file on
+                             # target server
 
 ============
 
@@ -186,5 +189,5 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of James Yates Farrimond.
 '''
-from cookbook_template import Cookbook
-from recipe_template import Recipe, RecipeException
+from cookbook_template import Cookbook  # noqa
+from recipe_template import Recipe, RecipeException  # noqa
