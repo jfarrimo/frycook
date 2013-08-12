@@ -85,6 +85,7 @@ pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
 import os
 import os.path
 import re
+import shutil
 import stat
 
 import cuisine
@@ -628,6 +629,7 @@ class Recipe(object):
         local('%s %s root@%s:%s' %
               (rsync_command, tmp_path, computer, target_path))
         cuisine.sudo('chown -R %s:%s %s' % (user, group, target_path))
+        shutil.rmtree(tmp_path)
 
     def clone_git_repo(self, user, git_url, target_path):
         '''
