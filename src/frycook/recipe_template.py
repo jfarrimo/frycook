@@ -515,7 +515,7 @@ class Recipe(object):
         for root, dirs, files in os.walk('.'):
             metadata.check_directory(root, dirs, files)
             owner, group, perms = metadata.get_metadata(root)
-            remote_root = root.lstrip('.')
+            remote_root = '/'+root.lstrip('.')
             cuisine.dir_ensure(
                 remote_root, owner=owner, group=group, mode=perms)
             for filename in files:
