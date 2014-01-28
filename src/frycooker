@@ -212,6 +212,30 @@ def massage_enviro_paths(env):
             env[k] = v.replace('~', os.environ['HOME'])
 
 
+def load_settings(filename):
+    settings = json.load(open(filename))
+    massage_enviro_paths(settings)
+
+
+def load_enviro(filename):
+    try:
+        enviro = json.load(open(filename))
+    except Exception:
+        print 'Error reading environment file %s' % filename
+        raise
+    massage_enviro_paths(enviro)
+
+    for key in enviro:
+        if 'imports' in enviro[key]:
+            for imp_file in enviro[key]['imports']:
+                imp_enviro = load_enviro(imp_file)
+                for imp_key in imp_enviro:
+                    enviro[key][imp_key] = imp_enviro[imp_key]
+            del enviro[key]['imports']
+
+    return enviro
+
+
 class InvalidTarget(Exception):
     pass
 
@@ -285,10 +309,8 @@ def apply_recipes_cookbooks(enviro, settings, args, host_list):
 def main():
     args = get_args()
 
-    settings = json.load(open(args.settings))
-    massage_enviro_paths(settings)
-    enviro = json.load(open(args.environment))
-    massage_enviro_paths(enviro)
+    settings = load_settings(args.settings)
+    enviro = load_enviro(args.environment)
 
     try:
         host_list = generate_target_list(enviro, args)
