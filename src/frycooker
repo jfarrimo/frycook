@@ -215,6 +215,7 @@ def massage_enviro_paths(env):
 def load_settings(filename):
     settings = json.load(open(filename))
     massage_enviro_paths(settings)
+    return settings
 
 
 def load_enviro(filename):
@@ -318,6 +319,9 @@ def main():
         if args.dryrun:
             print ("actions would be applied to the following hosts: %s" %
                    ', '.join(host_list))
+            print ("environment to be used: %s" %
+                   json.dumps(enviro, sort_keys=True, indent=4,
+                              separators=(',', ': ')))
             sys.exit(0)
 
         output_pre_apply_messages(enviro, settings, args)
