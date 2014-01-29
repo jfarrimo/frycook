@@ -69,7 +69,7 @@ class Cookbook(object):
     '''
     recipe_list = []
 
-    def __init__(self, settings, environment, ok_to_be_rude):
+    def __init__(self, settings, environment, ok_to_be_rude, no_prompt):
         '''
         Initialize the cookbook object with the settings and environment
         dictionaries.
@@ -85,11 +85,17 @@ class Cookbook(object):
         @type ok_to_be_rude: boolean
 
         @param ok_to_be_rude: is it ok to interrupt your users?
+
+        @type no_prompt: boolean
+
+        @param no_prompt: should we prompt the user?
         '''
         self.recipes = []
         self.ok_to_be_rude = ok_to_be_rude
+        self.no_prompt = no_prompt
         for recipe in self.recipe_list:
-            self.recipes.append(recipe(settings, environment, ok_to_be_rude))
+            self.recipes.append(
+                recipe(settings, environment, ok_to_be_rude, no_prompt))
 
     #######################
     ######## APPLY ########

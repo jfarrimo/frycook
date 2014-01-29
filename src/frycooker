@@ -181,6 +181,9 @@ def get_args():
                         help='environment file')
     parser.add_argument('-m', '--messages', action='store_true', default=False,
                         help='do not apply actions, just print messages')
+    parser.add_argument('-n', '--no-prompt', action='store_true', default=False,
+                        dest='no_prompt', help='do not prompt user for '
+                        'anything; good for automated scripts')
     parser.add_argument('-O', '--ok-to-be-rude', action='store_true',
                         default=False, dest='ok_to_be_rude',
                         help='ok to be rude to your users')
@@ -258,13 +261,13 @@ def output_pre_apply_messages(enviro, settings, args):
     if args.recipes:
         for r in args.recipes:
             recipe = recipes.recipes[r](
-                settings, enviro, args.ok_to_be_rude)
+                settings, enviro, args.ok_to_be_rude, args.no_prompt)
             recipe.handle_pre_apply_message()
 
     if args.cookbooks:
         for c in args.cookbooks:
             cookbook = cookbooks.cookbooks[c](
-                settings, enviro, args.ok_to_be_rude)
+                settings, enviro, args.ok_to_be_rude, args.no_prompt)
             cookbook.handle_pre_apply_messages()
 
 
@@ -272,13 +275,13 @@ def output_post_apply_messages(enviro, settings, args):
     if args.recipes:
         for r in args.recipes:
             recipe = recipes.recipes[r](
-                settings, enviro, args.ok_to_be_rude)
+                settings, enviro, args.ok_to_be_rude, args.no_prompt)
             recipe.handle_post_apply_message()
 
     if args.cookbooks:
         for c in args.cookbooks:
             cookbook = cookbooks.cookbooks[c](
-                settings, enviro, args.ok_to_be_rude)
+                settings, enviro, args.ok_to_be_rude, args.no_prompt)
             cookbook.handle_post_apply_messages()
 
 
@@ -295,13 +298,13 @@ def apply_recipes_cookbooks(enviro, settings, args, host_list):
             if args.recipes:
                 for r in args.recipes:
                     recipe = recipes.recipes[r](
-                        settings, enviro, args.ok_to_be_rude)
+                        settings, enviro, args.ok_to_be_rude, args.no_prompt)
                     recipe.run_apply(host)
 
             if args.cookbooks:
                 for c in args.cookbooks:
                     cookbook = cookbooks.cookbooks[c](
-                        settings, enviro, args.ok_to_be_rude)
+                        settings, enviro, args.ok_to_be_rude, args.no_prompt)
                     cookbook.run_apply(host)
         finally:
             disconnect_all()

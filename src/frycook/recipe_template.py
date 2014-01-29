@@ -274,7 +274,7 @@ class Recipe(object):
           }
     '''
 
-    def __init__(self, settings, environment, ok_to_be_rude):
+    def __init__(self, settings, environment, ok_to_be_rude, no_prompt):
         '''
         Initialize the recipe object with the settings and environment
         dictionaries.
@@ -290,10 +290,15 @@ class Recipe(object):
         @type ok_to_be_rude: boolean
 
         @param ok_to_be_rude: is it ok to interrupt your users?
+
+        @type no_prompt: boolean
+
+        @param no_prompt: should we prompt the user?
         '''
         self.settings = settings
         self.environment = environment
         self.ok_to_be_rude = ok_to_be_rude
+        self.no_prompt = no_prompt
         self.mylookup = TemplateLookup(
             directories=[self.settings["package_dir"]],
             module_directory=self.settings["module_dir"])
@@ -315,7 +320,8 @@ class Recipe(object):
             print header
             print '=' * len(header)
             print self.pre_apply_message
-            raw_input('press enter to continue')
+            if not self.no_prompt:
+                raw_input('press enter to continue')
 
     post_apply_message = ""
 
@@ -330,7 +336,8 @@ class Recipe(object):
             print header
             print '=' * len(header)
             print self.post_apply_message
-            raw_input('press enter to continue')
+            if not self.no_prompt:
+                raw_input('press enter to continue')
 
     def pre_apply_checks(self, computer):
         '''
