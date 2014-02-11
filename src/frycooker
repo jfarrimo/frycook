@@ -170,6 +170,8 @@ def get_args():
     cookbook_names.sort()
 
     parser = argparse.ArgumentParser(description='Setup machines.')
+    parser.add_argument('-a', '--apply', action='store_true', default=False,
+                        help='apply components to named servers')
     parser.add_argument('-c', '--cookbook', dest='cookbooks', action='append',
                         choices=cookbook_names,
                         help='cookbook to process (can specify multiple times)'
@@ -257,35 +259,55 @@ def generate_target_list(enviro, args):
     return host_list
 
 
-def output_pre_apply_messages(enviro, settings, args):
-    if args.recipes:
-        for r in args.recipes:
-            recipe = recipes.recipes[r](
-                settings, enviro, args.ok_to_be_rude, args.no_prompt)
-            recipe.handle_pre_apply_message()
-
-    if args.cookbooks:
-        for c in args.cookbooks:
-            cookbook = cookbooks.cookbooks[c](
-                settings, enviro, args.ok_to_be_rude, args.no_prompt)
-            cookbook.handle_pre_apply_messages()
-
-
-def output_post_apply_messages(enviro, settings, args):
-    if args.recipes:
-        for r in args.recipes:
-            recipe = recipes.recipes[r](
-                settings, enviro, args.ok_to_be_rude, args.no_prompt)
-            recipe.handle_post_apply_message()
-
-    if args.cookbooks:
-        for c in args.cookbooks:
-            cookbook = cookbooks.cookbooks[c](
-                settings, enviro, args.ok_to_be_rude, args.no_prompt)
-            cookbook.handle_post_apply_messages()
+def generate_run_list(enviro, args):
+    host_list = generate_target_list(enviro, args)
+    run_list = {}
+    cookbooks = set()
+    recipes = set()
+    if args.apply:
+        for host in host_list:
+            run_list[host] = []
+            for comp in enviro['computers'][host]["components"]:
+                if comp.type == 'cookbook':
+                    run_list[host].append(comp)
+                    cookbooks.add(comp["name"])
+                elif comp.type == 'recipe':
+                    run_list[host].append(comp)
+                    recipes.add(comp["name"])
+    else:
+        for host in host_list:
+            run_list[host] = [{"type": "cookbook", "name": c} for c in args.cookbooks]
+            run_list[host].extend([{"type": "recipe", "name": r} for r in args.recipes])
+        cookbooks.update(args.cookbooks)
+        recipes.update(args.recipes)
+    return run_list, host_list, recipes, cookbooks
 
 
-def apply_recipes_cookbooks(enviro, settings, args, host_list):
+def output_pre_apply_messages(recipe_list, cookbook_list, enviro, settings, args):
+    for r in recipe_list:
+        recipe = recipes.recipes[r](
+            settings, enviro, args.ok_to_be_rude, args.no_prompt)
+        recipe.handle_pre_apply_message()
+
+    for c in cookbook_list:
+        cookbook = cookbooks.cookbooks[c](
+            settings, enviro, args.ok_to_be_rude, args.no_prompt)
+        cookbook.handle_pre_apply_messages()
+
+
+def output_post_apply_messages(recipe_list, cookbook_list, enviro, settings, args):
+    for r in recipe_list:
+        recipe = recipes.recipes[r](
+            settings, enviro, args.ok_to_be_rude, args.no_prompt)
+        recipe.handle_post_apply_message()
+
+    for c in cookbook_list:
+        cookbook = cookbooks.cookbooks[c](
+            settings, enviro, args.ok_to_be_rude, args.no_prompt)
+        cookbook.handle_post_apply_messages()
+
+
+def apply_recipes_cookbooks(enviro, settings, args, host_list, run_list):
     for host in host_list:
         env.host_string = host
         if args.user:
@@ -295,15 +317,13 @@ def apply_recipes_cookbooks(enviro, settings, args, host_list):
             cuisine.package_update()
 
         try:
-            if args.recipes:
-                for r in args.recipes:
-                    recipe = recipes.recipes[r](
+            for item in run_list[host]:
+                if item["type"] == "recipe":
+                    recipe = recipes.recipes[item["name"]](
                         settings, enviro, args.ok_to_be_rude, args.no_prompt)
                     recipe.run_apply(host)
-
-            if args.cookbooks:
-                for c in args.cookbooks:
-                    cookbook = cookbooks.cookbooks[c](
+                elif item["type"] == "cookbook":
+                    cookbook = cookbooks.cookbooks[args["name"]](
                         settings, enviro, args.ok_to_be_rude, args.no_prompt)
                     cookbook.run_apply(host)
         finally:
@@ -317,7 +337,7 @@ def main():
     enviro = load_enviro(args.environment)
 
     try:
-        host_list = generate_target_list(enviro, args)
+        run_list, host_list, recipes, cookbooks = generate_run_list(enviro, args)
 
         if args.dryrun:
             print ("actions would be applied to the following hosts: %s" %
@@ -327,10 +347,10 @@ def main():
                               separators=(',', ': ')))
             sys.exit(0)
 
-        output_pre_apply_messages(enviro, settings, args)
+        output_pre_apply_messages(recipes, cookbooks, enviro, settings, args)
         if not args.messages:
-            apply_recipes_cookbooks(enviro, settings, args, host_list)
-        output_post_apply_messages(enviro, settings, args)
+            apply_recipes_cookbooks(enviro, settings, args, host_list, run_list)
+        output_post_apply_messages(recipes, cookbooks, enviro, settings, args)
 
         print "actions completed successfully"
     except Exception, e:

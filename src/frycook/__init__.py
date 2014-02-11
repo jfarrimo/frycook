@@ -191,3 +191,5 @@ either expressed or implied, of James Yates Farrimond.
 '''
 from cookbook_template import Cookbook  # noqa
 from recipe_template import Recipe, RecipeException  # noqa
+
+__version__ = '0.2.27'
