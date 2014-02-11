@@ -268,18 +268,22 @@ def generate_run_list(enviro, args):
         for host in host_list:
             run_list[host] = []
             for comp in enviro['computers'][host]["components"]:
-                if comp.type == 'cookbook':
+                if comp["type"] == 'cookbook':
                     run_list[host].append(comp)
                     cookbooks.add(comp["name"])
-                elif comp.type == 'recipe':
+                elif comp["type"] == 'recipe':
                     run_list[host].append(comp)
                     recipes.add(comp["name"])
     else:
         for host in host_list:
-            run_list[host] = [{"type": "cookbook", "name": c} for c in args.cookbooks]
-            run_list[host].extend([{"type": "recipe", "name": r} for r in args.recipes])
-        cookbooks.update(args.cookbooks)
-        recipes.update(args.recipes)
+            if args.cookbooks:
+                run_list[host] = [{"type": "cookbook", "name": c} for c in args.cookbooks]
+            if args.recipes:
+                run_list[host].extend([{"type": "recipe", "name": r} for r in args.recipes])
+        if args.cookbooks:
+            cookbooks.update(args.cookbooks)
+        if args.recipes:
+            recipes.update(args.recipes)
     return run_list, host_list, recipes, cookbooks
 
 
@@ -323,7 +327,7 @@ def apply_recipes_cookbooks(enviro, settings, args, host_list, run_list):
                         settings, enviro, args.ok_to_be_rude, args.no_prompt)
                     recipe.run_apply(host)
                 elif item["type"] == "cookbook":
-                    cookbook = cookbooks.cookbooks[args["name"]](
+                    cookbook = cookbooks.cookbooks[item["name"]](
                         settings, enviro, args.ok_to_be_rude, args.no_prompt)
                     cookbook.run_apply(host)
         finally:
