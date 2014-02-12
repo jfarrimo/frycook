@@ -276,8 +276,9 @@ def generate_run_list(enviro, args):
                     recipes.add(comp["name"])
     else:
         for host in host_list:
+            run_list[host] = []
             if args.cookbooks:
-                run_list[host] = [{"type": "cookbook", "name": c} for c in args.cookbooks]
+                run_list[host].extend([{"type": "cookbook", "name": c} for c in args.cookbooks])
             if args.recipes:
                 run_list[host].extend([{"type": "recipe", "name": r} for r in args.recipes])
         if args.cookbooks:

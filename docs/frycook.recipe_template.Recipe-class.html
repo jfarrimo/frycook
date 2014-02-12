@@ -127,7 +127,8 @@ object --+
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">settings</span>,
         <span class="summary-sig-arg">environment</span>,
-        <span class="summary-sig-arg">ok_to_be_rude</span>)</span><br />
+        <span class="summary-sig-arg">ok_to_be_rude</span>,
+        <span class="summary-sig-arg">no_prompt</span>)</span><br />
       Initialize the recipe object with the settings and environment 
       dictionaries.</td>
           <td align="right" valign="top">
@@ -145,8 +146,7 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#handle_pre_apply_message" class="summary-sig-name">handle_pre_apply_message</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">computer</span>)</span><br />
+          <td><span class="summary-sig"><a name="handle_pre_apply_message"></a><span class="summary-sig-name">handle_pre_apply_message</span>(<span class="summary-sig-arg">self</span>)</span><br />
       Print the pre-apply message for the user and wait for him/her to hit 
       return before continuing.</td>
           <td align="right" valign="top">
@@ -164,8 +164,7 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#handle_post_apply_message" class="summary-sig-name">handle_post_apply_message</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">computer</span>)</span><br />
+          <td><span class="summary-sig"><a name="handle_post_apply_message"></a><span class="summary-sig-name">handle_post_apply_message</span>(<span class="summary-sig-arg">self</span>)</span><br />
       Print the post-apply message for the user and wait for him/her to hit
       return before continuing.</td>
           <td align="right" valign="top">
@@ -238,8 +237,7 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#run_messages" class="summary-sig-name">run_messages</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">computer</span>)</span><br />
+          <td><span class="summary-sig"><a name="run_messages"></a><span class="summary-sig-name">run_messages</span>(<span class="summary-sig-arg">self</span>)</span><br />
       Print the pre and post apply messages only, as if the apply had been 
       run.</td>
           <td align="right" valign="top">
@@ -325,8 +323,8 @@ object --+
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#_push_package_file_set" class="summary-sig-name" onclick="show_private();">_push_package_file_set</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">package_name</span>,
         <span class="summary-sig-arg">template_env</span>)</span><br />
-      Implement the file copying portion of the push_package_file_set 
-      operation.</td>
+      Implement the file copying and deleting portion of the 
+      push_package_file_set operation.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe._push_package_file_set">source&nbsp;code</a></span>
             
@@ -544,7 +542,8 @@ object --+
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">settings</span>,
         <span class="sig-arg">environment</span>,
-        <span class="sig-arg">ok_to_be_rude</span>)</span>
+        <span class="sig-arg">ok_to_be_rude</span>,
+        <span class="sig-arg">no_prompt</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
@@ -560,60 +559,11 @@ object --+
         <li><strong class="pname"><code>settings</code></strong> (dict) - settings dictionary</li>
         <li><strong class="pname"><code>environment</code></strong> (dict) - metadata dictionary</li>
         <li><strong class="pname"><code>ok_to_be_rude</code></strong> (boolean) - is it ok to interrupt your users?</li>
+        <li><strong class="pname"><code>no_prompt</code></strong> (boolean) - should we prompt the user?</li>
     </ul></dd>
     <dt>Overrides:
         object.__init__
     </dt>
-  </dl>
-</td></tr></table>
-</div>
-<a name="handle_pre_apply_message"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_pre_apply_message</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">computer</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.handle_pre_apply_message">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>Print the pre-apply message for the user and wait for him/her to hit 
-  return before continuing.</p>
-  <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to print pre-apply message for</li>
-    </ul></dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="handle_post_apply_message"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_post_apply_message</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">computer</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.handle_post_apply_message">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>Print the post-apply message for the user and wait for him/her to hit 
-  return before continuing.</p>
-  <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to print post-apply message for</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -704,31 +654,6 @@ object --+
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe to</li>
-    </ul></dd>
-  </dl>
-</td></tr></table>
-</div>
-<a name="run_messages"></a>
-<div>
-<table class="details" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr><td>
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-  <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">run_messages</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">computer</span>)</span>
-  </h3>
-  </td><td align="right" valign="top"
-    ><span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.run_messages">source&nbsp;code</a></span>&nbsp;
-    </td>
-  </tr></table>
-  
-  <p>Print the pre and post apply messages only, as if the apply had been 
-  run.</p>
-  <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to show messages for</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -844,9 +769,9 @@ object --+
     </td>
   </tr></table>
   
-  <p>Implement the file copying portion of the push_package_file_set 
-  operation.  The calling function sets up the template environment, then 
-  calls this one.</p>
+  <p>Implement the file copying and deleting portion of the 
+  push_package_file_set operation.  The calling function sets up the 
+  template environment, then calls this one.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -898,6 +823,10 @@ object --+
   &lt;path&gt;:&lt;owner&gt;:&lt;group&gt;:&lt;perms&gt; that specifies the
   owner, group, and permissions for the path specified 
   (directory-relative).</p>
+  <p>If a file named fck_delete.txt is encountered in a directory, then 
+  it's expected to have contents of lines containing names of files to 
+  delete, one per line.  This way you can clean out a directory as well as 
+  copy files to it.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -1050,7 +979,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Wed Jan 23 09:36:34 2013
+    Generated by Epydoc 3.0.1 on Tue Feb 11 19:24:17 2014
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

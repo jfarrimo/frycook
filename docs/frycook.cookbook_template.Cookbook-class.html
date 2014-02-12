@@ -120,7 +120,8 @@ object --+
           <td><span class="summary-sig"><a href="frycook.cookbook_template.Cookbook-class.html#__init__" class="summary-sig-name">__init__</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">settings</span>,
         <span class="summary-sig-arg">environment</span>,
-        <span class="summary-sig-arg">ok_to_be_rude</span>)</span><br />
+        <span class="summary-sig-arg">ok_to_be_rude</span>,
+        <span class="summary-sig-arg">no_prompt</span>)</span><br />
       Initialize the cookbook object with the settings and environment 
       dictionaries.</td>
           <td align="right" valign="top">
@@ -138,8 +139,7 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="frycook.cookbook_template.Cookbook-class.html#handle_pre_apply_messages" class="summary-sig-name">handle_pre_apply_messages</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">computer</span>)</span><br />
+          <td><span class="summary-sig"><a href="frycook.cookbook_template.Cookbook-class.html#handle_pre_apply_messages" class="summary-sig-name">handle_pre_apply_messages</a>(<span class="summary-sig-arg">self</span>)</span><br />
       Run the pre_apply_message functions for all the recipes defined in 
       recipe_list.</td>
           <td align="right" valign="top">
@@ -157,8 +157,7 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="frycook.cookbook_template.Cookbook-class.html#handle_post_apply_messages" class="summary-sig-name">handle_post_apply_messages</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">computer</span>)</span><br />
+          <td><span class="summary-sig"><a href="frycook.cookbook_template.Cookbook-class.html#handle_post_apply_messages" class="summary-sig-name">handle_post_apply_messages</a>(<span class="summary-sig-arg">self</span>)</span><br />
       Run the post_apply_message functions for all the recipes defined in 
       recipe_list.</td>
           <td align="right" valign="top">
@@ -231,8 +230,7 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a href="frycook.cookbook_template.Cookbook-class.html#run_messages" class="summary-sig-name">run_messages</a>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">computer</span>)</span><br />
+          <td><span class="summary-sig"><a href="frycook.cookbook_template.Cookbook-class.html#run_messages" class="summary-sig-name">run_messages</a>(<span class="summary-sig-arg">self</span>)</span><br />
       Run the handle_pre_apply_messages and handle_post_apply_messages 
       functions for all the recipes defined in recipe_list.</td>
           <td align="right" valign="top">
@@ -341,7 +339,8 @@ object --+
   <h3 class="epydoc"><span class="sig"><span class="sig-name">__init__</span>(<span class="sig-arg">self</span>,
         <span class="sig-arg">settings</span>,
         <span class="sig-arg">environment</span>,
-        <span class="sig-arg">ok_to_be_rude</span>)</span>
+        <span class="sig-arg">ok_to_be_rude</span>,
+        <span class="sig-arg">no_prompt</span>)</span>
     <br /><em class="fname">(Constructor)</em>
   </h3>
   </td><td align="right" valign="top"
@@ -357,6 +356,7 @@ object --+
         <li><strong class="pname"><code>settings</code></strong> (dict) - settings dictionary</li>
         <li><strong class="pname"><code>environment</code></strong> (dict) - metadata dictionary</li>
         <li><strong class="pname"><code>ok_to_be_rude</code></strong> (boolean) - is it ok to interrupt your users?</li>
+        <li><strong class="pname"><code>no_prompt</code></strong> (boolean) - should we prompt the user?</li>
     </ul></dd>
     <dt>Overrides:
         object.__init__
@@ -371,8 +371,7 @@ object --+
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_pre_apply_messages</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">computer</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_pre_apply_messages</span>(<span class="sig-arg">self</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="frycook.cookbook_template-pysrc.html#Cookbook.handle_pre_apply_messages">source&nbsp;code</a></span>&nbsp;
@@ -383,10 +382,6 @@ object --+
   recipe_list. Override this if there are cookbook-level messages you would
   like to add.  Be sure to call the base if you override this.</p>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe checks to</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -397,8 +392,7 @@ object --+
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_post_apply_messages</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">computer</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">handle_post_apply_messages</span>(<span class="sig-arg">self</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="frycook.cookbook_template-pysrc.html#Cookbook.handle_post_apply_messages">source&nbsp;code</a></span>&nbsp;
@@ -409,10 +403,6 @@ object --+
   recipe_list. Override this if there are cookbook-level messages you would
   like to add.  Be sure to call the base if you override this.</p>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe checks to</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -502,8 +492,7 @@ object --+
 <tr><td>
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
   <tr valign="top"><td>
-  <h3 class="epydoc"><span class="sig"><span class="sig-name">run_messages</span>(<span class="sig-arg">self</span>,
-        <span class="sig-arg">computer</span>)</span>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">run_messages</span>(<span class="sig-arg">self</span>)</span>
   </h3>
   </td><td align="right" valign="top"
     ><span class="codelink"><a href="frycook.cookbook_template-pysrc.html#Cookbook.run_messages">source&nbsp;code</a></span>&nbsp;
@@ -515,10 +504,6 @@ object --+
   display all the possible messages to the user without actually applying 
   the cookbook.  This is usually just called from frycooker.</p>
   <dl class="fields">
-    <dt>Parameters:</dt>
-    <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to show messages for</li>
-    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -546,7 +531,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Wed Jan 23 09:36:34 2013
+    Generated by Epydoc 3.0.1 on Tue Feb 11 19:24:17 2014
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

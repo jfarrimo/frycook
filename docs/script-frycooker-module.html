@@ -82,7 +82,8 @@
          hosts.tmplt       # template that becomes /etc/hosts on the target
                            # server
      nginx                 # root for nginx package files
-       etc                 # corresponds to /etc directory on the target server
+       etc                 # corresponds to /etc directory on the
+                           # target server
          default           # corresponds to /etc/default directory on the
                            # target server
            nginx           # corresponds to /etc/default/nginx file on the
@@ -99,7 +100,8 @@
                            # directory on target server
            sites-enabled   # corresponds to /etc/nginx/sites-enable directory
                            # on target server
-       srv                 # corresponds to /srv directory on the target server
+       srv                 # corresponds to /srv directory on the
+                           # target server
          www               # corresponds to /srv/www directory on the target
                            # server
            50x.html        # corresponds to /srv/www/50x.html file on target
@@ -152,6 +154,31 @@
     representing official policies, either expressed or implied, of James 
     Yates Farrimond.</p>
 
+<!-- ==================== CLASSES ==================== -->
+<a name="section-Classes"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Classes</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-Classes"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+        <a href="script-frycooker.InvalidTarget-class.html" class="summary-name">InvalidTarget</a>
+    </td>
+  </tr>
+</table>
 <!-- ==================== FUNCTIONS ==================== -->
 <a name="section-Functions"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -207,6 +234,132 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
+          <td><span class="summary-sig"><a name="load_settings"></a><span class="summary-sig-name">load_settings</span>(<span class="summary-sig-arg">filename</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="load_enviro"></a><span class="summary-sig-name">load_enviro</span>(<span class="summary-sig-arg">filename</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="generate_target_list"></a><span class="summary-sig-name">generate_target_list</span>(<span class="summary-sig-arg">enviro</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="generate_run_list"></a><span class="summary-sig-name">generate_run_list</span>(<span class="summary-sig-arg">enviro</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="output_pre_apply_messages"></a><span class="summary-sig-name">output_pre_apply_messages</span>(<span class="summary-sig-arg">recipe_list</span>,
+        <span class="summary-sig-arg">cookbook_list</span>,
+        <span class="summary-sig-arg">enviro</span>,
+        <span class="summary-sig-arg">settings</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="output_post_apply_messages"></a><span class="summary-sig-name">output_post_apply_messages</span>(<span class="summary-sig-arg">recipe_list</span>,
+        <span class="summary-sig-arg">cookbook_list</span>,
+        <span class="summary-sig-arg">enviro</span>,
+        <span class="summary-sig-arg">settings</span>,
+        <span class="summary-sig-arg">args</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="apply_recipes_cookbooks"></a><span class="summary-sig-name">apply_recipes_cookbooks</span>(<span class="summary-sig-arg">enviro</span>,
+        <span class="summary-sig-arg">settings</span>,
+        <span class="summary-sig-arg">args</span>,
+        <span class="summary-sig-arg">host_list</span>,
+        <span class="summary-sig-arg">run_list</span>)</span></td>
+          <td align="right" valign="top">
+            
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
           <td><span class="summary-sig"><a name="main"></a><span class="summary-sig-name">main</span>()</span></td>
           <td align="right" valign="top">
             
@@ -241,7 +394,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Wed Jan 23 09:36:34 2013
+    Generated by Epydoc 3.0.1 on Tue Feb 11 19:24:17 2014
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
