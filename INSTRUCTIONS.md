@@ -14,8 +14,208 @@ in order to render their contents.  This means that these dictionaries
 map nicely to both the storage and rendering functions and keep frycook
 simple.
 
-settings dictionary
--------------------
+Recipes and cookbooks are python code that get executed when building
+and updating servers.  Each recipe and cookbook lives in its own file.
+
+Before you can do anything with frycook, you'll need to install its
+python package from pypi.  I usually create a virtualenv to run it in,
+but it can also be installed globally.
+
+    pip install frycook
+
+Globules
+========
+
+All the files necessary for frycook to function are usually arranged in
+a directory structure that I call a *globule*.  The rest of these
+instructions will walk you through this globule and explain all the
+pieces and how they work together.
+
+Example:
+
+    awesome_recipes           # root directory
+      packages                # directory for the package files
+        hosts                 # root for hosts package files
+          etc                 # corresponds to /etc on the target server
+            hosts.tmplt       # template that becomes /etc/hosts on the target server
+        nginx                 # root for nginx package files
+          etc                 # corresponds to /etc directory on the target server
+            default           # corresponds to /etc/default directory on the target server
+              nginx           # corresponds to /etc/default/nginx file on the target server
+            nginx             # corresponds to /etc/nginx directory on target server
+              conf.d          # corresponds to /etc/nginx/conf.d directory on target server
+              nginx.conf      # corresponds to /etc/nginx/nginx.conf file on target server
+              sites-available # corresponds to /etc/nginx/sites-available directory on target server
+                default       # corresponds to /etc/nginx/sites-available/default directory on target server
+              sites-enabled   # corresponds to /etc/nginx/sites-enable directory on target server
+          srv                 # corresponds to /srv directory on the target server
+            www               # corresponds to /srv/www directory on the target server
+              50x.html        # corresponds to /srv/www/50x.html file on target server
+              index.html      # corresponds to /srv/www/index.html file on target server
+      setup                   # directory for non-package files
+        comp_test1.json       # included environment file for computer test1
+        environment.json      # environment file
+        runner.sh             # wrapper for frycooker that sets PYTHONPATH
+        settings.json         # settings file
+        cookbooks             # directory to hold the cookbooks package
+          __init__.py         # define the cookbook list here and import all cookbook classes
+          base.py             # cookbook referencing all the recipes for a base server setup
+          web.py              # cookbook for make a base server into a web server
+        recipes               # directory to hold the recipes package
+          __init__.py         # define the recipe list here and import all recipe classes
+          example_com.py      # recipe for setting up example.com on a web server
+          hosts.py            # recipe for setting up the /etc/hosts file
+          nginx.py            # recipe for setting up nginx
+          root.py             # recipe for setting the root user's authorized_keys file
+
+Recipes
+=======
+
+Recipes define subsystems that are distinct parts of larger systems.
+They are the basic units of setup in frycook.  Generally a recipe
+corresponds to a package that needs to be installed or configured.
+
+example recipe
+--------------
+
+This example sets up the hosts file on a computer.
+
+    import cuisine
+
+    from frycook import Recipe
+
+    class RecipeHosts(Recipe):
+        def apply(self, computer):
+            group = self.environment["computers"][computer]["host_group"]
+            computers = self.environment["groups"][group]["computers"]
+            sibs = [comp for comp in computers if comp != computer]
+            tmp_env = {"host": computer,
+                       "sibs": sibs,
+                       "computers": self.environment["computers"]}
+            self.push_package_file_set('hosts', computer, tmp_env)
+
+            cuisine.sudo("service hostname restart")
+
+idempotence
+-----------
+
+One thing to keep in mind when creating recipes and cookbooks is
+idempotency.  By keeping idempotency in mind in general you can create
+recipes that you can run again and again to push out minor changes to a
+package.  This way your recipes become the only way that you modify your
+servers and can be a single chokepoint that you can monitor to make sure
+things happen properly.
+
+Lots of the cuisine functions you'll use have an "ensure" version that
+first checks to see if a condition is true before applying it, such as
+checking if a package is installed before trying to install it.  This is
+nice when things could cause undesired configuration changes or
+expensive operations that you don't want to happen every time.  These
+functions are a huge aid in writing idempotent recipes and cookbooks.
+
+rudeness
+--------
+
+Another thing to keep in mind is that some actions performed in recipes
+can affect the end users of the systems, in effect being rude to them.
+This might cause an outage or otherwise mess them up.  The recipe class
+keeps track of whether or not this is ok in its 'ok_to_be_rude' variable
+so you can know what actions are acceptable.  Consult this before doing
+rude things.
+
+file set copying
+----------------
+
+The Recipe class defines a few helper functions for handling templates
+and copying files to servers.  It runs files with a .tmplt extension
+through Mako, using the dictionary you pass to it.  Regular files just
+get copied.  You can specify owner, group, and permissions on a
+per-directory and per-file basis.
+
+git repo checkouts
+------------------
+
+The Recipe class also defines some helper functions for working with git
+repos.  You can checkout a git repo onto the remote machine, or check it
+out locally and copy it to the remote machine if you don't want to setup
+the remote machine to be able to do checkouts.
+
+apply process
+-------------
+
+This is where you apply a recipe to a server.  There are two class
+methods that get called during the apply process, and possibly two
+messages that get displayed.  Generally you'll just override the apply
+method and sometimes add pre_apply or post_apply messages.  If you
+override pre_apply_checks, remember to call the base class method.
+Here's the order that things happen in:
+
+pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
+
+Cookbooks
+=========
+
+Cookbooks are sets of recipes to apply to a server to create systems
+made up of subsystems.
+
+Example:
+
+    from frycook import Cookbook
+
+    from recipes import RecipeHosts
+    from recipes import RecipeRootUser
+    from recipes import RecipeShorewall
+    from recipes import RecipeSSH
+    from recipes import RecipeFail2ban
+    from recipes import RecipePostfix
+
+    class CookbookBase(Cookbook):
+        recipe_list = [RecipeRootUser,
+                       RecipeHosts,
+                       RecipeShorewall,
+                       RecipeSSH,
+                       RecipeFail2ban,
+                       RecipePostfix]
+
+
+Packages Directory
+==================
+
+The packages directory contains all the files needed by the recipes.
+There is one sub-directory per package, and each package generally
+corresponds to a recipe.  Within each package the directories and files
+are laid out the exact same as they will be on the target systems.  Any
+files with .tmplt extensions will be processed as mako templates before
+being copied out to computers.  The fck_metadata.txt files define the
+ownership and permissions for the files and directories when they're
+copied to the target system.  The fck_delete.txt files list files that
+should be deleted in that directory on the target systems.
+
+Here's an example layout:
+
+    packages                 # directory for the package files
+      hosts                  # root for hosts package files
+        etc                  # corresponds to /etc on the target server
+          hosts.tmplt        # template that becomes /etc/hosts on the target server
+      nginx                  # root for nginx package files
+        etc                  # corresponds to /etc directory on the target server
+          default            # corresponds to /etc/default directory on the target server
+            nginx            # corresponds to /etc/default/nginx file on the target server
+          nginx              # corresponds to /etc/nginx directory on target server
+            fck_metadata.txt # define ownership and perms for the /etc/nginx directory on the server
+            nginx.conf       # corresponds to /etc/nginx/nginx.conf file on target server
+            conf.d           # corresponds to /etc/nginx/conf.d directory on target server
+            sites-available  # corresponds to /etc/nginx/sites-available directory on target server
+              default        # corresponds to /etc/nginx/sites-available/default directory on target server
+              fck_delete.txt # lists files to be deleted from the sites-available directory on target server
+            sites-enabled    # corresponds to /etc/nginx/sites-enabled directory on target server
+        srv                  # corresponds to /srv directory on the target server
+          www                # corresponds to /srv/www directory on the target server
+            50x.html         # corresponds to /srv/www/50x.html file on target server
+            index.html       # corresponds to /srv/www/index.html file on target server
+
+Settings Dictionary
+===================
 
 There are a few settings that frycook depends on.  They're contained in
 a dictionary called settings that's passed to the constructors for
@@ -47,8 +247,8 @@ Example:
       "file_ignores": ".*~"
       }
 
-environment dictionary
-----------------------
+Environment Dictionary
+======================
 
 The environment dictionary contains all the metadata about the computers
 and the environment they live in that the recipes and cookbooks need to
@@ -113,112 +313,6 @@ Example:
       }
     }
 
-
-packages directory
-------------------
-
-The packages directory contains all the files needed by the recipes.
-There is one sub-directory per package, and each package generally
-corresponds to a recipe.  Within each package the directories and files
-are laid out the exact same as they will be on the target systems.  Any
-files with .tmplt extensions will be processed as mako templates before
-being copied out to computers.  The fck_metadata.txt files define the
-ownership and permissions for the files and directories when they're
-copied to the target system.  The fck_delete.txt files list files that
-should be deleted in that directory on the target systems.
-
-Here's an example layout:
-
-    packages                 # directory for the package files
-      hosts                  # root for hosts package files
-        etc                  # corresponds to /etc on the target server
-          hosts.tmplt        # template that becomes /etc/hosts on the target server
-      nginx                  # root for nginx package files
-        etc                  # corresponds to /etc directory on the target server
-          default            # corresponds to /etc/default directory on the target server
-            nginx            # corresponds to /etc/default/nginx file on the target server
-          nginx              # corresponds to /etc/nginx directory on target server
-            fck_metadata.txt # define ownership and perms for the /etc/nginx directory on the server
-            nginx.conf       # corresponds to /etc/nginx/nginx.conf file on target server
-            conf.d           # corresponds to /etc/nginx/conf.d directory on target server
-            sites-available  # corresponds to /etc/nginx/sites-available directory on target server
-              default        # corresponds to /etc/nginx/sites-available/default directory on target server
-              fck_delete.txt # lists files to be deleted from the sites-available directory on target server
-            sites-enabled    # corresponds to /etc/nginx/sites-enabled directory on target server
-        srv                  # corresponds to /srv directory on the target server
-          www                # corresponds to /srv/www directory on the target server
-            50x.html         # corresponds to /srv/www/50x.html file on target server
-            index.html       # corresponds to /srv/www/index.html file on target server
-
-Recipes
-=======
-
-Recipes define subsystems that are distinct parts of larger systems.
-They are the basic units of setup in frycook.  Generally a recipe
-corresponds to a package that needs to be installed or configured.
-
-idempotence
------------
-
-One thing to keep in mind when creating recipes and cookbooks is
-idempotency.  By keeping idempotency in mind in general you can create
-recipes that you can run again and again to push out minor changes to a
-package.  This way your recipes become the only way that you modify your
-servers and can be a single chokepoint that you can monitor to make sure
-things happen properly.
-
-Lots of the cuisine functions you'll use have an "ensure" version that
-first checks to see if a condition is true before applying it, such as
-checking if a package is installed before trying to install it.  This is
-nice when things could cause undesired configuration changes or
-expensive operations that you don't want to happen every time.  These
-functions are a huge aid in writing idempotent recipes and cookbooks.
-
-rudeness
---------
-
-Another thing to keep in mind is that some actions performed in recipes
-can affect the end users of the systems, in effect being rude to them.
-This might cause an outage or otherwise mess them up.  The recipe class
-keeps track of whether or not this is ok in its 'ok_to_be_rude' variable
-so you can know what actions are acceptable.  Consult this before doing
-rude things.
-
-file set copying
-----------------
-
-The Recipe class defines a few helper functions for handling templates
-and copying files to servers.  It runs files with a .tmplt extension
-through Mako, using the dictionary you pass to it.  Regular files just
-get copied.  You can specify owner, group, and permissions on a
-per-directory and per-file basis.
-
-git repo checkouts
-------------------
-
-The Recipe class also defines some helper functions for working with git
-repos.  You can checkout a git repo onto the remote machine, or check it
-out locally and copy it to the remote machine if you don't want to setup
-the remote machine to be able to do checkouts.
-
-apply process
--------------
-
-This is where you apply a recipe to a server.  There are two class
-methods that get called during the apply process, and possibly two
-messages that get displayed.  Generally you'll just override the apply
-method and sometimes add pre_apply or post_apply messages.  If you
-override pre_apply_checks, remember to call the base class method.
-Here's the order that things happen in:
-
-pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
-
-Cookbooks
-=========
-
-Cookbooks are sets of recipes to apply to a server to create systems
-made up of subsystems.
-
 Frycooker
 =========
 
@@ -234,9 +328,54 @@ Frycooker depends on a few things to work properly.
 
 Contains the settings for the program, in JSON format.
 
+Example:
+
+    {
+    "package_dir": "~/Dropbox/dev/frycook/sample/packages/",
+    "module_dir": "/tmp/mako_modules",
+    "file_ignores": ".*~"
+    }
+
 ** environment.json file **
 
-Contains the environment for the program, in JSON format.
+Contains the environment for the program, in JSON format.  This file can
+have include directives that pull in additonal json files so that you
+can split up large environments into multiple files.
+
+environment.json:
+
+    {
+      "users": {
+        "root": {
+          "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"
+        },
+        "example_com": {
+          "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"
+        }
+      },
+
+      "computers": {
+        "imports": ["comp_test1.json"]
+      },
+
+      "groups": {
+        "test" : {
+          "computers": ["test1"]
+        }
+      }
+    }
+
+comp_test1.json:
+
+    "test1": {
+      "domain_name": "fubu.example",
+      "host_group": "test",
+      "public_ifaces": ["eth0", "eth1"],
+      "public_ips": {"192.168.56.10": "test1.fubu.example",
+                     "192.168.56.11": "test2.fubu.example"},
+      "private_ifaces": ["eth2"],
+      "private_ips": {"192.168.1.126": "test1"}
+    }
 
 ** packages directory **
 
@@ -251,65 +390,6 @@ There should be a recipe list in the __init__.py file for the packge.
 
 This should be accessible via the PYTHONPATH so it can be imported.
 There should be a recipe list in the __init__.py file for the packge.
-
-Globules
---------
-
-All the files necessary for frycooker to run are usually arranged in a
-directory structure that I call a *globule*.  Here's an example of
-that::
-
-    awesome_recipes           # root directory
-      packages                # directory for the package files
-        hosts                 # root for hosts package files
-          etc                 # corresponds to /etc on the target server
-            hosts.tmplt       # template that becomes /etc/hosts on the target
-                              # server
-        nginx                 # root for nginx package files
-          etc                 # corresponds to /etc directory on the
-                              # target server
-            default           # corresponds to /etc/default directory on the
-                              # target server
-              nginx           # corresponds to /etc/default/nginx file on the
-                              # target server
-            nginx             # corresponds to /etc/nginx directory on target
-                              # server
-              nginx.conf      # corresponds to /etc/nginx/nginx.conf file on
-                              # target server
-              conf.d          # corresponds to /etc/nginx/conf.d directory on
-                              # target server
-              sites-available # corresponds to /etc/nginx/sites-available
-                              # directory on target server
-                default       # corresponds to /etc/nginx/sites-available/default
-                              # directory on target server
-              sites-enabled   # corresponds to /etc/nginx/sites-enable directory
-                              # on target server
-          srv                 # corresponds to /srv directory on the
-                              # target server
-            www               # corresponds to /srv/www directory on the target
-                              # server
-              50x.html        # corresponds to /srv/www/50x.html file on target
-                              # server
-              index.html      # corresponds to /srv/www/index.html file on target
-                              # server
-      setup                   # directory for non-package files
-        runner.sh             # wrapper for frycooker that sets PYTHONPATH
-        settings.json         # settings file
-        environment.json      # environment file
-        cookbooks             # directory to hold the cookbooks package
-          __init__.py         # define the cookbook list here and import all
-                              # cookbook classes
-          base.py             # cookbook referencing all the recipes for a base
-                              # server setup
-          web.py              # cookbook for make a base server into a web server
-        recipes               # directory to hold the recipes package
-          __init__.py         # define the recipe list here and import all recipe
-                              # classes
-          root.py             # recipe for setting the root user's
-                              # authorized_keys file
-          hosts.py            # recipe for setting up the /etc/hosts file
-          nginx.py            # recipe for setting up nginx
-          example_com.py      # recipe for setting up example.com on a web server
 
 ----------------
 Copyright (c) James Yates Farrimond. All rights reserved.
