@@ -1,11 +1,16 @@
 Frycook
 =======
 
-Frycook depends on recipes and cookbooks to define how systems are
-built.  Recipes and cookbooks in turn use settings, environments, and
-packages to do their work.  The settings and environments are passed
-around as json-translatable dictionaries.  Packages live on disk as
-directories and files.
+Frycook is a system for installing and maintaining software on Linux
+computers.  It consists of a framework to build systems with and a
+program you run to apply the things you built with the framework to your
+computers.
+
+At the highest level Frycook depends on recipes and cookbooks to define
+how systems are built.  Recipes and cookbooks in turn use settings,
+environments, and packages to do their work.  The settings and
+environments are passed around within the framework as json-translatable
+dictionaries.  Packages live on disk as directories and files.
 
 Settings and environments exist as json-like dictionaries because they
 are easy to turn into json files, and then read back from them, and
@@ -16,6 +21,9 @@ simple.
 
 Recipes and cookbooks are python code that get executed when building
 and updating servers.  Each recipe and cookbook lives in its own file.
+
+Setup
+=====
 
 Before you can do anything with frycook, you'll need to install its
 python package from pypi.  I usually create a virtualenv to run it in,
@@ -95,6 +103,33 @@ This example sets up the hosts file on a computer.
             self.push_package_file_set('hosts', computer, tmp_env)
 
             cuisine.sudo("service hostname restart")
+
+recipe list
+-----------
+
+There should be a recipe list in the __init__.py file for the packge.
+
+Here's the sample init file:
+
+    from fail2ban import RecipeFail2ban
+    from hosts import RecipeHosts
+    from nginx import RecipeNginx
+    from postfix import RecipePostfix
+    from root_user import RecipeRootUser
+    from example_com import RecipeExampleCom
+    from shorewall import RecipeShorewall
+    from ssh import RecipeSSH
+
+    recipes = {
+        'fail2ban': RecipeFail2ban,
+        'hosts': RecipeHosts,
+        'nginx': RecipeNginx,
+        'postfix': RecipePostfix,
+        'root_user': RecipeRootUser,
+        'example_com': RecipeExampleCom,
+        'shorewall': RecipeShorewall,
+        'ssh': RecipeSSH
+        }
 
 idempotence
 -----------
@@ -177,6 +212,18 @@ Example:
                        RecipeFail2ban,
                        RecipePostfix]
 
+There should be a cookbook list in the __init__.py file for the
+cookbooks packge.
+
+Here's the init file for the sample cookbooks module:
+
+    from base import CookbookBase
+    from web import CookbookWeb
+
+    cookbooks = {
+        'base': CookbookBase,
+        'web': CookbookWeb
+        }
 
 Packages Directory
 ==================
@@ -191,35 +238,46 @@ ownership and permissions for the files and directories when they're
 copied to the target system.  The fck_delete.txt files list files that
 should be deleted in that directory on the target systems.
 
-Here's an example layout:
+Here's the packages directory layout from our sample globule:
 
-    packages                 # directory for the package files
-      hosts                  # root for hosts package files
-        etc                  # corresponds to /etc on the target server
-          hosts.tmplt        # template that becomes /etc/hosts on the target server
-      nginx                  # root for nginx package files
-        etc                  # corresponds to /etc directory on the target server
-          default            # corresponds to /etc/default directory on the target server
-            nginx            # corresponds to /etc/default/nginx file on the target server
-          nginx              # corresponds to /etc/nginx directory on target server
-            fck_metadata.txt # define ownership and perms for the /etc/nginx directory on the server
-            nginx.conf       # corresponds to /etc/nginx/nginx.conf file on target server
-            conf.d           # corresponds to /etc/nginx/conf.d directory on target server
-            sites-available  # corresponds to /etc/nginx/sites-available directory on target server
-              default        # corresponds to /etc/nginx/sites-available/default directory on target server
-              fck_delete.txt # lists files to be deleted from the sites-available directory on target server
-            sites-enabled    # corresponds to /etc/nginx/sites-enabled directory on target server
-        srv                  # corresponds to /srv directory on the target server
-          www                # corresponds to /srv/www directory on the target server
-            50x.html         # corresponds to /srv/www/50x.html file on target server
-            index.html       # corresponds to /srv/www/index.html file on target server
+    packages                # directory for the package files
+      hosts                 # root for hosts package files
+        etc                 # corresponds to /etc on the target server
+          hosts.tmplt       # template that becomes /etc/hosts on the target server
+      nginx                 # root for nginx package files
+        etc                 # corresponds to /etc directory on the target server
+          default           # corresponds to /etc/default directory on the target server
+            nginx           # corresponds to /etc/default/nginx file on the target server
+          nginx             # corresponds to /etc/nginx directory on target server
+            conf.d          # corresponds to /etc/nginx/conf.d directory on target server
+            nginx.conf      # corresponds to /etc/nginx/nginx.conf file on target server
+            sites-available # corresponds to /etc/nginx/sites-available directory on target server
+              default       # corresponds to /etc/nginx/sites-available/default directory on target server
+            sites-enabled   # corresponds to /etc/nginx/sites-enable directory on target server
+        srv                 # corresponds to /srv directory on the target server
+          www               # corresponds to /srv/www directory on the target server
+            50x.html        # corresponds to /srv/www/50x.html file on target server
+            index.html      # corresponds to /srv/www/index.html file on target server
 
-Settings Dictionary
-===================
+regular files
+-------------
 
-There are a few settings that frycook depends on.  They're contained in
-a dictionary called settings that's passed to the constructors for
-Cookbooks and Recipes.  It has the following keys:
+template files
+--------------
+
+fck_delete.txt files
+--------------------
+
+fck_metadata.txt files
+----------------------
+
+Settings
+========
+
+There are a few settings that frycook depends on.  They are read in from
+a JSON file called settings.json and are passed around as a dictionary
+to the constructors for Cookbooks and Recipes.  The settings dicionary
+has the following keys:
 
 *package_dir*: root of the packages hierarchy for the file copying
 routines to look in
@@ -238,20 +296,24 @@ the value, it will be replaced with the home directory of the user
 running frycooker, just like in bash.  For this example, that would be
 the "package_dir" and "module_dir" keys.
 
-Example:
+Example settings.json file:
 
-      {
+    {
       "package_dir": "~/bigawesomecorp/admin/packages/",
       "module_dir": "/tmp/bigawesomecorp/mako_modules",
       "tmp_dir": "/tmp",
       "file_ignores": ".*~"
-      }
+    }
 
-Environment Dictionary
-======================
+Environment
+===========
 
-The environment dictionary contains all the metadata about the computers
-and the environment they live in that the recipes and cookbooks need to
+Frycook depends on having detailed knowledge of the metadata needed by
+all the components when software is being setup on the computers.  It is
+read in from a set of files into a single dictionary that is passed
+around to the parts of the frycook framework.  The environment
+dictionary contains all the metadata about the computers and the
+environment they live in that the recipes and cookbooks need to
 function.  Most of its data is directly relevant to specific recipes and
 is filled in depending on the recipes' needs.  It's a dictionary with
 three main sections that should always be there:
@@ -313,34 +375,10 @@ Example:
       }
     }
 
-Frycooker
-=========
-
-Frycooker is the program that takes all your carefully coded recipes and
-cookbooks and applies them to computers.
-
-Pre-requisites
---------------
-
-Frycooker depends on a few things to work properly.
-
-** settings.json file **
-
-Contains the settings for the program, in JSON format.
-
-Example:
-
-    {
-    "package_dir": "~/Dropbox/dev/frycook/sample/packages/",
-    "module_dir": "/tmp/mako_modules",
-    "file_ignores": ".*~"
-    }
-
-** environment.json file **
-
-Contains the environment for the program, in JSON format.  This file can
-have include directives that pull in additonal json files so that you
-can split up large environments into multiple files.
+This dictionary is created by processing thee environment JSON files.
+The main file is called environment.json, and it can have include
+directives that pull in additonal json files so that you can split up
+large environments into multiple files.
 
 environment.json:
 
@@ -374,22 +412,27 @@ comp_test1.json:
       "public_ips": {"192.168.56.10": "test1.fubu.example",
                      "192.168.56.11": "test2.fubu.example"},
       "private_ifaces": ["eth2"],
-      "private_ips": {"192.168.1.126": "test1"}
+      "private_ips": {"192.168.1.126": "test1"},
+      "components": [{"type": "cookbook",
+                      "name": "base"},
+                     {"type": "cookbook",
+                      "name": "web"}]
     }
 
-** packages directory **
+Frycooker
+=========
 
-Contains all the package files for the recipes.
+Frycooker is the program that takes all your carefully coded recipes and
+cookbooks and applies them to computers.
 
-** recipes package **
+The recipes and cookbooks modules should be accessible via the
+PYTHONPATH so they can be imported.
 
-This should be accessible via the PYTHONPATH so it can be imported.
-There should be a recipe list in the __init__.py file for the packge.
+explain messages
 
-** cookbooks package **
+just print messages
 
-This should be accessible via the PYTHONPATH so it can be imported.
-There should be a recipe list in the __init__.py file for the packge.
+dry run
 
 ----------------
 Copyright (c) James Yates Farrimond. All rights reserved.
