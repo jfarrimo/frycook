@@ -667,9 +667,34 @@ class Recipe(object):
         '''
         cuisine.sudo('cd %s && sudo -u %s git pull' % (target_path, user))
 
+    def is_git_repo(self, target_path):
+        '''
+        Make sure a git repo exists on the remote computer and is really
+        a git repo.
+
+        @type git_url: string
+
+        @param git_url: git url of repo (probably from github)
+
+        @type target_path: string
+
+        @param target_path: root path on remote server to check git repo
+
+        @rtype: boolean
+
+        @return: True if repo already existed, False if not
+
+        '''
+        if not cuisine.dir_exists(os.path.join(target_path, '.git')):
+            return False
+        ret = cuisine.sudo('cd %s && git status' % target_path)
+        if not ret.succeeded:
+            return False
+        return True
+
     def ensure_git_repo(self, user, git_url, target_path):
         '''
-        Make sure a git repo exists on the remote computer and is up to date.
+        Make sure a git repo exists on the remote computer.
 
         @type git_url: string
 
@@ -686,6 +711,4 @@ class Recipe(object):
         if not cuisine.dir_exists(target_path):
             self.clone_git_repo(user, git_url, target_path)
             return False
-        else:
-            self.update_git_repo(user, git_url, target_path)
-            return True
+        return True
