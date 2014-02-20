@@ -461,7 +461,45 @@ Frycooker is the program that takes all your carefully coded recipes and
 cookbooks and applies them to computers.
 
 The recipes and cookbooks modules should be accessible via the
-`PYTHONPATH` so they can be imported.
+`PYTHONPATH` so they can be imported.  In the sample globule we ensure
+this with the `runner.sh` wrapper script which sets up the python path,
+then invokes frycooker.
+
+    #!/bin/bash
+
+    export PYTHONPATH=.
+    frycooker $*
+
+recipes and cookbooks vs. apply
+-------------------------------
+
+There are two ways to update computers.  The first way is to specify
+recipes and cookbooks on the frycooker command line (using the '-r' and
+'-c' command-line options) and have those be applied to all the desired
+computers, in the order that they're specified.  This way is nice to use
+when you have specific, small changes to apply.
+
+The second way to update a computer is to use the *apply* option in
+frycooker ('-a' command-line option).  With this option frycooker looks
+at the `"components"` list in the environment for each specified
+computer to determine what recipes and cookbooks apply to each computer,
+then applies them.  This way is nice to use when you just want to bring
+a computer into compliance with all of its components and don't want to
+have to figure out which ones have changed and apply them individually.
+This is when the idempotence of your recipes comes in handy because it
+allows you to blindly update computers without worrying if the indicated
+changes have already been applied.
+
+computers vs. groups
+--------------------
+
+When choosing which computers to run frycook against, you have the
+option of giving a list of computers or of specifying a group and having
+frycooker run against all computers in that group.  Groups are specified
+in the `"groups"` key in the environment json files.  Frycooker will use
+any combination of groups and computers that are specified on its
+command line.  If there are identically named computers and groups,
+the computer will be selected instead of the group.
 
 messages
 --------
