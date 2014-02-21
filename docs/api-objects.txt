@@ -47,6 +47,7 @@ frycook.recipe_template.Recipe.push_git_repo	frycook.recipe_template.Recipe-clas
 frycook.recipe_template.Recipe.ensure_git_repo	frycook.recipe_template.Recipe-class.html#ensure_git_repo
 frycook.recipe_template.Recipe.handle_pre_apply_message	frycook.recipe_template.Recipe-class.html#handle_pre_apply_message
 frycook.recipe_template.Recipe.update_git_repo	frycook.recipe_template.Recipe-class.html#update_git_repo
+frycook.recipe_template.Recipe.is_git_repo	frycook.recipe_template.Recipe-class.html#is_git_repo
 frycook.recipe_template.Recipe.pre_apply_checks	frycook.recipe_template.Recipe-class.html#pre_apply_checks
 frycook.recipe_template.Recipe.push_package_file_set	frycook.recipe_template.Recipe-class.html#push_package_file_set
 frycook.recipe_template.Recipe.get_local_file_perms	frycook.recipe_template.Recipe-class.html#get_local_file_perms

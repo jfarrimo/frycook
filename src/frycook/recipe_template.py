@@ -103,13 +103,14 @@ class RecipeException(Exception):
 
 class FileMetaDataTracker(object):
     '''
-    A FileMetaDataTracker object keeps track of owner, group, and permissions
-    for files and directories during a push_package_fileset operation.  This
-    hinges on a file named fck_metadata.txt being encountered in the directory
-    being examined.  This file should have each line contain the text
-    <filename>:<owner>:<group>:<perms>, where <filename> is either a file name
-    or '.' for the directory itself, <owner> is the owner's account name,
-    <group> is the group's name, and <perms> is the permissions string..
+    A FileMetaDataTracker object keeps track of owner, group, and
+    permissions for files and directories during a push_package_fileset
+    operation.  This hinges on a file named fck_metadata.txt being
+    encountered in the directory being examined.  This file should have
+    each line contain the text <filename>:<owner>:<group>:<perms>, where
+    <filename> is either a file name or '.' for the directory itself,
+    <owner> is the owner's account name, <group> is the group's name,
+    and <perms> is the permissions string..
     '''
 
     tagfile = 'fck_metadata.txt'
@@ -122,12 +123,12 @@ class FileMetaDataTracker(object):
 
     def check_directory(self, root, dirs, files):
         '''
-        Read in the metadata for the given directory from the fck_metadata.txt
-        file in the directory, or remember metadata from previous calls if no
-        fck_metadata.txt file is encountered.
+        Read in the metadata for the given directory from the
+        fck_metadata.txt file in the directory, or remember metadata
+        from previous calls if no fck_metadata.txt file is encountered.
 
-        The input parameters are expected to be the values returned from a call
-        to os.walk()
+        The input parameters are expected to be the values returned from
+        a call to os.walk()
 
         @type root: string
 
@@ -167,8 +168,9 @@ class FileMetaDataTracker(object):
 
     def get_metadata(self, path, filename=''):
         '''
-        Get the owner, group, and permissions for the given path and filename.
-        If no filename is specified, the data is retrieved for the directory
+        Lookup the owner, group, and permissions for the given path and
+        filename from the metadata dictionary in this object.  If no
+        filename is specified, the data is retrieved for the directory
         specified in path.
 
         @type path: string
@@ -177,8 +179,8 @@ class FileMetaDataTracker(object):
 
         @type filename: string
 
-        @param filename: name of file to get metadata for (leave blank if just
-        getting directory metadata)
+        @param filename: name of file to get metadata for (leave blank
+        if just getting directory metadata)
 
         @rtype: tuple of strings
 
@@ -195,33 +197,32 @@ class FileMetaDataTracker(object):
 
 class FileDeleter(object):
     '''
-    A FileDeleter object deletes unwanted files from a directory.  This hinges
-    on a file named fck_delete.txt being encountered in the directory being
-    examined.  This file should have each line contain the name of a file to be
-    deleted.
+    A FileDeleter object deletes unwanted files from a directory on a
+    remote server.  This hinges on a file named fck_delete.txt being
+    encountered in the directory being examined.  This file should have
+    each line contain the name of a file to be deleted.
     '''
 
     tagfile = 'fck_delete.txt'
 
     def check_directory(self, root, files, remote_rootpath):
         '''
-        Examine the given directory, check for a fck_delete.txt file in the
-        directory, and delete all files named in fck_delete.txt.
-
-        The first of the input parameters are expected to be values returned
-        from a call to os.walk()
+        Examine the given directory, check for a fck_delete.txt file in
+        the directory, and if it exists delete all remote files named in
+        it.
 
         @type root: string
 
-        @param root: directory being examined
+        @param root: local directory possibly containing fck_delete.txt
 
         @type files: list of strings
 
-        @param files: list of the files in the root directory
+        @param files: list of the files in the local root directory
 
         @type remote_rootpath: string
 
-        @param remote_rootpath: path on remote server to delete files from
+        @param remote_rootpath: path on remote server to delete files
+        from
         '''
 
         if self.tagfile in files:
@@ -232,46 +233,34 @@ class FileDeleter(object):
 
 class Recipe(object):
     '''
-    The Recipe class is the base class for all recipes to subclass.  It defines
-    the framework for recipes and some helper functions.  By itself it doesn't
-    do much.
+    The Recipe class is the base class for all recipes to subclass.  It
+    defines the framework for recipes and some helper functions.  By
+    itself it doesn't do much.
 
-    Here is an example that implements a basic recipe to make sure a package is
-    installed::
+    It has a set of helper functions that are hooks called by frycooker
+    to apply the recipe to a remote server.
 
-      import cuisine
+      handle_pre_apply_message()
+      handle_post_apply_message()
+      run_apply()
+      run_messages()
 
-      from frycook import Recipe
+    It has another set of helper functions used within recipes for
+    copying files to remote servers.
 
-      class RecipeFail2ban(Recipe):
-          def apply(self, computer):
-              cuisine.package_ensure('fail2ban')
+      get_local_file_perms()
+      push_file()
+      push_template()
+      push_package_file_set()
 
-    All recipe files should live in a single recipes package.  The __init__.py
-    file for this package should import all recipes and have a list of them so
-    they can easily be imported by the frycooker program.
+    It has a final set of helper functions used within recipes for
+    managing git repos on remote servers.
 
-    Example::
-
-      from fail2ban import RecipeFail2ban
-      from hosts import RecipeHosts
-      from nginx import RecipeNginx
-      from postfix import RecipePostfix
-      from root_user import RecipeRootUser
-      from example_com import RecipeExampleCom
-      from shorewall import RecipeShorewall
-      from ssh import RecipeSSH
-
-      recipes = {
-          'fail2ban': RecipeFail2ban,
-          'hosts': RecipeHosts,
-          'nginx': RecipeNginx,
-          'postfix': RecipePostfix,
-          'root_user': RecipeRootUser,
-          'example_com': RecipeExampleCom,
-          'shorewall': RecipeShorewall,
-          'ssh': RecipeSSH
-          }
+      push_git_repo()
+      clone_git_repo()
+      update_git_repo()
+      is_git_repo()
+      ensure_git_repo()
     '''
 
     def __init__(self, settings, environment, ok_to_be_rude, no_prompt):
