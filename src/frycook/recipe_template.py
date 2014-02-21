@@ -26,61 +26,10 @@
 # policies, either expressed or implied, of James Yates Farrimond.
 
 '''
-Recipes define subsystems that are distinct parts of larger systems.  They are
-the basic units of setup in frycook.  Generally a recipe corresponds to a
-package that needs to be installed or configured.
-
-idempotence
-===========
-
-One thing to keep in mind when creating recipes and cookbooks is idempotency.
-By keeping idempotency in mind in general you can create recipes that you can
-run again and again to push out minor changes to a package.  This way your
-recipes become the only way that you modify your servers and can be a single
-chokepoint that you can monitor to make sure things happen properly.
-
-Lots of the cuisine functions you'll use have an "ensure" version that first
-checks to see if a condition is true before applying it, such as checking if a
-package is installed before trying to install it.  This is nice when things
-could cause undesired configuration changes or expensive operations that you
-don't want to happen every time.  These functions are a huge aid in writing
-idempotent recipes and cookbooks.
-
-rudeness
-========
-
-Another thing to keep in mind is that some actions performed in recipes can
-affect the end users of the systems, in effect being rude to them.  This might
-cause an outage or otherwise mess them up.  The recipe class keeps track of
-whether or not this is ok in its 'ok_to_be_rude' variable so you can know what
-actions are acceptable.  Consult this before doing rude things.
-
-file set copying
-================
-
-The Recipe class defines a few helper functions for handling templates and
-copying files to servers.  It runs files with a .tmplt extension through Mako,
-using the dictionary you pass to it.  Regular files just get copied.  You can
-specify owner, group, and permissions on a per-directory and per-file basis.
-
-git repo checkouts
-==================
-
-The Recipe class also defines some helper functions for working with git repos.
-You can checkout a git repo onto the remote machine, or check it out locally
-and copy it to the remote machine if you don't want to setup the remote machine
-to be able to do checkouts.
-
-apply process
-=============
-
-This is where you apply a recipe to a server.  There are two class methods that
-get called during the apply process, and possibly two messages that get
-displayed.  Generally you'll just override the apply method and sometimes add
-pre_apply or post_apply messages.  If you override pre_apply_checks, remember
-to call the base class method.  Here's the order that things happen in:
-
-pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
+Recipes define subsystems that are distinct parts of larger systems.
+They are the basic units of setup in frycook.  Generally a recipe
+corresponds to an os-level package that needs to be installed or
+configured.
 '''
 import os
 import os.path
@@ -238,29 +187,29 @@ class Recipe(object):
     itself it doesn't do much.
 
     It has a set of helper functions that are hooks called by frycooker
-    to apply the recipe to a remote server.
+    to apply the recipe to a remote server::
 
-      handle_pre_apply_message()
-      handle_post_apply_message()
-      run_apply()
-      run_messages()
+        handle_pre_apply_message()
+        handle_post_apply_message()
+        run_apply()
+        run_messages()
 
     It has another set of helper functions used within recipes for
-    copying files to remote servers.
+    copying files to remote servers::
 
-      get_local_file_perms()
-      push_file()
-      push_template()
-      push_package_file_set()
+        get_local_file_perms()
+        push_file()
+        push_template()
+        push_package_file_set()
 
     It has a final set of helper functions used within recipes for
-    managing git repos on remote servers.
+    managing git repos on remote servers::
 
-      push_git_repo()
-      clone_git_repo()
-      update_git_repo()
-      is_git_repo()
-      ensure_git_repo()
+        push_git_repo()
+        clone_git_repo()
+        update_git_repo()
+        is_git_repo()
+        ensure_git_repo()
     '''
 
     def __init__(self, settings, environment, ok_to_be_rude, no_prompt):
@@ -341,7 +290,7 @@ class Recipe(object):
 
         @type computer: string
 
-        @param computer: computer to apply recipe checks to
+        @param computer: name of computer to apply recipe checks to
 
         @raise RecipeException: raised if the computer name is not in the
         environment being processed
@@ -360,7 +309,7 @@ class Recipe(object):
 
         @type computer: string
 
-        @param computer: computer to apply recipe to
+        @param computer: name of computer to apply recipe to
         '''
         pass
 
@@ -371,11 +320,11 @@ class Recipe(object):
 
         Sequence::
 
-          pre_apply_message -> pre_apply_checks() -> apply() -> post_apply_message
+          pre_apply_checks() -> apply()
 
         @type computer: string
 
-        @param computer: computer to apply recipe to
+        @param computer: name of computer to apply recipe to
         '''
         self.pre_apply_checks(computer)
         self.apply(computer)
@@ -435,7 +384,7 @@ class Recipe(object):
 
         @type perms: string
 
-        @param perms: permissions for the file
+        @param perms: permissions for the file, ie. '655'
         '''
         local_name = os.path.join(self.settings["package_dir"], local_name)
         cuisine.file_upload(remote_name, local_name)
@@ -474,7 +423,7 @@ class Recipe(object):
 
         @type perms: string
 
-        @param perms: permissions for the templated file
+        @param perms: permissions for the templated file, ie. '655'
         '''
         mytemplate = self.mylookup.get_template(templatename)
         try:
@@ -637,7 +586,8 @@ class Recipe(object):
 
         @type target_path: string
 
-        @param target_path: root path on remote server to clone git repo into
+        @param target_path: root path on remote server to clone git repo
+        into
         '''
         cuisine.sudo('sudo -Hi -u %s git clone %s %s' %
                      (user, git_url, target_path))
@@ -652,14 +602,15 @@ class Recipe(object):
 
         @type target_path: string
 
-        @param target_path: root path on remote server to update git repo in
+        @param target_path: root path on remote server to update git
+        repo in
         '''
         cuisine.sudo('cd %s && sudo -u %s git pull' % (target_path, user))
 
     def is_git_repo(self, target_path):
         '''
-        Make sure a git repo exists on the remote computer and is really
-        a git repo.
+        Make sure the target path exists on the remote computer and is
+        really a git repo.
 
         @type git_url: string
 
@@ -683,7 +634,8 @@ class Recipe(object):
 
     def ensure_git_repo(self, user, git_url, target_path):
         '''
-        Make sure a git repo exists on the remote computer.
+        Make sure a git repo exists in the target path on the remote
+        computer.
 
         @type git_url: string
 

@@ -61,37 +61,33 @@ object --+
 </pre>
 
 <hr />
+<p>The Recipe class is the base class for all recipes to subclass.  It 
+  defines the framework for recipes and some helper functions.  By itself 
+  it doesn't do much.</p>
+  <p>It has a set of helper functions that are hooks called by frycooker to
+  apply the recipe to a remote server:</p>
 <pre class="literalblock">
-
-The Recipe class is the base class for all recipes to subclass.  It
-defines the framework for recipes and some helper functions.  By
-itself it doesn't do much.
-
-It has a set of helper functions that are hooks called by frycooker
-to apply the recipe to a remote server.
-
-  handle_pre_apply_message()
-  handle_post_apply_message()
-  run_apply()
-  run_messages()
-
-It has another set of helper functions used within recipes for
-copying files to remote servers.
-
-  get_local_file_perms()
-  push_file()
-  push_template()
-  push_package_file_set()
-
-It has a final set of helper functions used within recipes for
-managing git repos on remote servers.
-
-  push_git_repo()
-  clone_git_repo()
-  update_git_repo()
-  is_git_repo()
-  ensure_git_repo()
-
+   handle_pre_apply_message()
+   handle_post_apply_message()
+   run_apply()
+   run_messages()
+</pre>
+  <p>It has another set of helper functions used within recipes for copying
+  files to remote servers:</p>
+<pre class="literalblock">
+   get_local_file_perms()
+   push_file()
+   push_template()
+   push_package_file_set()
+</pre>
+  <p>It has a final set of helper functions used within recipes for 
+  managing git repos on remote servers:</p>
+<pre class="literalblock">
+   push_git_repo()
+   clone_git_repo()
+   update_git_repo()
+   is_git_repo()
+   ensure_git_repo()
 </pre>
 
 <!-- ==================== INSTANCE METHODS ==================== -->
@@ -419,8 +415,8 @@ managing git repos on remote servers.
         <tr>
           <td><span class="summary-sig"><a href="frycook.recipe_template.Recipe-class.html#is_git_repo" class="summary-sig-name">is_git_repo</a>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">target_path</span>)</span><br />
-      Make sure a git repo exists on the remote computer and is really a 
-      git repo.</td>
+      Make sure the target path exists on the remote computer and is really
+      a git repo.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.is_git_repo">source&nbsp;code</a></span>
             
@@ -440,7 +436,8 @@ managing git repos on remote servers.
         <span class="summary-sig-arg">user</span>,
         <span class="summary-sig-arg">git_url</span>,
         <span class="summary-sig-arg">target_path</span>)</span><br />
-      Make sure a git repo exists on the remote computer.</td>
+      Make sure a git repo exists in the target path on the remote 
+      computer.</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="frycook.recipe_template-pysrc.html#Recipe.ensure_git_repo">source&nbsp;code</a></span>
             
@@ -604,7 +601,7 @@ managing git repos on remote servers.
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe checks to</li>
+        <li><strong class="pname"><code>computer</code></strong> (string) - name of computer to apply recipe checks to</li>
     </ul></dd>
     <dt>Raises:</dt>
     <dd><ul class="nomargin-top">
@@ -636,7 +633,7 @@ managing git repos on remote servers.
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe to</li>
+        <li><strong class="pname"><code>computer</code></strong> (string) - name of computer to apply recipe to</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -660,12 +657,12 @@ managing git repos on remote servers.
   frycooker.</p>
   <p>Sequence:</p>
 <pre class="literalblock">
- pre_apply_message -&gt; pre_apply_checks() -&gt; apply() -&gt; post_apply_message
+ pre_apply_checks() -&gt; apply()
 </pre>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
-        <li><strong class="pname"><code>computer</code></strong> (string) - computer to apply recipe to</li>
+        <li><strong class="pname"><code>computer</code></strong> (string) - name of computer to apply recipe to</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -724,7 +721,7 @@ managing git repos on remote servers.
         <li><strong class="pname"><code>remote_name</code></strong> (string) - remote path to write file to (path + filename)</li>
         <li><strong class="pname"><code>owner</code></strong> (string) - owner of the file</li>
         <li><strong class="pname"><code>group</code></strong> (string) - group of the file</li>
-        <li><strong class="pname"><code>perms</code></strong> (string) - permissions for the file</li>
+        <li><strong class="pname"><code>perms</code></strong> (string) - permissions for the file, ie. '655'</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -760,7 +757,7 @@ managing git repos on remote servers.
         <li><strong class="pname"><code>enviro</code></strong> (dict) - environment dictionary for template engine</li>
         <li><strong class="pname"><code>owner</code></strong> (string) - owner of the templated file</li>
         <li><strong class="pname"><code>group</code></strong> (string) - group of the templated file</li>
-        <li><strong class="pname"><code>perms</code></strong> (string) - permissions for the templated file</li>
+        <li><strong class="pname"><code>perms</code></strong> (string) - permissions for the templated file, ie. '655'</li>
     </ul></dd>
   </dl>
 </td></tr></table>
@@ -952,8 +949,8 @@ managing git repos on remote servers.
     </td>
   </tr></table>
   
-  <p>Make sure a git repo exists on the remote computer and is really a git
-  repo.</p>
+  <p>Make sure the target path exists on the remote computer and is really 
+  a git repo.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -982,7 +979,8 @@ managing git repos on remote servers.
     </td>
   </tr></table>
   
-  <p>Make sure a git repo exists on the remote computer.</p>
+  <p>Make sure a git repo exists in the target path on the remote 
+  computer.</p>
   <dl class="fields">
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
@@ -1018,7 +1016,7 @@ managing git repos on remote servers.
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Thu Feb 20 20:06:41 2014
+    Generated by Epydoc 3.0.1 on Fri Feb 21 09:37:54 2014
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
