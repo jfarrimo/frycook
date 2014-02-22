@@ -3,153 +3,38 @@
 # Copyright (c) James Yates Farrimond. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
-# Modification, are permitted provided that the following conditions are met:
+# Modification, are permitted provided that the following conditions are
+# met:
 #
-# Redistributions of source code must retain the above copyright notice, this
-# list of conditions and the following disclaimer.
+# Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
 #
-# Redistributions in binary form must reproduce the above copyright notice,
-# this list of conditions and the following disclaimer in the documentation
-# and/or other materials provided with the distribution.
+# Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
 #
-# THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND ''AS IS'' AND ANY EXPRESS
-# OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-# EVENT SHALL JAMES YATES FARRIMOND OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND ''AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMES YATES FARRIMOND OR
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-# The views and conclusions contained in the software and documentation are
-# those of the authors and should not be interpreted as representing official
-# policies, either expressed or implied, of James Yates Farrimond.
+# The views and conclusions contained in the software and documentation
+# are those of the authors and should not be interpreted as representing
+# official policies, either expressed or implied, of James Yates
+# Farrimond.
 
 '''
 Frycooker is the program that takes all your carefully coded recipes and
 cookbooks and applies them to computers.
-
-Pre-requisites
-==============
-
-Frycooker depends on a few things to work properly.
-
-settings.json file
-------------------
-
-Contains the settings for the program, in JSON format.
-
-environment.json file
----------------------
-
-Contains the environment for the program, in JSON format.
-
-packages directory
-------------------
-
-Contains all the package files for the recipes.
-
-recipes package
----------------
-
-This should be accessible via the PYTHONPATH so it can be imported.  There
-should be a recipe list in the __init__.py file for the packge.
-
-cookbooks package
------------------
-
-This should be accessible via the PYTHONPATH so it can be imported.  There
-should be a recipe list in the __init__.py file for the packge.
-
-Globules
-========
-
-All the files necessary for frycooker to run are usually arranged in a
-directory structure that I call a I{globule}.  Here's an example of that::
-
-  awesome_recipes           # root directory
-    packages                # directory for the package files
-      hosts                 # root for hosts package files
-        etc                 # corresponds to /etc on the target server
-          hosts.tmplt       # template that becomes /etc/hosts on the target
-                            # server
-      nginx                 # root for nginx package files
-        etc                 # corresponds to /etc directory on the
-                            # target server
-          default           # corresponds to /etc/default directory on the
-                            # target server
-            nginx           # corresponds to /etc/default/nginx file on the
-                            # target server
-          nginx             # corresponds to /etc/nginx directory on target
-                            # server
-            nginx.conf      # corresponds to /etc/nginx/nginx.conf file on
-                            # target server
-            conf.d          # corresponds to /etc/nginx/conf.d directory on
-                            # target server
-            sites-available # corresponds to /etc/nginx/sites-available
-                            # directory on target server
-              default       # corresponds to /etc/nginx/sites-available/default
-                            # directory on target server
-            sites-enabled   # corresponds to /etc/nginx/sites-enable directory
-                            # on target server
-        srv                 # corresponds to /srv directory on the
-                            # target server
-          www               # corresponds to /srv/www directory on the target
-                            # server
-            50x.html        # corresponds to /srv/www/50x.html file on target
-                            # server
-            index.html      # corresponds to /srv/www/index.html file on target
-                            # server
-    setup                   # directory for non-package files
-      runner.sh             # wrapper for frycooker that sets PYTHONPATH
-      settings.json         # settings file
-      environment.json      # environment file
-      cookbooks             # directory to hold the cookbooks package
-        __init__.py         # define the cookbook list here and import all
-                            # cookbook classes
-        base.py             # cookbook referencing all the recipes for a base
-                            # server setup
-        web.py              # cookbook for make a base server into a web server
-      recipes               # directory to hold the recipes package
-        __init__.py         # define the recipe list here and import all recipe
-                            # classes
-        root.py             # recipe for setting the root user's
-                            # authorized_keys file
-        hosts.py            # recipe for setting up the /etc/hosts file
-        nginx.py            # recipe for setting up nginx
-        example_com.py      # recipe for setting up example.com on a web server
-
-============
-
-Copyright (c) James Yates Farrimond. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-Modification, are permitted provided that the following conditions are met:
-
-Redistributions of source code must retain the above copyright notice, this
-list of conditions and the following disclaimer.
-
-Redistributions in binary form must reproduce the above copyright notice, this
-list of conditions and the following disclaimer in the documentation and/or
-other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND ''AS IS'' AND ANY EXPRESS OR
-IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-EVENT SHALL JAMES YATES FARRIMOND OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies,
-either expressed or implied, of James Yates Farrimond.
 '''
+
 import argparse
 import json
 import os
@@ -164,6 +49,14 @@ import recipes
 
 
 def get_args():
+    '''
+    Parse the command-line arguments, using python's argparse library.
+
+    @rtype: argparse args object
+
+    @return: object containing attributes for all possible command-line
+    arguments
+    '''
     recipe_names = recipes.recipes.keys()
     recipe_names.sort()
     cookbook_names = cookbooks.cookbooks.keys()
@@ -208,6 +101,17 @@ def get_args():
 
 
 def massage_enviro_paths(env):
+    '''
+    Recursively iterate through all the keys in the environment
+    dictionary and look for any that contain the strings 'path' or 'dir'
+    in them.  For the values corresponding to the keys that do, replace
+    any instances of the '~' character with the running user's home
+    directory path.
+
+    @type env: dictionary
+
+    @param env: environment dictionary
+    '''
     for k, v in env.iteritems():
         if isinstance(v, dict):
             massage_enviro_paths(v)
@@ -218,12 +122,37 @@ def massage_enviro_paths(env):
 
 
 def load_settings(filename):
+    '''
+    Load the settings json file, massaging its environment paths in the
+    process.
+
+    @type filename: string
+
+    @param filename: filename of settings file to read
+
+    @rtype: dictionary
+
+    @return: dictionary representation of settings
+    '''
     settings = json.load(open(filename))
     massage_enviro_paths(settings)
     return settings
 
 
 def load_enviro(filename):
+    '''
+    Load the environment json file, loading additionaly imported
+    environment files and massaging environment paths in the
+    process.
+
+    @type filename: string
+
+    @param filename: filename of environment file to read
+
+    @rtype: dictionary
+
+    @return: dictionary representation of environment
+    '''
     try:
         enviro = json.load(open(filename))
     except Exception:
@@ -243,10 +172,31 @@ def load_enviro(filename):
 
 
 class InvalidTarget(Exception):
+    '''
+    An InvalidTarget exception is raised for exceptional conditions
+    encountered while generating target lists.
+    '''
     pass
 
 
 def generate_target_list(enviro, args):
+    '''
+    Get a list of computers to run against from the command-line
+    arguments.  Translate group names into lists of computers.
+
+    @type enviro: dictionary
+
+    @param enviro: environment to read group lists from
+
+    @type args: args object
+
+    @param args: objection containing attributes for all possible
+    command-line parameters
+
+    @rtype: list of strings
+
+    @return: list of computer names to run against
+    '''
     host_list = []
     for target in args.target:
         if target in enviro['computers']:

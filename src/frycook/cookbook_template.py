@@ -33,13 +33,15 @@ subsystems.
 
 class Cookbook(object):
     '''
-    The Cookbook class is the base class for all cookbooks to be created from.
-    If you over-ride any of the functions, be sure to call the base class
-    functions so that all the good stuff still happens.
-
-    In your subclass you will fill the class-level variable recipe_list with
-    class objects for recipes that you want to run when applying the cookbook.
-    The recipes will be applied in the order they're defined in the list.
+    The Cookbook class is the base class for all cookbooks to be created
+    from.  If you over-ride any of the built-in functions, be sure to
+    call the base class functions so that all the good stuff still
+    happens.  You will probably not need to sub-class any of the base
+    functions in your cookbooks, though.  They will all be called by
+    frycooker as necessary.  All you need to do is to fill the
+    class-level variable recipe_list with class objects for recipes that
+    you want to run when applying the cookbook.  The recipes will be
+    applied in the order they're defined in the list.
 
     Example::
 
@@ -52,20 +54,6 @@ class Cookbook(object):
           recipe_list = [RecipeNginx,
                          RecipeExampleCom]
 
-    All cookbook files should live in a single cookbooks package.  The
-    __init__.py file for this package should import all cookbooks and have a
-    list of them called cookbooks so they can easily be imported by the
-    frycooker program.
-
-    Example::
-
-      from base import CookbookBase
-      from web import CookbookWeb
-
-      cookbooks = {
-          'base': CookbookBase,
-          'web': CookbookWeb
-          }
     '''
     recipe_list = []
 
@@ -128,7 +116,7 @@ class Cookbook(object):
 
         @type computer: string
 
-        @param computer: computer to apply recipe checks to
+        @param computer: name of computer to apply recipe checks to
         '''
         for recipe in self.recipes:
             recipe.pre_apply_checks(computer)
@@ -141,7 +129,7 @@ class Cookbook(object):
 
         @type computer: string
 
-        @param computer: computer to apply recipe to
+        @param computer: name of computer to apply recipe to
         '''
         for recipe in self.recipes:
             recipe.apply(computer)
@@ -153,7 +141,7 @@ class Cookbook(object):
 
         @type computer: string
 
-        @param computer: computer to apply recipe to
+        @param computer: name of computer to apply recipe to
         '''
         self.pre_apply_checks(computer)
         self.apply(computer)

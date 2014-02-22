@@ -54,105 +54,6 @@
 <h1 class="epydoc">Script frycooker</h1><p class="nomargin-top"></p>
 <p>Frycooker is the program that takes all your carefully coded recipes 
   and cookbooks and applies them to computers.</p>
-  <h1 class="heading">Pre-requisites</h1>
-    <p>Frycooker depends on a few things to work properly.</p>
-    <h2 class="heading">settings.json file</h2>
-      <p>Contains the settings for the program, in JSON format.</p>
-    <h2 class="heading">environment.json file</h2>
-      <p>Contains the environment for the program, in JSON format.</p>
-    <h2 class="heading">packages directory</h2>
-      <p>Contains all the package files for the recipes.</p>
-    <h2 class="heading">recipes package</h2>
-      <p>This should be accessible via the PYTHONPATH so it can be 
-      imported.  There should be a recipe list in the __init__.py file for 
-      the packge.</p>
-    <h2 class="heading">cookbooks package</h2>
-      <p>This should be accessible via the PYTHONPATH so it can be 
-      imported.  There should be a recipe list in the __init__.py file for 
-      the packge.</p>
-  <h1 class="heading">Globules</h1>
-    <p>All the files necessary for frycooker to run are usually arranged in
-    a directory structure that I call a <i>globule</i>.  Here's an example 
-    of that:</p>
-<pre class="literalblock">
- awesome_recipes           # root directory
-   packages                # directory for the package files
-     hosts                 # root for hosts package files
-       etc                 # corresponds to /etc on the target server
-         hosts.tmplt       # template that becomes /etc/hosts on the target
-                           # server
-     nginx                 # root for nginx package files
-       etc                 # corresponds to /etc directory on the
-                           # target server
-         default           # corresponds to /etc/default directory on the
-                           # target server
-           nginx           # corresponds to /etc/default/nginx file on the
-                           # target server
-         nginx             # corresponds to /etc/nginx directory on target
-                           # server
-           nginx.conf      # corresponds to /etc/nginx/nginx.conf file on
-                           # target server
-           conf.d          # corresponds to /etc/nginx/conf.d directory on
-                           # target server
-           sites-available # corresponds to /etc/nginx/sites-available
-                           # directory on target server
-             default       # corresponds to /etc/nginx/sites-available/default
-                           # directory on target server
-           sites-enabled   # corresponds to /etc/nginx/sites-enable directory
-                           # on target server
-       srv                 # corresponds to /srv directory on the
-                           # target server
-         www               # corresponds to /srv/www directory on the target
-                           # server
-           50x.html        # corresponds to /srv/www/50x.html file on target
-                           # server
-           index.html      # corresponds to /srv/www/index.html file on target
-                           # server
-   setup                   # directory for non-package files
-     runner.sh             # wrapper for frycooker that sets PYTHONPATH
-     settings.json         # settings file
-     environment.json      # environment file
-     cookbooks             # directory to hold the cookbooks package
-       __init__.py         # define the cookbook list here and import all
-                           # cookbook classes
-       base.py             # cookbook referencing all the recipes for a base
-                           # server setup
-       web.py              # cookbook for make a base server into a web server
-     recipes               # directory to hold the recipes package
-       __init__.py         # define the recipe list here and import all recipe
-                           # classes
-       root.py             # recipe for setting the root user's
-                           # authorized_keys file
-       hosts.py            # recipe for setting up the /etc/hosts file
-       nginx.py            # recipe for setting up nginx
-       example_com.py      # recipe for setting up example.com on a web server
-</pre>
-    <p>============</p>
-    <p>Copyright (c) James Yates Farrimond. All rights reserved.</p>
-    <p>Redistribution and use in source and binary forms, with or without 
-    Modification, are permitted provided that the following conditions are 
-    met:</p>
-    <p>Redistributions of source code must retain the above copyright 
-    notice, this list of conditions and the following disclaimer.</p>
-    <p>Redistributions in binary form must reproduce the above copyright 
-    notice, this list of conditions and the following disclaimer in the 
-    documentation and/or other materials provided with the 
-    distribution.</p>
-    <p>THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND ''AS IS'' AND ANY
-    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
-    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMES YATES FARRIMOND OR 
-    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
-    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
-    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-    <p>The views and conclusions contained in the software and 
-    documentation are those of the authors and should not be interpreted as
-    representing official policies, either expressed or implied, of James 
-    Yates Farrimond.</p>
 
 <!-- ==================== CLASSES ==================== -->
 <a name="section-Classes"></a>
@@ -175,7 +76,9 @@
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
     </td><td class="summary">
-        <a href="script-frycooker.InvalidTarget-class.html" class="summary-name">InvalidTarget</a>
+        <a href="script-frycooker.InvalidTarget-class.html" class="summary-name">InvalidTarget</a><br />
+      An InvalidTarget exception is raised for exceptional conditions 
+        encountered while generating target lists.
     </td>
   </tr>
 </table>
@@ -198,11 +101,12 @@
 </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">argparse args object</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="get_args"></a><span class="summary-sig-name">get_args</span>()</span></td>
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#get_args" class="summary-sig-name">get_args</a>()</span><br />
+      Parse the command-line arguments, using python's argparse library.</td>
           <td align="right" valign="top">
             
             
@@ -218,7 +122,10 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="massage_enviro_paths"></a><span class="summary-sig-name">massage_enviro_paths</span>(<span class="summary-sig-arg">env</span>)</span></td>
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#massage_enviro_paths" class="summary-sig-name">massage_enviro_paths</a>(<span class="summary-sig-arg">env</span>)</span><br />
+      Recursively iterate through all the keys in the environment 
+      dictionary and look for any that contain the strings 'path' or 'dir' 
+      in them.</td>
           <td align="right" valign="top">
             
             
@@ -230,11 +137,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">dictionary</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="load_settings"></a><span class="summary-sig-name">load_settings</span>(<span class="summary-sig-arg">filename</span>)</span></td>
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#load_settings" class="summary-sig-name">load_settings</a>(<span class="summary-sig-arg">filename</span>)</span><br />
+      Load the settings json file, massaging its environment paths in the 
+      process.</td>
           <td align="right" valign="top">
             
             
@@ -246,11 +155,13 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">dictionary</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="load_enviro"></a><span class="summary-sig-name">load_enviro</span>(<span class="summary-sig-arg">filename</span>)</span></td>
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#load_enviro" class="summary-sig-name">load_enviro</a>(<span class="summary-sig-arg">filename</span>)</span><br />
+      Load the environment json file, loading additionaly imported 
+      environment files and massaging environment paths in the process.</td>
           <td align="right" valign="top">
             
             
@@ -262,12 +173,14 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">list of strings</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="generate_target_list"></a><span class="summary-sig-name">generate_target_list</span>(<span class="summary-sig-arg">enviro</span>,
-        <span class="summary-sig-arg">args</span>)</span></td>
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#generate_target_list" class="summary-sig-name">generate_target_list</a>(<span class="summary-sig-arg">enviro</span>,
+        <span class="summary-sig-arg">args</span>)</span><br />
+      Get a list of computers to run against from the command-line 
+      arguments.</td>
           <td align="right" valign="top">
             
             
@@ -371,6 +284,154 @@
     </td>
   </tr>
 </table>
+<!-- ==================== FUNCTION DETAILS ==================== -->
+<a name="section-FunctionDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Function Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-FunctionDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="get_args"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_args</span>()</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Parse the command-line arguments, using python's argparse library.</p>
+  <dl class="fields">
+    <dt>Returns: argparse args object</dt>
+        <dd>object containing attributes for all possible command-line 
+          arguments</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="massage_enviro_paths"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">massage_enviro_paths</span>(<span class="sig-arg">env</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Recursively iterate through all the keys in the environment dictionary
+  and look for any that contain the strings 'path' or 'dir' in them.  For 
+  the values corresponding to the keys that do, replace any instances of 
+  the '~' character with the running user's home directory path.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>env</code></strong> (dictionary) - environment dictionary</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="load_settings"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">load_settings</span>(<span class="sig-arg">filename</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Load the settings json file, massaging its environment paths in the 
+  process.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>filename</code></strong> (string) - filename of settings file to read</li>
+    </ul></dd>
+    <dt>Returns: dictionary</dt>
+        <dd>dictionary representation of settings</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="load_enviro"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">load_enviro</span>(<span class="sig-arg">filename</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Load the environment json file, loading additionaly imported 
+  environment files and massaging environment paths in the process.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>filename</code></strong> (string) - filename of environment file to read</li>
+    </ul></dd>
+    <dt>Returns: dictionary</dt>
+        <dd>dictionary representation of environment</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="generate_target_list"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generate_target_list</span>(<span class="sig-arg">enviro</span>,
+        <span class="sig-arg">args</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get a list of computers to run against from the command-line 
+  arguments.  Translate group names into lists of computers.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>enviro</code></strong> (dictionary) - environment to read group lists from</li>
+        <li><strong class="pname"><code>args</code></strong> (args object) - objection containing attributes for all possible command-line 
+          parameters</li>
+    </ul></dd>
+    <dt>Returns: list of strings</dt>
+        <dd>list of computer names to run against</dd>
+  </dl>
+</td></tr></table>
+</div>
+<br />
 <!-- ==================== NAVIGATION BAR ==================== -->
 <table class="navbar" border="0" width="100%" cellpadding="0"
        bgcolor="#a0c0ff" cellspacing="0">
@@ -394,7 +455,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Fri Feb 21 09:37:54 2014
+    Generated by Epydoc 3.0.1 on Fri Feb 21 20:05:07 2014
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
