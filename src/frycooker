@@ -190,7 +190,7 @@ def generate_target_list(enviro, args):
 
     @type args: args object
 
-    @param args: objection containing attributes for all possible
+    @param args: object containing attributes for all possible
     command-line parameters
 
     @rtype: list of strings
@@ -210,6 +210,28 @@ def generate_target_list(enviro, args):
 
 
 def generate_run_list(enviro, args):
+    '''
+    Get the lists of computers, recipes, cookbooks, and run list to run
+    against.  A run list is a dictionary containing a list of recipes
+    and cookbooks to run against each specified computer.  Typically the
+    run list will just specify the same recipes and cookbooks for each
+    computer, unless a list of computers was given and the apply (-a)
+    command-line argument was specified.  In that case each computer
+    could have different things run against them.
+
+    @type enviro: dictionary
+
+    @param enviro: environment to read group lists and computer components from
+
+    @type args: args object
+
+    @param args: object containing attributes for all possible
+    command-line parameters
+
+    @rtype: tuple of (dictionary, list, list, list)
+
+    @return: (run list, host list, recipe list, cookbook list)
+    '''
     host_list = generate_target_list(enviro, args)
     run_list = {}
     cookbooks = set()
@@ -239,6 +261,31 @@ def generate_run_list(enviro, args):
 
 
 def output_pre_apply_messages(recipe_list, cookbook_list, enviro, settings, args):
+    '''
+    Ouptput all the pre-apply messages for the specified recipes and
+    cookbooks.
+
+    @type recipe_list: list
+
+    @param recipe_list: list of recipes to process
+
+    @type cookbook_list: list
+
+    @param cookbook_list: list of cookbooks to process
+
+    @type enviro: dictionary
+
+    @param enviro: environment dictionary
+
+    @type settings: dictionary
+
+    @param settings: settings dictionary
+
+    @type args: args object
+
+    @param args: object containing attributes for all possible
+    command-line parameters
+    '''
     for r in recipe_list:
         recipe = recipes.recipes[r](
             settings, enviro, args.ok_to_be_rude, args.no_prompt)
@@ -251,6 +298,31 @@ def output_pre_apply_messages(recipe_list, cookbook_list, enviro, settings, args
 
 
 def output_post_apply_messages(recipe_list, cookbook_list, enviro, settings, args):
+    '''
+    Ouptput all the post-apply messages for the specified recipes and
+    cookbooks.
+
+    @type recipe_list: list
+
+    @param recipe_list: list of recipes to process
+
+    @type cookbook_list: list
+
+    @param cookbook_list: list of cookbooks to process
+
+    @type enviro: dictionary
+
+    @param enviro: environment dictionary
+
+    @type settings: dictionary
+
+    @param settings: settings dictionary
+
+    @type args: args object
+
+    @param args: object containing attributes for all possible
+    command-line parameters
+    '''
     for r in recipe_list:
         recipe = recipes.recipes[r](
             settings, enviro, args.ok_to_be_rude, args.no_prompt)
@@ -263,6 +335,30 @@ def output_post_apply_messages(recipe_list, cookbook_list, enviro, settings, arg
 
 
 def apply_recipes_cookbooks(enviro, settings, args, host_list, run_list):
+    '''
+    Apply all specified recipes and cookbooks to the requested hosts.
+
+    @type enviro: dictionary
+
+    @param enviro: environment dictionary
+
+    @type settings: dictionary
+
+    @param settings: settings dictionary
+
+    @type args: args object
+
+    @param args: object containing attributes for all possible
+    command-line parameters
+
+    @type host_list: list of strings
+
+    @param host_list: list of hosts to run against
+
+    @type run_list: dictionary
+
+    @param run_list: dictionary of lists
+    '''
     for host in host_list:
         env.host_string = host
         if args.user:
@@ -286,6 +382,9 @@ def apply_recipes_cookbooks(enviro, settings, args, host_list, run_list):
 
 
 def main():
+    '''
+    Main function for the frycooker program.
+    '''
     args = get_args()
 
     settings = load_settings(args.settings)

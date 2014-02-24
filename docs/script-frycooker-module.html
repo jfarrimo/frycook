@@ -192,12 +192,14 @@
   </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
+      <span class="summary-type">tuple of (dictionary, list, list, list)</span>
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="generate_run_list"></a><span class="summary-sig-name">generate_run_list</span>(<span class="summary-sig-arg">enviro</span>,
-        <span class="summary-sig-arg">args</span>)</span></td>
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#generate_run_list" class="summary-sig-name">generate_run_list</a>(<span class="summary-sig-arg">enviro</span>,
+        <span class="summary-sig-arg">args</span>)</span><br />
+      Get the lists of computers, recipes, cookbooks, and run list to run 
+      against.</td>
           <td align="right" valign="top">
             
             
@@ -213,11 +215,13 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="output_pre_apply_messages"></a><span class="summary-sig-name">output_pre_apply_messages</span>(<span class="summary-sig-arg">recipe_list</span>,
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#output_pre_apply_messages" class="summary-sig-name">output_pre_apply_messages</a>(<span class="summary-sig-arg">recipe_list</span>,
         <span class="summary-sig-arg">cookbook_list</span>,
         <span class="summary-sig-arg">enviro</span>,
         <span class="summary-sig-arg">settings</span>,
-        <span class="summary-sig-arg">args</span>)</span></td>
+        <span class="summary-sig-arg">args</span>)</span><br />
+      Ouptput all the pre-apply messages for the specified recipes and 
+      cookbooks.</td>
           <td align="right" valign="top">
             
             
@@ -233,11 +237,13 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="output_post_apply_messages"></a><span class="summary-sig-name">output_post_apply_messages</span>(<span class="summary-sig-arg">recipe_list</span>,
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#output_post_apply_messages" class="summary-sig-name">output_post_apply_messages</a>(<span class="summary-sig-arg">recipe_list</span>,
         <span class="summary-sig-arg">cookbook_list</span>,
         <span class="summary-sig-arg">enviro</span>,
         <span class="summary-sig-arg">settings</span>,
-        <span class="summary-sig-arg">args</span>)</span></td>
+        <span class="summary-sig-arg">args</span>)</span><br />
+      Ouptput all the post-apply messages for the specified recipes and 
+      cookbooks.</td>
           <td align="right" valign="top">
             
             
@@ -253,11 +259,12 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="apply_recipes_cookbooks"></a><span class="summary-sig-name">apply_recipes_cookbooks</span>(<span class="summary-sig-arg">enviro</span>,
+          <td><span class="summary-sig"><a href="script-frycooker-module.html#apply_recipes_cookbooks" class="summary-sig-name">apply_recipes_cookbooks</a>(<span class="summary-sig-arg">enviro</span>,
         <span class="summary-sig-arg">settings</span>,
         <span class="summary-sig-arg">args</span>,
         <span class="summary-sig-arg">host_list</span>,
-        <span class="summary-sig-arg">run_list</span>)</span></td>
+        <span class="summary-sig-arg">run_list</span>)</span><br />
+      Apply all specified recipes and cookbooks to the requested hosts.</td>
           <td align="right" valign="top">
             
             
@@ -273,7 +280,8 @@
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="main"></a><span class="summary-sig-name">main</span>()</span></td>
+          <td><span class="summary-sig"><a name="main"></a><span class="summary-sig-name">main</span>()</span><br />
+      Main function for the frycooker program.</td>
           <td align="right" valign="top">
             
             
@@ -423,11 +431,143 @@
     <dt>Parameters:</dt>
     <dd><ul class="nomargin-top">
         <li><strong class="pname"><code>enviro</code></strong> (dictionary) - environment to read group lists from</li>
-        <li><strong class="pname"><code>args</code></strong> (args object) - objection containing attributes for all possible command-line 
+        <li><strong class="pname"><code>args</code></strong> (args object) - object containing attributes for all possible command-line 
           parameters</li>
     </ul></dd>
     <dt>Returns: list of strings</dt>
         <dd>list of computer names to run against</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="generate_run_list"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">generate_run_list</span>(<span class="sig-arg">enviro</span>,
+        <span class="sig-arg">args</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Get the lists of computers, recipes, cookbooks, and run list to run 
+  against.  A run list is a dictionary containing a list of recipes and 
+  cookbooks to run against each specified computer.  Typically the run list
+  will just specify the same recipes and cookbooks for each computer, 
+  unless a list of computers was given and the apply (-a) command-line 
+  argument was specified.  In that case each computer could have different 
+  things run against them.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>enviro</code></strong> (dictionary) - environment to read group lists and computer components from</li>
+        <li><strong class="pname"><code>args</code></strong> (args object) - object containing attributes for all possible command-line 
+          parameters</li>
+    </ul></dd>
+    <dt>Returns: tuple of (dictionary, list, list, list)</dt>
+        <dd>(run list, host list, recipe list, cookbook list)</dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="output_pre_apply_messages"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">output_pre_apply_messages</span>(<span class="sig-arg">recipe_list</span>,
+        <span class="sig-arg">cookbook_list</span>,
+        <span class="sig-arg">enviro</span>,
+        <span class="sig-arg">settings</span>,
+        <span class="sig-arg">args</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Ouptput all the pre-apply messages for the specified recipes and 
+  cookbooks.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>recipe_list</code></strong> (list) - list of recipes to process</li>
+        <li><strong class="pname"><code>cookbook_list</code></strong> (list) - list of cookbooks to process</li>
+        <li><strong class="pname"><code>enviro</code></strong> (dictionary) - environment dictionary</li>
+        <li><strong class="pname"><code>settings</code></strong> (dictionary) - settings dictionary</li>
+        <li><strong class="pname"><code>args</code></strong> (args object) - object containing attributes for all possible command-line 
+          parameters</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="output_post_apply_messages"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">output_post_apply_messages</span>(<span class="sig-arg">recipe_list</span>,
+        <span class="sig-arg">cookbook_list</span>,
+        <span class="sig-arg">enviro</span>,
+        <span class="sig-arg">settings</span>,
+        <span class="sig-arg">args</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Ouptput all the post-apply messages for the specified recipes and 
+  cookbooks.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>recipe_list</code></strong> (list) - list of recipes to process</li>
+        <li><strong class="pname"><code>cookbook_list</code></strong> (list) - list of cookbooks to process</li>
+        <li><strong class="pname"><code>enviro</code></strong> (dictionary) - environment dictionary</li>
+        <li><strong class="pname"><code>settings</code></strong> (dictionary) - settings dictionary</li>
+        <li><strong class="pname"><code>args</code></strong> (args object) - object containing attributes for all possible command-line 
+          parameters</li>
+    </ul></dd>
+  </dl>
+</td></tr></table>
+</div>
+<a name="apply_recipes_cookbooks"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">apply_recipes_cookbooks</span>(<span class="sig-arg">enviro</span>,
+        <span class="sig-arg">settings</span>,
+        <span class="sig-arg">args</span>,
+        <span class="sig-arg">host_list</span>,
+        <span class="sig-arg">run_list</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    >&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Apply all specified recipes and cookbooks to the requested hosts.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>enviro</code></strong> (dictionary) - environment dictionary</li>
+        <li><strong class="pname"><code>settings</code></strong> (dictionary) - settings dictionary</li>
+        <li><strong class="pname"><code>args</code></strong> (args object) - object containing attributes for all possible command-line 
+          parameters</li>
+        <li><strong class="pname"><code>host_list</code></strong> (list of strings) - list of hosts to run against</li>
+        <li><strong class="pname"><code>run_list</code></strong> (dictionary) - dictionary of lists</li>
+    </ul></dd>
   </dl>
 </td></tr></table>
 </div>
@@ -455,7 +595,7 @@
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Fri Feb 21 20:05:07 2014
+    Generated by Epydoc 3.0.1 on Mon Feb 24 09:31:58 2014
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"
