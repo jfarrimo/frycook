@@ -4,8 +4,9 @@ from frycook import Recipe, RecipeException
 
 
 class RecipeExampleCom(Recipe):
-    def __init__(self, settings, environment):
-        super(RecipeExampleCom, self).__init__(settings, environment)
+    def __init__(self, settings, environment, ok_to_be_rude, no_prompt):
+        super(RecipeExampleCom, self).__init__(
+            settings, environment, ok_to_be_rude, no_prompt)
         self.username = 'example_com'
 
     def pre_apply_checks(self, computer):
