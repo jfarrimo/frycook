@@ -1,7 +1,7 @@
 import cuisine
-from fabric.context_managers import prefix
 
 from frycook import Recipe, RecipeException
+
 
 class RecipeExampleCom(Recipe):
     def __init__(self, settings, environment):
@@ -30,7 +30,7 @@ class RecipeExampleCom(Recipe):
         cuisine.file_link('/home/example_com/www',
                           '/srv/www/example_com')
 
-        self.push_package_file_set('example_com', computer, tmp_env)
+        self.push_package_file_set('example_com', computer)
 
         cuisine.file_link('/etc/nginx/sites-available/example_com',
                           '/etc/nginx/sites-enabled/example_com')

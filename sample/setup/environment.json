@@ -9,12 +9,12 @@
   },
 
   "computers": {
-    "imports": ["comp_admin3.json"]
+    "imports": ["comp_dev.json"]
   },
 
   "groups": {
-    "test" : {
-      "computers": ["test1"]
+    "dev" : {
+      "computers": ["dev"]
     }
   }
 }

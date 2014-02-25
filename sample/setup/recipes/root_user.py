@@ -2,6 +2,7 @@ import cuisine
 
 from frycook import Recipe, RecipeException
 
+
 class RecipeRootUser(Recipe):
     def pre_apply_checks(self, computer):
         super(RecipeRootUser, self).pre_apply_checks(computer)

@@ -2,6 +2,7 @@ import cuisine
 
 from frycook import Recipe
 
+
 class RecipeHosts(Recipe):
     def apply(self, computer):
         group = self.environment["computers"][computer]["host_group"]

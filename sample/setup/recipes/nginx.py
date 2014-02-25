@@ -1,7 +1,7 @@
 import cuisine
-from fabric.context_managers import prefix
 
 from frycook import Recipe
+
 
 class RecipeNginx(Recipe):
     '''
