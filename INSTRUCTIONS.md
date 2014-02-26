@@ -41,40 +41,66 @@ explain all the pieces and how they work together.
 
 Example:
 
-    awesome_recipes           # root directory
-      packages                # directory for the package files
-        hosts                 # root for hosts package files
-          etc                 # corresponds to /etc on the target server
-            hosts.tmplt       # template that becomes /etc/hosts on the target server
-        nginx                 # root for nginx package files
-          etc                 # corresponds to /etc directory on the target server
-            default           # corresponds to /etc/default directory on the target server
-              nginx           # corresponds to /etc/default/nginx file on the target server
-            nginx             # corresponds to /etc/nginx directory on target server
-              conf.d          # corresponds to /etc/nginx/conf.d directory on target server
-              nginx.conf      # corresponds to /etc/nginx/nginx.conf file on target server
-              sites-available # corresponds to /etc/nginx/sites-available directory on target server
-                default       # corresponds to /etc/nginx/sites-available/default directory on target server
-              sites-enabled   # corresponds to /etc/nginx/sites-enable directory on target server
-          srv                 # corresponds to /srv directory on the target server
-            www               # corresponds to /srv/www directory on the target server
-              50x.html        # corresponds to /srv/www/50x.html file on target server
-              index.html      # corresponds to /srv/www/index.html file on target server
-      setup                   # directory for non-package files
-        comp_test1.json       # included environment file for computer test1
-        environment.json      # environment file
-        runner.sh             # wrapper for frycooker that sets PYTHONPATH
-        settings.json         # settings file
-        cookbooks             # directory to hold the cookbooks package
-          __init__.py         # define the cookbook list here and import all cookbook classes
-          base.py             # cookbook referencing all the recipes for a base server setup
-          web.py              # cookbook for make a base server into a web server
-        recipes               # directory to hold the recipes package
-          __init__.py         # define the recipe list here and import all recipe classes
-          example_com.py      # recipe for setting up example.com on a web server
-          hosts.py            # recipe for setting up the /etc/hosts file
-          nginx.py            # recipe for setting up nginx
-          root.py             # recipe for setting the root user's authorized_keys file
+    sample                     # root directory
+      packages                 # directory for the package files
+        example_com            # root for example_com package files
+          etc                  # corresponds to /etc on the target server
+            nginx              # corresponds to /etc/nginx on the target server
+              sites-available  # corresponds to /etc/nginx/sites-available on the target server
+                example.com    # corresponds to /etc/nginx/sites-available/example.com on the target server
+        hosts                  # root for hosts package files
+          etc                  # corresponds to /etc on the target server
+            hostname.tmplt     # template that becomes /etc/hostname on the target server
+            hosts.tmplt        # template that becomes /etc/hosts on the target server
+        nginx                  # root for nginx package files
+          etc                  # corresponds to /etc directory on the target server
+            default            # corresponds to /etc/default directory on the target server
+              nginx            # corresponds to /etc/default/nginx file on the target server
+            nginx              # corresponds to /etc/nginx directory on target server
+              nginx.conf       # corresponds to /etc/nginx/nginx.conf file on target server
+              sites-available  # corresponds to /etc/nginx/sites-available directory on target server
+                default        # corresponds to /etc/nginx/sites-available/default directory on target server
+                fck_delete.txt # lists files to delete from /etc/nginx/sites-available on target server
+          srv                  # corresponds to /srv directory on the target server
+            www                # corresponds to /srv/www directory on the target server
+              50x.html         # corresponds to /srv/www/50x.html file on target server
+              index.html       # corresponds to /srv/www/index.html file on target server
+        postfix                # root for postfix package files
+          etc                  # corresponds to /etc directory on the target server
+            aliases            # corresponds to /etc/aliases directory on the target server
+            mailname.tmplt     # template that becomes /etc/mailname on the target server
+            postfix            # corresponds to /etc/postfix directory on the target server
+              main.cf.tmplt    # template that becomes /etc/postfix/main.cf on the target server
+        shorewall              # root for shorewall package files
+          etc                  # corresponds to /etc directory on the target server
+            default            # corresponds to /etc/default directory on the target server
+              shorewall        # corresponds to /etc/default/shorewall directory on the target server
+            shorewall          # corresponds to /etc/shorewall directory on the target server
+              interfaces.tmplt # template that becomes /etc/shorewall/interfaces on the target server
+        ssh                    # root for ssh package files
+          etc                  # corresponds to /etc directory on the target server
+            ssh                # corresponds to /etc/ssh directory on the target server
+              sshd_config      # corresponds to /etc/ssh/sshd_config directory on the target server
+      setup                    # directory for non-package files
+        comp_dev.json          # included environment file for computer named dev
+        environment.json       # environment file
+        requirements.txt       # python pip requirements file
+        runner.sh              # wrapper for frycooker that sets PYTHONPATH
+        settings.json          # settings file
+        cookbooks              # directory to hold the cookbooks package
+          __init__.py          # define the cookbook list here and import all cookbook classes
+          base.py              # cookbook referencing all the recipes for a base server setup
+          web.py               # cookbook for make a base server into a web server
+        recipes                # directory to hold the recipes package
+          __init__.py          # define the recipe list here and import all recipe classes
+          example_com.py       # recipe for setting up example.com on a web server
+          fail2ban.py          # recipe for setting up fail2ban
+          hosts.py             # recipe for setting up the /etc/hosts file
+          nginx.py             # recipe for setting up nginx
+          postfix.py           # recipe for setting up postfix
+          root_user.py         # recipe for setting the root user's authorized_keys file
+          shorewall.py         # recipe for setting up shorewall
+          ssh.py               # recipe for setting up ssh
 
 Recipes
 =======
@@ -86,11 +112,12 @@ corresponds to an os-level package that needs to be installed or configured.
 example recipe
 --------------
 
-This example sets up the hosts file on a computer.
+    This example sets up the hosts file on a computer.
 
     import cuisine
 
     from frycook import Recipe
+
 
     class RecipeHosts(Recipe):
         def apply(self, computer):
@@ -249,24 +276,45 @@ files that should be deleted in that directory on the target systems.
 
 Here's the packages directory layout from our sample globule:
 
-    packages                # directory for the package files
-      hosts                 # root for hosts package files
-        etc                 # corresponds to /etc on the target server
-          hosts.tmplt       # template that becomes /etc/hosts on the target server
-      nginx                 # root for nginx package files
-        etc                 # corresponds to /etc directory on the target server
-          default           # corresponds to /etc/default directory on the target server
-            nginx           # corresponds to /etc/default/nginx file on the target server
-          nginx             # corresponds to /etc/nginx directory on target server
-            conf.d          # corresponds to /etc/nginx/conf.d directory on target server
-            nginx.conf      # corresponds to /etc/nginx/nginx.conf file on target server
-            sites-available # corresponds to /etc/nginx/sites-available directory on target server
-              default       # corresponds to /etc/nginx/sites-available/default directory on target server
-            sites-enabled   # corresponds to /etc/nginx/sites-enable directory on target server
-        srv                 # corresponds to /srv directory on the target server
-          www               # corresponds to /srv/www directory on the target server
-            50x.html        # corresponds to /srv/www/50x.html file on target server
-            index.html      # corresponds to /srv/www/index.html file on target server
+    packages                 # directory for the package files
+      example_com            # root for example_com package files
+        etc                  # corresponds to /etc on the target server
+          nginx              # corresponds to /etc/nginx on the target server
+            sites-available  # corresponds to /etc/nginx/sites-available on the target server
+              example.com    # corresponds to /etc/nginx/sites-available/example.com on the target server
+      hosts                  # root for hosts package files
+        etc                  # corresponds to /etc on the target server
+          hostname.tmplt     # template that becomes /etc/hostname on the target server
+          hosts.tmplt        # template that becomes /etc/hosts on the target server
+      nginx                  # root for nginx package files
+        etc                  # corresponds to /etc directory on the target server
+          default            # corresponds to /etc/default directory on the target server
+            nginx            # corresponds to /etc/default/nginx file on the target server
+          nginx              # corresponds to /etc/nginx directory on target server
+            nginx.conf       # corresponds to /etc/nginx/nginx.conf file on target server
+            sites-available  # corresponds to /etc/nginx/sites-available directory on target server
+              default        # corresponds to /etc/nginx/sites-available/default directory on target server
+              fck_delete.txt # lists files to delete from /etc/nginx/sites-available on target server
+        srv                  # corresponds to /srv directory on the target server
+          www                # corresponds to /srv/www directory on the target server
+            50x.html         # corresponds to /srv/www/50x.html file on target server
+            index.html       # corresponds to /srv/www/index.html file on target server
+      postfix                # root for postfix package files
+        etc                  # corresponds to /etc directory on the target server
+          aliases            # corresponds to /etc/aliases directory on the target server
+          mailname.tmplt     # template that becomes /etc/mailname on the target server
+          postfix            # corresponds to /etc/postfix directory on the target server
+            main.cf.tmplt    # template that becomes /etc/postfix/main.cf on the target server
+      shorewall              # root for shorewall package files
+        etc                  # corresponds to /etc directory on the target server
+          default            # corresponds to /etc/default directory on the target server
+            shorewall        # corresponds to /etc/default/shorewall directory on the target server
+          shorewall          # corresponds to /etc/shorewall directory on the target server
+            interfaces.tmplt # template that becomes /etc/shorewall/interfaces on the target server
+      ssh                    # root for ssh package files
+        etc                  # corresponds to /etc directory on the target server
+          ssh                # corresponds to /etc/ssh directory on the target server
+            sshd_config      # corresponds to /etc/ssh/sshd_config directory on the target server
 
 template files
 --------------
@@ -321,9 +369,6 @@ during template handling
 `"file_ignores"`: regex pattern for filenames to ignore while copying
 package files
 
-`"tmp_dir"`: directory used to temporarily hold files during some of the
- git repo manipulation routines in recipes
-
 For any key containing the strings `"dir"` or `"path"`, if you include a
 tilde `~` in the value, it will be replaced with the home directory of
 the user running frycooker, just like in bash.  For this example, that
@@ -332,10 +377,9 @@ would be the `"package_dir"` and `"module_dir"` keys.
 Example settings.json file:
 
     {
-      "package_dir": "~/bigawesomecorp/admin/packages/",
-      "module_dir": "/tmp/bigawesomecorp/mako_modules",
-      "tmp_dir": "/tmp",
-      "file_ignores": ".*~"
+    "package_dir": "~/Dropbox/dev/frycook/sample/packages/",
+    "module_dir": "/tmp/mako_modules",
+    "file_ignores": ".*~"
     }
 
 Environment
@@ -376,36 +420,51 @@ cookbook or recipe.
 Example:
 
     {
-      "users": {
-        "root": {
-          "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"
+        "computers": {
+            "dev": {
+                "components": [
+                    {
+                        "name": "base",
+                        "type": "cookbook"
+                    },
+                    {
+                        "name": "web",
+                        "type": "cookbook"
+                    }
+                ],
+                "domain_name": "fubu.example",
+                "host_group": "dev",
+                "private_ifaces": [
+                    "eth2"
+                ],
+                "private_ips": {
+                    "192.168.1.126": "dev"
+                },
+                "public_ifaces": [
+                    "eth0",
+                    "eth1"
+                ],
+                "public_ips": {
+                    "192.168.56.10": "dev.fubu.example",
+                    "192.168.56.11": "dev.fubu.example"
+                }
+            }
         },
-        "example_com": {
-          "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"
+        "groups": {
+            "dev": {
+                "computers": [
+                    "dev"
+                ]
+            }
+        },
+        "users": {
+            "example_com": {
+                "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"
+            },
+            "root": {
+                "ssh_public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDYK8U9Isp+Ih+THCj2ohCo6nLY1R5Sn7oPzxM8ZBwH3ik/2EF3v0ibNezruja1I3OwF8W1QyWOdooIwTYJ8HXH9+Gyxcq/PseXbFWqg3k/lL50d5AawyRQZndOaNcFG6B8ULXJDksA6oQccXRzzxmnXpwGR8XEfSBCo2cdWDF1CXKvKXDZ4sqvGTVJIKshUAVbmfi4wH0LTtGIlV4IxslKUbfsErIU8kSyZNLLslq9XRvlqVK3iSabomKUY14MTbc3sefQzIctTtlmBpZw2mMBS49k4HYo1UwhUNiLbFBS7QhcivbJwFqGPj0N5pAx0oPUj1m96GGsqpiqu1eNp/yb jay@Jamess-MacBook-Air.local"
+            }
         }
-      },
-
-      "computers": {
-        "test1": {
-          "domain_name": "fubu.example",
-          "host_group": "test",
-          "public_ifaces": ["eth0", "eth1"],
-          "public_ips": {"192.168.56.10": "test1.fubu.example",
-                         "192.168.56.11": "test2.fubu.example"},
-          "private_ifaces": ["eth2"],
-          "private_ips": {"192.168.1.126": "test1"},
-          "components": [{"type": "cookbook",
-                          "name": "base"},
-                         {"type": "cookbook",
-                          "name": "web"}]
-        }
-      },
-
-      "groups": {
-        "test" : {
-          "computers": ["test1"]
-        }
-      }
     }
 
 This dictionary is created by processing the environment JSON files.
@@ -426,31 +485,29 @@ environment.json:
       },
 
       "computers": {
-        "imports": ["comp_test1.json"]
+        "imports": ["comp_dev.json"]
       },
 
       "groups": {
-        "test" : {
-          "computers": ["test1"]
+        "dev" : {
+          "computers": ["dev"]
         }
       }
     }
 
-comp_test1.json:
+comp_dev.json:
 
     {
-      "test1": {
+      "dev": {
         "domain_name": "fubu.example",
-        "host_group": "test",
+        "host_group": "dev",
         "public_ifaces": ["eth0", "eth1"],
-        "public_ips": {"192.168.56.10": "test1.fubu.example",
-                       "192.168.56.11": "test2.fubu.example"},
+        "public_ips": {"192.168.56.10": "dev.fubu.example",
+                       "192.168.56.11": "dev.fubu.example"},
         "private_ifaces": ["eth2"],
-        "private_ips": {"192.168.1.126": "test1"},
-        "components": [{"type": "cookbook",
-                        "name": "base"},
-                       {"type": "cookbook",
-                        "name": "web"}]
+        "private_ips": {"192.168.1.126": "dev"},
+        "components": [{"type": "cookbook", "name": "base"},
+                       {"type": "cookbook", "name": "web"}]
       }
     }
 
