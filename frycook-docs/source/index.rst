@@ -42,6 +42,13 @@ Tutorial
 
    tutorial
 
+API
+===
+
+.. toctree::
+
+   recipe
+
 History
 =======
 

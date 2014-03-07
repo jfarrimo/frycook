@@ -79,17 +79,12 @@ class FileMetaDataTracker(object):
         The input parameters are expected to be the values returned from
         a call to os.walk()
 
-        @type root: string
-
-        @param root: directory being examined
-
-        @type dirs: list of strings
-
-        @param dirs: list of sub-directories under the root directory
-
-        @type files: list of strings
-
-        @param files: list of the files in the root directory
+        :type root: string
+        :param root: directory being examined
+        :type dirs: list of strings
+        :param dirs: list of sub-directories under the root directory
+        :type files: list of strings
+        :param files: list of the files in the root directory
         '''
         if root not in self.metadata:
             self.metadata[root] = (None, None, None, )
@@ -122,18 +117,13 @@ class FileMetaDataTracker(object):
         filename is specified, the data is retrieved for the directory
         specified in path.
 
-        @type path: string
+        :type path: string
+        :param path: path to file to get metadata for
+        :type filename: string
+        :param filename: name of file to get metadata for (leave blank if just getting directory metadata)
 
-        @param path: path to file to get metadata for
-
-        @type filename: string
-
-        @param filename: name of file to get metadata for (leave blank
-        if just getting directory metadata)
-
-        @rtype: tuple of strings
-
-        @return: tuple containing (<owner>, <group>, <perms>, )
+        :rtype: tuple of strings
+        :return: tuple containing (<owner>, <group>, <perms>, )
         '''
         fq = os.path.join(path, filename)
         if fq in self.metadata:
@@ -160,18 +150,12 @@ class FileDeleter(object):
         the directory, and if it exists delete all remote files named in
         it.
 
-        @type root: string
-
-        @param root: local directory possibly containing fck_delete.txt
-
-        @type files: list of strings
-
-        @param files: list of the files in the local root directory
-
-        @type remote_rootpath: string
-
-        @param remote_rootpath: path on remote server to delete files
-        from
+        :type root: string
+        :param root: local directory possibly containing fck_delete.txt
+        :type files: list of strings
+        :param files: list of the files in the local root directory
+        :type remote_rootpath: string
+        :param remote_rootpath: path on remote server to delete files from
         '''
 
         if self.tagfile in files:
@@ -217,21 +201,10 @@ class Recipe(object):
         Initialize the recipe object with the settings and environment
         dictionaries.
 
-        @type settings: dict
-
-        @param settings: settings dictionary
-
-        @type environment: dict
-
-        @param environment: metadata dictionary
-
-        @type ok_to_be_rude: boolean
-
-        @param ok_to_be_rude: is it ok to interrupt your users?
-
-        @type no_prompt: boolean
-
-        @param no_prompt: should we prompt the user?
+        :param dict sttings: settings dictionary
+        :param dict environment: metadata dictionary
+        :param boolean ok_to_be_rude: is it ok to interrupt your users?
+        :param boolean no_prompt: should we prompt the user?
         '''
         self.settings = settings
         self.environment = environment
@@ -288,12 +261,8 @@ class Recipe(object):
         sure to call the base class function to make sure its checks get done
         as well.
 
-        @type computer: string
-
-        @param computer: name of computer to apply recipe checks to
-
-        @raise RecipeException: raised if the computer name is not in the
-        environment being processed
+        :param string computer: name of computer to apply recipe checks to
+        :raises RecipeException: raised if the computer name is not in the environment being processed
         '''
         # make sure the computer is in our enviro
         if computer not in self.environment["computers"]:
@@ -307,9 +276,8 @@ class Recipe(object):
         have any actions to apply.  If you don't have any actions, then why are
         you creating a recipe?
 
-        @type computer: string
-
-        @param computer: name of computer to apply recipe to
+        :type computer: string
+        :param computer: name of computer to apply recipe to
         '''
         pass
 
@@ -322,9 +290,8 @@ class Recipe(object):
 
           pre_apply_checks() -> apply()
 
-        @type computer: string
-
-        @param computer: name of computer to apply recipe to
+        :type computer: string
+        :param computer: name of computer to apply recipe to
         '''
         self.pre_apply_checks(computer)
         self.apply(computer)
@@ -345,13 +312,11 @@ class Recipe(object):
         '''
         Get a string of the permissions set on a local file.
 
-        @type local_name: string
+        :type local_name: string
+        :param local_name: path to file on local file system
 
-        @param local_name: path to file on local file system
-
-        @rtype: string
-
-        @return: string containing perms of file, ie. '655'
+        :rtype: string
+        :return: string containing perms of file, ie. '655'
         '''
         bit_mode = stat.S_IMODE(os.stat(local_name).st_mode)
         user_perms = (bit_mode & stat.S_IRWXU) >> 6
@@ -365,26 +330,16 @@ class Recipe(object):
         Copy a file to a remote server if the file is different or doesn't
         exist.
 
-        @type local_name: string
-
-        @param local_name: path within packages dir of file to upload (path +
-        filename)
-
-        @type remote_name: string
-
-        @param remote_name: remote path to write file to (path + filename)
-
-        @type owner: string
-
-        @param owner: owner of the file
-
-        @type group: string
-
-        @param group: group of the file
-
-        @type perms: string
-
-        @param perms: permissions for the file, ie. '655'
+        :type local_name: string
+        :param local_name: path within packages dir of file to upload (path + filename)
+        :type remote_name: string
+        :param remote_name: remote path to write file to (path + filename)
+        :type owner: string
+        :param owner: owner of the file
+        :type group: string
+        :param group: group of the file
+        :type perms: string
+        :param perms: permissions for the file, ie. '655'
         '''
         local_name = os.path.join(self.settings["package_dir"], local_name)
         cuisine.file_upload(remote_name, local_name)
@@ -399,31 +354,18 @@ class Recipe(object):
         Process a template file and push its contents to a remote server if
         it's different than what's already there.
 
-        @type templatename: string
-
-        @param templatename: path within packages dir of template file to
-        process (path + filename)
-
-        @type out_path: string
-
-        @param out_path: path on remote server to write file to (path +
-        filename)
-
-        @type enviro: dict
-
-        @param enviro: environment dictionary for template engine
-
-        @type owner: string
-
-        @param owner: owner of the templated file
-
-        @type group: string
-
-        @param group: group of the templated file
-
-        @type perms: string
-
-        @param perms: permissions for the templated file, ie. '655'
+        :type templatename: string
+        :param templatename: path within packages dir of template file to process (path + filename)
+        :type out_path: string
+        :param out_path: path on remote server to write file to (path + filename)
+        :type enviro: dict
+        :param enviro: environment dictionary for template engine
+        :type owner: string
+        :param owner: owner of the templated file
+        :type group: string
+        :param group: group of the templated file
+        :type perms: string
+        :param perms: permissions for the templated file, ie. '655'
         '''
         mytemplate = self.mylookup.get_template(templatename)
         try:
@@ -444,14 +386,10 @@ class Recipe(object):
         push_package_file_set operation.  The calling function sets up the
         template environment, then calls this one.
 
-        @type package_name: string
-
-        @param package_name: name of package to process, corresponds to
-        directory in packages directory
-
-        @type template_env: dict
-
-        @param template_env: environment dictionary for template engine
+        :type package_name: string
+        :param package_name: name of package to process, corresponds to directory in packages directory
+        :type template_env: dict
+        :param template_env: environment dictionary for template engine
         '''
         metadata = FileMetaDataTracker()
         deleter = FileDeleter()
@@ -515,18 +453,13 @@ class Recipe(object):
         one per line.  This way you can clean out a directory as well as copy
         files to it.
 
-        @type package_name: string
+        :type package_name: string
 
-        @param package_name: name of package to process, corresponds to
-        directory in packages directory
-
-        @type template_env: dict
-
-        @param template_env: environment dictionary for template engine
-
-        @type aux_env: dict
-
-        @param aux_env: additional key/value pairs for the template environment
+        :param package_name: name of package to process, corresponds to directory in packages directory
+        :type template_env: dict
+        :param template_env: environment dictionary for template engine
+        :type aux_env: dict
+        :param aux_env: additional key/value pairs for the template environment
         '''
         template_env = {"computer":
                         self.environment["computers"][computer_name]}
@@ -543,25 +476,16 @@ class Recipe(object):
         Make a local clone of the repo in git_url into the temp directory
         specified in the settings file, then rsync it to the remote path.
 
-        @type computer: string
-
-        @param computer: computer name to push to
-
-        @type user: string
-
-        @param user: user to own the files in the repo
-
-        @type group: string
-
-        @param group: group to own the files in the repo
-
-        @type git_url: string
-
-        @param git_url: git url of repo (probably from github)
-
-        @type target_path: string
-
-        @param target_path: root path on remote server to copy git repo to
+        :type computer: string
+        :param computer: computer name to push to
+        :type user: string
+        :param user: user to own the files in the repo
+        :type group: string
+        :param group: group to own the files in the repo
+        :type git_url: string
+        :param git_url: git url of repo (probably from github)
+        :type target_path: string
+        :param target_path: root path on remote server to copy git repo to
         '''
         rsync_command = ('rsync -qrlptz --delete --delete-excluded '
                          '--exclude=.svn --exclude=.git')
@@ -580,14 +504,10 @@ class Recipe(object):
         '''
         Clone a git repo on a remote server.
 
-        @type git_url: string
-
-        @param git_url: git url of repo (probably from github)
-
-        @type target_path: string
-
-        @param target_path: root path on remote server to clone git repo
-        into
+        :type git_url: string
+        :param git_url: git url of repo (probably from github)
+        :type target_path: string
+        :param target_path: root path on remote server to clone git repo into
         '''
         cuisine.sudo('sudo -Hi -u %s git clone %s %s' %
                      (user, git_url, target_path))
@@ -596,14 +516,10 @@ class Recipe(object):
         '''
         Update an existing git repo on a remote server.
 
-        @type git_url: string
-
-        @param git_url: git url of repo (probably from github)
-
-        @type target_path: string
-
-        @param target_path: root path on remote server to update git
-        repo in
+        :type git_url: string
+        :param git_url: git url of repo (probably from github)
+        :type target_path: string
+        :param target_path: root path on remote server to update git repo in
         '''
         cuisine.sudo('cd %s && sudo -u %s git pull' % (target_path, user))
 
@@ -612,17 +528,13 @@ class Recipe(object):
         Make sure the target path exists on the remote computer and is
         really a git repo.
 
-        @type git_url: string
+        :type git_url: string
+        :param git_url: git url of repo (probably from github)
+        :type target_path: string
+        :param target_path: root path on remote server to check git repo
 
-        @param git_url: git url of repo (probably from github)
-
-        @type target_path: string
-
-        @param target_path: root path on remote server to check git repo
-
-        @rtype: boolean
-
-        @return: True if repo already existed, False if not
+        :rtype: boolean
+        :return: True if repo already existed, False if not
 
         '''
         if not cuisine.dir_exists(os.path.join(target_path, '.git')):
@@ -637,17 +549,13 @@ class Recipe(object):
         Make sure a git repo exists in the target path on the remote
         computer.
 
-        @type git_url: string
+        :type git_url: string
+        :param git_url: git url of repo (probably from github)
+        :type target_path: string
+        :param target_path: root path on remote server to check git repo
 
-        @param git_url: git url of repo (probably from github)
-
-        @type target_path: string
-
-        @param target_path: root path on remote server to check git repo
-
-        @rtype: boolean
-
-        @return: True if repo already existed, False if not
+        :rtype: boolean
+        :return: True if repo already existed, False if not
         '''
         if not cuisine.dir_exists(target_path):
             self.clone_git_repo(user, git_url, target_path)
