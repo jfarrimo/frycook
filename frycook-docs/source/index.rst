@@ -50,6 +50,12 @@ API
    recipe_template
    cookbook_template
 
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 History
 =======
@@ -105,13 +111,6 @@ calling this directory structure and its contents a globule (frycooks
 deal with lots of grease).  The package you install has the base recipe
 and cookbook classes and a program to process everything (called,
 appropriately, frycooker).
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
 Copyright Notice
 ================

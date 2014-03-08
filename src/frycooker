@@ -52,10 +52,8 @@ def get_args():
     '''
     Parse the command-line arguments, using python's argparse library.
 
-    @rtype: argparse args object
-
-    @return: object containing attributes for all possible command-line
-    arguments
+    :rtype: argparse args object
+    :return: object containing attributes for all possible command-line arguments
     '''
     recipe_names = recipes.recipes.keys()
     recipe_names.sort()
@@ -108,9 +106,8 @@ def massage_enviro_paths(env):
     any instances of the '~' character with the running user's home
     directory path.
 
-    @type env: dictionary
-
-    @param env: environment dictionary
+    :type env: dictionary
+    :param env: environment dictionary
     '''
     for k, v in env.iteritems():
         if isinstance(v, dict):
@@ -126,13 +123,11 @@ def load_settings(filename):
     Load the settings json file, massaging its environment paths in the
     process.
 
-    @type filename: string
+    :type filename: string
+    :param filename: filename of settings file to read
 
-    @param filename: filename of settings file to read
-
-    @rtype: dictionary
-
-    @return: dictionary representation of settings
+    :rtype: dictionary
+    :return: dictionary representation of settings
     '''
     settings = json.load(open(filename))
     massage_enviro_paths(settings)
@@ -145,13 +140,11 @@ def load_enviro(filename):
     environment files and massaging environment paths in the
     process.
 
-    @type filename: string
+    :type filename: string
+    :param filename: filename of environment file to read
 
-    @param filename: filename of environment file to read
-
-    @rtype: dictionary
-
-    @return: dictionary representation of environment
+    :rtype: dictionary
+    :return: dictionary representation of environment
     '''
     try:
         enviro = json.load(open(filename))
@@ -184,18 +177,13 @@ def generate_target_list(enviro, args):
     Get a list of computers to run against from the command-line
     arguments.  Translate group names into lists of computers.
 
-    @type enviro: dictionary
+    :type enviro: dictionary
+    :param enviro: environment to read group lists from
+    :type args: args object
+    :param args: object containing attributes for all possible command-line parameters
 
-    @param enviro: environment to read group lists from
-
-    @type args: args object
-
-    @param args: object containing attributes for all possible
-    command-line parameters
-
-    @rtype: list of strings
-
-    @return: list of computer names to run against
+    :rtype: list of strings
+    :return: list of computer names to run against
     '''
     host_list = []
     for target in args.target:
@@ -219,18 +207,13 @@ def generate_run_list(enviro, args):
     command-line argument was specified.  In that case each computer
     could have different things run against them.
 
-    @type enviro: dictionary
+    :type enviro: dictionary
+    :param enviro: environment to read group lists and computer components from
+    :type args: args object
+    :param args: object containing attributes for all possible command-line parameters
 
-    @param enviro: environment to read group lists and computer components from
-
-    @type args: args object
-
-    @param args: object containing attributes for all possible
-    command-line parameters
-
-    @rtype: tuple of (dictionary, list, list, list)
-
-    @return: (run list, host list, recipe list, cookbook list)
+    :rtype: tuple of (dictionary, list, list, list)
+    :return: (run list, host list, recipe list, cookbook list)
     '''
     host_list = generate_target_list(enviro, args)
     run_list = {}
@@ -265,26 +248,16 @@ def output_pre_apply_messages(recipe_list, cookbook_list, enviro, settings, args
     Ouptput all the pre-apply messages for the specified recipes and
     cookbooks.
 
-    @type recipe_list: list
-
-    @param recipe_list: list of recipes to process
-
-    @type cookbook_list: list
-
-    @param cookbook_list: list of cookbooks to process
-
-    @type enviro: dictionary
-
-    @param enviro: environment dictionary
-
-    @type settings: dictionary
-
-    @param settings: settings dictionary
-
-    @type args: args object
-
-    @param args: object containing attributes for all possible
-    command-line parameters
+    :type recipe_list: list
+    :param recipe_list: list of recipes to process
+    :type cookbook_list: list
+    :param cookbook_list: list of cookbooks to process
+    :type enviro: dictionary
+    :param enviro: environment dictionary
+    :type settings: dictionary
+    :param settings: settings dictionary
+    :type args: args object
+    :param args: object containing attributes for all possible command-line parameters
     '''
     for r in recipe_list:
         recipe = recipes.recipes[r](
@@ -302,26 +275,16 @@ def output_post_apply_messages(recipe_list, cookbook_list, enviro, settings, arg
     Ouptput all the post-apply messages for the specified recipes and
     cookbooks.
 
-    @type recipe_list: list
-
-    @param recipe_list: list of recipes to process
-
-    @type cookbook_list: list
-
-    @param cookbook_list: list of cookbooks to process
-
-    @type enviro: dictionary
-
-    @param enviro: environment dictionary
-
-    @type settings: dictionary
-
-    @param settings: settings dictionary
-
-    @type args: args object
-
-    @param args: object containing attributes for all possible
-    command-line parameters
+    :type recipe_list: list
+    :param recipe_list: list of recipes to process
+    :type cookbook_list: list
+    :param cookbook_list: list of cookbooks to process
+    :type enviro: dictionary
+    :param enviro: environment dictionary
+    :type settings: dictionary
+    :param settings: settings dictionary
+    :type args: args object
+    :param args: object containing attributes for all possible command-line parameters
     '''
     for r in recipe_list:
         recipe = recipes.recipes[r](
@@ -338,26 +301,16 @@ def apply_recipes_cookbooks(enviro, settings, args, host_list, run_list):
     '''
     Apply all specified recipes and cookbooks to the requested hosts.
 
-    @type enviro: dictionary
-
-    @param enviro: environment dictionary
-
-    @type settings: dictionary
-
-    @param settings: settings dictionary
-
-    @type args: args object
-
-    @param args: object containing attributes for all possible
-    command-line parameters
-
-    @type host_list: list of strings
-
-    @param host_list: list of hosts to run against
-
-    @type run_list: dictionary
-
-    @param run_list: dictionary of lists
+    :type enviro: dictionary
+    :param enviro: environment dictionary
+    :type settings: dictionary
+    :param settings: settings dictionary
+    :type args: args object
+    :param args: object containing attributes for all possible command-line parameters
+    :type host_list: list of strings
+    :param host_list: list of hosts to run against
+    :type run_list: dictionary
+    :param run_list: dictionary of lists
     '''
     for host in host_list:
         env.host_string = host
