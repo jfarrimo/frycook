@@ -47,7 +47,9 @@ API
 
 .. toctree::
 
-   recipe
+   recipe_template
+   cookbook_template
+
 
 History
 =======

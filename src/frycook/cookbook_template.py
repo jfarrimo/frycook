@@ -62,21 +62,14 @@ class Cookbook(object):
         Initialize the cookbook object with the settings and environment
         dictionaries.
 
-        @type settings: dict
-
-        @param settings: settings dictionary
-
-        @type environment: dict
-
-        @param environment: metadata dictionary
-
-        @type ok_to_be_rude: boolean
-
-        @param ok_to_be_rude: is it ok to interrupt your users?
-
-        @type no_prompt: boolean
-
-        @param no_prompt: should we prompt the user?
+        :type settings: dict
+        :param settings: settings dictionary
+        :type environment: dict
+        :param environment: metadata dictionary
+        :type ok_to_be_rude: boolean
+        :param ok_to_be_rude: is it ok to interrupt your users?
+        :type no_prompt: boolean
+        :param no_prompt: should we prompt the user?
         '''
         self.recipes = []
         self.ok_to_be_rude = ok_to_be_rude
@@ -114,9 +107,8 @@ class Cookbook(object):
         and beyond the recipe-level data.  Be sure to call the base if you
         override this.
 
-        @type computer: string
-
-        @param computer: name of computer to apply recipe checks to
+        :type computer: string
+        :param computer: name of computer to apply recipe checks to
         '''
         for recipe in self.recipes:
             recipe.pre_apply_checks(computer)
@@ -127,9 +119,8 @@ class Cookbook(object):
         Override this if there's something you need to do besides just running
         all the recipes.  Be sure to call the base class if you override this.
 
-        @type computer: string
-
-        @param computer: name of computer to apply recipe to
+        :type computer: string
+        :param computer: name of computer to apply recipe to
         '''
         for recipe in self.recipes:
             recipe.apply(computer)
@@ -139,9 +130,8 @@ class Cookbook(object):
         Run the apply process for the computer.  This is usually just called
         from frycooker.
 
-        @type computer: string
-
-        @param computer: name of computer to apply recipe to
+        :type computer: string
+        :param computer: name of computer to apply recipe to
         '''
         self.pre_apply_checks(computer)
         self.apply(computer)
