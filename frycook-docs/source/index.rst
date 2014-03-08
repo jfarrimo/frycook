@@ -19,13 +19,7 @@ build it.  I call this set of recipes and metadata a *globule*.  There
 is a sample globule in the sample directory that handles a base server
 setup and web domain setup for a simple web server, based on Ubuntu
 12.04.  The frycooker script that comes with the frycook package takes
-care of applying the recipes to your computers.  This is all documented
-in the docs that are part of the repo if you clone it from github at
-https://github.com/jfarrimo/frycook.
-
-The ideas embodied in frycook originally came from managing several
-hundred servers for a social gaming company, and then were augmented by
-time spent perusing the chef documentation.
+care of applying the recipes to your computers.
 
 Instructions
 ============
@@ -73,9 +67,9 @@ use of ssh to connect to the server and run commands on it.  This works
 pretty good.  Eventually, though, you end up with a huge pile of bash
 code that gets unwieldy pretty quickly.  Combine that with the fact that
 I find bash to be a little opaque and I finally went looking for a
-better solution.  I checked out all of the popular solutions (Chef,
-Puppet, etc...) and didn't find one that felt like a good fit for me.
-They all have lots of complex infrastructure to setup and require
+better solution.  I checked out all of the popular solutions at the time
+(Chef, Puppet, etc...) and didn't find one that felt like a good fit for
+me.  They all have lots of complex infrastructure to setup and require
 learning things like Ruby or proprietary DSLs, none of which caught my
 fancy.
 
