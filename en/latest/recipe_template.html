@@ -1,0 +1,562 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>recipe_template.py &mdash; Frycook 0.3.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Frycook 0.3.3 documentation" href="index.html" />
+    <link rel="prev" title="Intro" href="tutorial.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Intro"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Frycook 0.3.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-frycook.recipe_template">
+<span id="recipe-template-py"></span><h1>recipe_template.py<a class="headerlink" href="#module-frycook.recipe_template" title="Permalink to this headline">¶</a></h1>
+<p>Recipes define subsystems that are distinct parts of larger systems.
+They are the basic units of setup in frycook.  Generally a recipe
+corresponds to an os-level package that needs to be installed or
+configured.</p>
+<div class="section" id="recipe">
+<h2>Recipe<a class="headerlink" href="#recipe" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="frycook.recipe_template.Recipe">
+<em class="property">class </em><tt class="descclassname">frycook.recipe_template.</tt><tt class="descname">Recipe</tt><big>(</big><em>settings</em>, <em>environment</em>, <em>ok_to_be_rude</em>, <em>no_prompt</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Recipe class is the base class for all recipes to subclass.  It
+defines the framework for recipes and some helper functions.  By
+itself it doesn&#8217;t do much.</p>
+<p>It has a set of helper functions that are hooks called by frycooker
+to apply the recipe to a remote server:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">handle_pre_apply_message</span><span class="p">()</span>
+<span class="n">handle_post_apply_message</span><span class="p">()</span>
+<span class="n">run_apply</span><span class="p">()</span>
+<span class="n">run_messages</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>It has another set of helper functions used within recipes for
+copying files to remote servers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">get_local_file_perms</span><span class="p">()</span>
+<span class="n">push_file</span><span class="p">()</span>
+<span class="n">push_template</span><span class="p">()</span>
+<span class="n">push_package_file_set</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>It has a final set of helper functions used within recipes for
+managing git repos on remote servers:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">push_git_repo</span><span class="p">()</span>
+<span class="n">clone_git_repo</span><span class="p">()</span>
+<span class="n">update_git_repo</span><span class="p">()</span>
+<span class="n">is_git_repo</span><span class="p">()</span>
+<span class="n">ensure_git_repo</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.apply">
+<tt class="descname">apply</tt><big>(</big><em>computer</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define the actions to take place when this recipe is applied to a
+computer.  Override this function in your subclass of Recipe if you
+have any actions to apply.  If you don&#8217;t have any actions, then why are
+you creating a recipe?</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>computer</strong> (<em>string</em>) &#8211; name of computer to apply recipe to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.clone_git_repo">
+<tt class="descname">clone_git_repo</tt><big>(</big><em>user</em>, <em>git_url</em>, <em>target_path</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.clone_git_repo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.clone_git_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clone a git repo on a remote server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>git_url</strong> (<em>string</em>) &#8211; git url of repo (probably from github)</li>
+<li><strong>target_path</strong> (<em>string</em>) &#8211; root path on remote server to clone git repo into</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.ensure_git_repo">
+<tt class="descname">ensure_git_repo</tt><big>(</big><em>user</em>, <em>git_url</em>, <em>target_path</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.ensure_git_repo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.ensure_git_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure a git repo exists in the target path on the remote
+computer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>git_url</strong> (<em>string</em>) &#8211; git url of repo (probably from github)</li>
+<li><strong>target_path</strong> (<em>string</em>) &#8211; root path on remote server to check git repo</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">boolean</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if repo already existed, False if not</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.get_local_file_perms">
+<tt class="descname">get_local_file_perms</tt><big>(</big><em>local_name</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.get_local_file_perms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.get_local_file_perms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a string of the permissions set on a local file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>local_name</strong> (<em>string</em>) &#8211; path to file on local file system</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string containing perms of file, ie. &#8216;655&#8217;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.handle_post_apply_message">
+<tt class="descname">handle_post_apply_message</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.handle_post_apply_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.handle_post_apply_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the post-apply message for the user and wait for him/her to hit
+return before continuing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.handle_pre_apply_message">
+<tt class="descname">handle_pre_apply_message</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.handle_pre_apply_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.handle_pre_apply_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the pre-apply message for the user and wait for him/her to hit
+return before continuing.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.is_git_repo">
+<tt class="descname">is_git_repo</tt><big>(</big><em>target_path</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.is_git_repo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.is_git_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure the target path exists on the remote computer and is
+really a git repo.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>git_url</strong> (<em>string</em>) &#8211; git url of repo (probably from github)</li>
+<li><strong>target_path</strong> (<em>string</em>) &#8211; root path on remote server to check git repo</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">boolean</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">True if repo already existed, False if not</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.pre_apply_checks">
+<tt class="descname">pre_apply_checks</tt><big>(</big><em>computer</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.pre_apply_checks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.pre_apply_checks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define checks to run before applying the recipe.  The base class checks
+that the designated computer exists in the environment dictionary.
+This is a good place to check other things in your environment
+dictionary that the apply function expects to be there.  Override this
+function in your subclass of Recipe if you have any checks to perform.
+Raise a RecipeException if you encounter exceptional conditions.  Be
+sure to call the base class function to make sure its checks get done
+as well.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>computer</strong> (<em>string</em>) &#8211; name of computer to apply recipe checks to</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises RecipeException:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body">raised if the computer name is not in the environment being processed</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.push_file">
+<tt class="descname">push_file</tt><big>(</big><em>local_name</em>, <em>remote_name</em>, <em>owner</em>, <em>group</em>, <em>perms=None</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.push_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.push_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy a file to a remote server if the file is different or doesn&#8217;t
+exist.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>local_name</strong> (<em>string</em>) &#8211; path within packages dir of file to upload (path + filename)</li>
+<li><strong>remote_name</strong> (<em>string</em>) &#8211; remote path to write file to (path + filename)</li>
+<li><strong>owner</strong> (<em>string</em>) &#8211; owner of the file</li>
+<li><strong>group</strong> (<em>string</em>) &#8211; group of the file</li>
+<li><strong>perms</strong> (<em>string</em>) &#8211; permissions for the file, ie. &#8216;655&#8217;</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.push_git_repo">
+<tt class="descname">push_git_repo</tt><big>(</big><em>computer</em>, <em>user</em>, <em>group</em>, <em>git_url</em>, <em>target_path</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.push_git_repo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.push_git_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a local clone of the repo in git_url into the temp directory
+specified in the settings file, then rsync it to the remote path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>computer</strong> (<em>string</em>) &#8211; computer name to push to</li>
+<li><strong>user</strong> (<em>string</em>) &#8211; user to own the files in the repo</li>
+<li><strong>group</strong> (<em>string</em>) &#8211; group to own the files in the repo</li>
+<li><strong>git_url</strong> (<em>string</em>) &#8211; git url of repo (probably from github)</li>
+<li><strong>target_path</strong> (<em>string</em>) &#8211; root path on remote server to copy git repo to</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.push_package_file_set">
+<tt class="descname">push_package_file_set</tt><big>(</big><em>package_name</em>, <em>computer_name</em>, <em>aux_env=None</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.push_package_file_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.push_package_file_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy a set of files to a remote server, maintaining the same directory
+structure and processing any templates encountered. This copies the
+files to the root of the destination, so that things like /etc/hosts or
+/etc/nginx/nginx.conf get put in the right place.</p>
+<p>First create a directory with the same name as package_name in your
+root packages directory.  Then create a directory structure under that
+that mirrors the target machine and all files will get copied there in
+the correct place.</p>
+<p>For template file processing, a default environment dictionary will be
+passed in consisting of:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&quot;computer&quot;</span><span class="p">:</span> <span class="n">host_env</span><span class="p">[</span><span class="s">&quot;computers&quot;</span><span class="p">][</span><span class="n">computer_name</span><span class="p">]}</span>
+</pre></div>
+</div>
+<p>Template files have a .tmplt extension.</p>
+<p>If aux_env is given, it will be added to the default dictionary using
+dict.update() after the default dictionary is constructed.  This means
+that if you pass in an aux_env dictionary with a key called &#8220;computer&#8221;,
+that that key will over-write the default key of that name.</p>
+<p>If a file named fck_metadata.txt is encountered in a directory, then
+it&#8217;s expected to have contents of lines consisting of
+&lt;path&gt;:&lt;owner&gt;:&lt;group&gt;:&lt;perms&gt; that specifies the owner, group, and
+permissions for the path specified (directory-relative).</p>
+<p>If a file named fck_delete.txt is encountered in a directory, then it&#8217;s
+expected to have contents of lines containing names of files to delete,
+one per line.  This way you can clean out a directory as well as copy
+files to it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>package_name</strong> (<em>string</em>) &#8211; name of package to process, corresponds to directory in packages directory</li>
+<li><strong>template_env</strong> (<em>dict</em>) &#8211; environment dictionary for template engine</li>
+<li><strong>aux_env</strong> (<em>dict</em>) &#8211; additional key/value pairs for the template environment</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.push_template">
+<tt class="descname">push_template</tt><big>(</big><em>templatename</em>, <em>out_path</em>, <em>enviro</em>, <em>owner</em>, <em>group</em>, <em>perms=None</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.push_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.push_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process a template file and push its contents to a remote server if
+it&#8217;s different than what&#8217;s already there.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>templatename</strong> (<em>string</em>) &#8211; path within packages dir of template file to process (path + filename)</li>
+<li><strong>out_path</strong> (<em>string</em>) &#8211; path on remote server to write file to (path + filename)</li>
+<li><strong>enviro</strong> (<em>dict</em>) &#8211; environment dictionary for template engine</li>
+<li><strong>owner</strong> (<em>string</em>) &#8211; owner of the templated file</li>
+<li><strong>group</strong> (<em>string</em>) &#8211; group of the templated file</li>
+<li><strong>perms</strong> (<em>string</em>) &#8211; permissions for the templated file, ie. &#8216;655&#8217;</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.run_apply">
+<tt class="descname">run_apply</tt><big>(</big><em>computer</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.run_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.run_apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the apply sequence of functions.  This is typically called by
+frycooker.</p>
+<p>Sequence:</p>
+<div class="highlight-python"><div class="highlight"><pre>pre_apply_checks() -&gt; apply()
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>computer</strong> (<em>string</em>) &#8211; name of computer to apply recipe to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.run_messages">
+<tt class="descname">run_messages</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.run_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.run_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the pre and post apply messages only, as if the apply had been
+run.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.Recipe.update_git_repo">
+<tt class="descname">update_git_repo</tt><big>(</big><em>user</em>, <em>git_url</em>, <em>target_path</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.update_git_repo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.update_git_repo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update an existing git repo on a remote server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>git_url</strong> (<em>string</em>) &#8211; git url of repo (probably from github)</li>
+<li><strong>target_path</strong> (<em>string</em>) &#8211; root path on remote server to update git repo in</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="recipeexception">
+<h2>RecipeException<a class="headerlink" href="#recipeexception" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="frycook.recipe_template.RecipeException">
+<em class="property">exception </em><tt class="descclassname">frycook.recipe_template.</tt><tt class="descname">RecipeException</tt><a class="reference internal" href="_modules/frycook/recipe_template.html#RecipeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.RecipeException" title="Permalink to this definition">¶</a></dt>
+<dd><p>A RecipeException exception is raised for exceptional conditions
+encountered while using the Recipe class.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="filemetadatatracker">
+<h2>FileMetaDataTracker<a class="headerlink" href="#filemetadatatracker" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="frycook.recipe_template.FileMetaDataTracker">
+<em class="property">class </em><tt class="descclassname">frycook.recipe_template.</tt><tt class="descname">FileMetaDataTracker</tt><a class="reference internal" href="_modules/frycook/recipe_template.html#FileMetaDataTracker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.FileMetaDataTracker" title="Permalink to this definition">¶</a></dt>
+<dd><p>A FileMetaDataTracker object keeps track of owner, group, and
+permissions for files and directories during a push_package_fileset
+operation.  This hinges on a file named fck_metadata.txt being
+encountered in the directory being examined.  This file should have
+each line contain the text &lt;filename&gt;:&lt;owner&gt;:&lt;group&gt;:&lt;perms&gt;, where
+&lt;filename&gt; is either a file name or &#8216;.&#8217; for the directory itself,
+&lt;owner&gt; is the owner&#8217;s account name, &lt;group&gt; is the group&#8217;s name,
+and &lt;perms&gt; is the permissions string..</p>
+<dl class="method">
+<dt id="frycook.recipe_template.FileMetaDataTracker.check_directory">
+<tt class="descname">check_directory</tt><big>(</big><em>root</em>, <em>dirs</em>, <em>files</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#FileMetaDataTracker.check_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.FileMetaDataTracker.check_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in the metadata for the given directory from the
+fck_metadata.txt file in the directory, or remember metadata
+from previous calls if no fck_metadata.txt file is encountered.</p>
+<p>The input parameters are expected to be the values returned from
+a call to os.walk()</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> (<em>string</em>) &#8211; directory being examined</li>
+<li><strong>dirs</strong> (<em>list of strings</em>) &#8211; list of sub-directories under the root directory</li>
+<li><strong>files</strong> (<em>list of strings</em>) &#8211; list of the files in the root directory</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.recipe_template.FileMetaDataTracker.get_metadata">
+<tt class="descname">get_metadata</tt><big>(</big><em>path</em>, <em>filename=''</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#FileMetaDataTracker.get_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.FileMetaDataTracker.get_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lookup the owner, group, and permissions for the given path and
+filename from the metadata dictionary in this object.  If no
+filename is specified, the data is retrieved for the directory
+specified in path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> (<em>string</em>) &#8211; path to file to get metadata for</li>
+<li><strong>filename</strong> (<em>string</em>) &#8211; name of file to get metadata for (leave blank if just getting directory metadata)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple of strings</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">tuple containing (&lt;owner&gt;, &lt;group&gt;, &lt;perms&gt;, )</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="filedeleter">
+<h2>FileDeleter<a class="headerlink" href="#filedeleter" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="frycook.recipe_template.FileDeleter">
+<em class="property">class </em><tt class="descclassname">frycook.recipe_template.</tt><tt class="descname">FileDeleter</tt><a class="reference internal" href="_modules/frycook/recipe_template.html#FileDeleter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.FileDeleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>A FileDeleter object deletes unwanted files from a directory on a
+remote server.  This hinges on a file named fck_delete.txt being
+encountered in the directory being examined.  This file should have
+each line contain the name of a file to be deleted.</p>
+<dl class="method">
+<dt id="frycook.recipe_template.FileDeleter.check_directory">
+<tt class="descname">check_directory</tt><big>(</big><em>root</em>, <em>files</em>, <em>remote_rootpath</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#FileDeleter.check_directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.FileDeleter.check_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Examine the given directory, check for a fck_delete.txt file in
+the directory, and if it exists delete all remote files named in
+it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>root</strong> (<em>string</em>) &#8211; local directory possibly containing fck_delete.txt</li>
+<li><strong>files</strong> (<em>list of strings</em>) &#8211; list of the files in the local root directory</li>
+<li><strong>remote_rootpath</strong> (<em>string</em>) &#8211; path on remote server to delete files from</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">recipe_template.py</a><ul>
+<li><a class="reference internal" href="#recipe">Recipe</a></li>
+<li><a class="reference internal" href="#recipeexception">RecipeException</a></li>
+<li><a class="reference internal" href="#filemetadatatracker">FileMetaDataTracker</a></li>
+<li><a class="reference internal" href="#filedeleter">FileDeleter</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="previous chapter">Intro</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/recipe_template.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Intro"
+             >previous</a> |</li>
+        <li><a href="index.html">Frycook 0.3.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, James Yates Farrimond.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

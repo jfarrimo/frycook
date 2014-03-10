@@ -1,0 +1,655 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>frycook.recipe_template &mdash; Frycook 0.3.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Frycook 0.3.3 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Frycook 0.3.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for frycook.recipe_template</h1><div class="highlight"><pre>
+<span class="c"># Copyright (c) James Yates Farrimond. All rights reserved.</span>
+<span class="c">#</span>
+<span class="c"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c"># Modification, are permitted provided that the following conditions are met:</span>
+<span class="c">#</span>
+<span class="c"># Redistributions of source code must retain the above copyright notice, this</span>
+<span class="c"># list of conditions and the following disclaimer.</span>
+<span class="c">#</span>
+<span class="c"># Redistributions in binary form must reproduce the above copyright notice,</span>
+<span class="c"># this list of conditions and the following disclaimer in the documentation</span>
+<span class="c"># and/or other materials provided with the distribution.</span>
+<span class="c">#</span>
+<span class="c"># THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND &#39;&#39;AS IS&#39;&#39; AND ANY EXPRESS</span>
+<span class="c"># OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES</span>
+<span class="c"># OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO</span>
+<span class="c"># EVENT SHALL JAMES YATES FARRIMOND OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,</span>
+<span class="c"># INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES</span>
+<span class="c"># (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</span>
+<span class="c"># LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND</span>
+<span class="c"># ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</span>
+<span class="c"># (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS</span>
+<span class="c"># SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="c">#</span>
+<span class="c"># The views and conclusions contained in the software and documentation are</span>
+<span class="c"># those of the authors and should not be interpreted as representing official</span>
+<span class="c"># policies, either expressed or implied, of James Yates Farrimond.</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Recipes define subsystems that are distinct parts of larger systems.</span>
+<span class="sd">They are the basic units of setup in frycook.  Generally a recipe</span>
+<span class="sd">corresponds to an os-level package that needs to be installed or</span>
+<span class="sd">configured.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">stat</span>
+
+<span class="kn">import</span> <span class="nn">cuisine</span>
+<span class="kn">from</span> <span class="nn">fabric.api</span> <span class="kn">import</span> <span class="n">local</span>
+<span class="kn">from</span> <span class="nn">mako.lookup</span> <span class="kn">import</span> <span class="n">TemplateLookup</span>
+
+
+<div class="viewcode-block" id="RecipeException"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.RecipeException">[docs]</a><span class="k">class</span> <span class="nc">RecipeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A RecipeException exception is raised for exceptional conditions</span>
+<span class="sd">    encountered while using the Recipe class.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="FileMetaDataTracker"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.FileMetaDataTracker">[docs]</a><span class="k">class</span> <span class="nc">FileMetaDataTracker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A FileMetaDataTracker object keeps track of owner, group, and</span>
+<span class="sd">    permissions for files and directories during a push_package_fileset</span>
+<span class="sd">    operation.  This hinges on a file named fck_metadata.txt being</span>
+<span class="sd">    encountered in the directory being examined.  This file should have</span>
+<span class="sd">    each line contain the text &lt;filename&gt;:&lt;owner&gt;:&lt;group&gt;:&lt;perms&gt;, where</span>
+<span class="sd">    &lt;filename&gt; is either a file name or &#39;.&#39; for the directory itself,</span>
+<span class="sd">    &lt;owner&gt; is the owner&#39;s account name, &lt;group&gt; is the group&#39;s name,</span>
+<span class="sd">    and &lt;perms&gt; is the permissions string..</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">tagfile</span> <span class="o">=</span> <span class="s">&#39;fck_metadata.txt&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Start with a blank metadata dictionary.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="FileMetaDataTracker.check_directory"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.FileMetaDataTracker.check_directory">[docs]</a>    <span class="k">def</span> <span class="nf">check_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Read in the metadata for the given directory from the</span>
+<span class="sd">        fck_metadata.txt file in the directory, or remember metadata</span>
+<span class="sd">        from previous calls if no fck_metadata.txt file is encountered.</span>
+
+<span class="sd">        The input parameters are expected to be the values returned from</span>
+<span class="sd">        a call to os.walk()</span>
+
+<span class="sd">        :type root: string</span>
+<span class="sd">        :param root: directory being examined</span>
+<span class="sd">        :type dirs: list of strings</span>
+<span class="sd">        :param dirs: list of sub-directories under the root directory</span>
+<span class="sd">        :type files: list of strings</span>
+<span class="sd">        :param files: list of the files in the root directory</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">root</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">root</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tagfile</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tagfile</span><span class="p">)):</span>
+                <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;#&#39;</span><span class="p">:</span>
+                    <span class="n">owner</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">group</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                        <span class="n">perms</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">perms</span> <span class="o">=</span> <span class="bp">None</span>
+
+                    <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s">&#39;.&#39;</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">root</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="p">)</span>
+                        <span class="k">for</span> <span class="n">dn</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">dn</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span>
+                                <span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">path</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FileMetaDataTracker.get_metadata"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.FileMetaDataTracker.get_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">get_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Lookup the owner, group, and permissions for the given path and</span>
+<span class="sd">        filename from the metadata dictionary in this object.  If no</span>
+<span class="sd">        filename is specified, the data is retrieved for the directory</span>
+<span class="sd">        specified in path.</span>
+
+<span class="sd">        :type path: string</span>
+<span class="sd">        :param path: path to file to get metadata for</span>
+<span class="sd">        :type filename: string</span>
+<span class="sd">        :param filename: name of file to get metadata for (leave blank if just getting directory metadata)</span>
+
+<span class="sd">        :rtype: tuple of strings</span>
+<span class="sd">        :return: tuple containing (&lt;owner&gt;, &lt;group&gt;, &lt;perms&gt;, )</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">fq</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fq</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">fq</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">path</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
+
+</div></div>
+<div class="viewcode-block" id="FileDeleter"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.FileDeleter">[docs]</a><span class="k">class</span> <span class="nc">FileDeleter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A FileDeleter object deletes unwanted files from a directory on a</span>
+<span class="sd">    remote server.  This hinges on a file named fck_delete.txt being</span>
+<span class="sd">    encountered in the directory being examined.  This file should have</span>
+<span class="sd">    each line contain the name of a file to be deleted.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">tagfile</span> <span class="o">=</span> <span class="s">&#39;fck_delete.txt&#39;</span>
+
+<div class="viewcode-block" id="FileDeleter.check_directory"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.FileDeleter.check_directory">[docs]</a>    <span class="k">def</span> <span class="nf">check_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">remote_rootpath</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Examine the given directory, check for a fck_delete.txt file in</span>
+<span class="sd">        the directory, and if it exists delete all remote files named in</span>
+<span class="sd">        it.</span>
+
+<span class="sd">        :type root: string</span>
+<span class="sd">        :param root: local directory possibly containing fck_delete.txt</span>
+<span class="sd">        :type files: list of strings</span>
+<span class="sd">        :param files: list of the files in the local root directory</span>
+<span class="sd">        :type remote_rootpath: string</span>
+<span class="sd">        :param remote_rootpath: path on remote server to delete files from</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tagfile</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tagfile</span><span class="p">)):</span>
+                <span class="n">delfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remote_rootpath</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="n">cuisine</span><span class="o">.</span><span class="n">file_unlink</span><span class="p">(</span><span class="n">delfile</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Recipe"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe">[docs]</a><span class="k">class</span> <span class="nc">Recipe</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The Recipe class is the base class for all recipes to subclass.  It</span>
+<span class="sd">    defines the framework for recipes and some helper functions.  By</span>
+<span class="sd">    itself it doesn&#39;t do much.</span>
+
+<span class="sd">    It has a set of helper functions that are hooks called by frycooker</span>
+<span class="sd">    to apply the recipe to a remote server::</span>
+
+<span class="sd">        handle_pre_apply_message()</span>
+<span class="sd">        handle_post_apply_message()</span>
+<span class="sd">        run_apply()</span>
+<span class="sd">        run_messages()</span>
+
+<span class="sd">    It has another set of helper functions used within recipes for</span>
+<span class="sd">    copying files to remote servers::</span>
+
+<span class="sd">        get_local_file_perms()</span>
+<span class="sd">        push_file()</span>
+<span class="sd">        push_template()</span>
+<span class="sd">        push_package_file_set()</span>
+
+<span class="sd">    It has a final set of helper functions used within recipes for</span>
+<span class="sd">    managing git repos on remote servers::</span>
+
+<span class="sd">        push_git_repo()</span>
+<span class="sd">        clone_git_repo()</span>
+<span class="sd">        update_git_repo()</span>
+<span class="sd">        is_git_repo()</span>
+<span class="sd">        ensure_git_repo()</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">ok_to_be_rude</span><span class="p">,</span> <span class="n">no_prompt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initialize the recipe object with the settings and environment</span>
+<span class="sd">        dictionaries.</span>
+
+<span class="sd">        :param dict sttings: settings dictionary</span>
+<span class="sd">        :param dict environment: metadata dictionary</span>
+<span class="sd">        :param boolean ok_to_be_rude: is it ok to interrupt your users?</span>
+<span class="sd">        :param boolean no_prompt: should we prompt the user?</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">environment</span> <span class="o">=</span> <span class="n">environment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_to_be_rude</span> <span class="o">=</span> <span class="n">ok_to_be_rude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_prompt</span> <span class="o">=</span> <span class="n">no_prompt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mylookup</span> <span class="o">=</span> <span class="n">TemplateLookup</span><span class="p">(</span>
+            <span class="n">directories</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s">&quot;package_dir&quot;</span><span class="p">]],</span>
+            <span class="n">module_directory</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s">&quot;module_dir&quot;</span><span class="p">])</span>
+
+    <span class="c">#######################</span>
+    <span class="c">######## APPLY ########</span>
+    <span class="c">#######################</span>
+
+    <span class="n">pre_apply_message</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+<div class="viewcode-block" id="Recipe.handle_pre_apply_message"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.handle_pre_apply_message">[docs]</a>    <span class="k">def</span> <span class="nf">handle_pre_apply_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Print the pre-apply message for the user and wait for him/her to hit</span>
+<span class="sd">        return before continuing.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_apply_message</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s">&quot;pre-apply message from </span><span class="si">%s</span><span class="s">:&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="k">print</span> <span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">header</span>
+            <span class="k">print</span> <span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+            <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_apply_message</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_prompt</span><span class="p">:</span>
+                <span class="nb">raw_input</span><span class="p">(</span><span class="s">&#39;press enter to continue&#39;</span><span class="p">)</span>
+</div>
+    <span class="n">post_apply_message</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+<div class="viewcode-block" id="Recipe.handle_post_apply_message"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.handle_post_apply_message">[docs]</a>    <span class="k">def</span> <span class="nf">handle_post_apply_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Print the post-apply message for the user and wait for him/her to hit</span>
+<span class="sd">        return before continuing.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_apply_message</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="s">&quot;post-apply message from </span><span class="si">%s</span><span class="s">:&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="k">print</span> <span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+            <span class="k">print</span> <span class="n">header</span>
+            <span class="k">print</span> <span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+            <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_apply_message</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_prompt</span><span class="p">:</span>
+                <span class="nb">raw_input</span><span class="p">(</span><span class="s">&#39;press enter to continue&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Recipe.pre_apply_checks"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.pre_apply_checks">[docs]</a>    <span class="k">def</span> <span class="nf">pre_apply_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computer</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Define checks to run before applying the recipe.  The base class checks</span>
+<span class="sd">        that the designated computer exists in the environment dictionary.</span>
+<span class="sd">        This is a good place to check other things in your environment</span>
+<span class="sd">        dictionary that the apply function expects to be there.  Override this</span>
+<span class="sd">        function in your subclass of Recipe if you have any checks to perform.</span>
+<span class="sd">        Raise a RecipeException if you encounter exceptional conditions.  Be</span>
+<span class="sd">        sure to call the base class function to make sure its checks get done</span>
+<span class="sd">        as well.</span>
+
+<span class="sd">        :param string computer: name of computer to apply recipe checks to</span>
+<span class="sd">        :raises RecipeException: raised if the computer name is not in the environment being processed</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c"># make sure the computer is in our enviro</span>
+        <span class="k">if</span> <span class="n">computer</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s">&quot;computers&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">RecipeException</span><span class="p">(</span>
+                <span class="s">&quot;computer </span><span class="si">%s</span><span class="s"> not defined in environment&quot;</span> <span class="o">%</span> <span class="n">computer</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Recipe.apply"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computer</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Define the actions to take place when this recipe is applied to a</span>
+<span class="sd">        computer.  Override this function in your subclass of Recipe if you</span>
+<span class="sd">        have any actions to apply.  If you don&#39;t have any actions, then why are</span>
+<span class="sd">        you creating a recipe?</span>
+
+<span class="sd">        :type computer: string</span>
+<span class="sd">        :param computer: name of computer to apply recipe to</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="Recipe.run_apply"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.run_apply">[docs]</a>    <span class="k">def</span> <span class="nf">run_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computer</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run the apply sequence of functions.  This is typically called by</span>
+<span class="sd">        frycooker.</span>
+
+<span class="sd">        Sequence::</span>
+
+<span class="sd">          pre_apply_checks() -&gt; apply()</span>
+
+<span class="sd">        :type computer: string</span>
+<span class="sd">        :param computer: name of computer to apply recipe to</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_apply_checks</span><span class="p">(</span><span class="n">computer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">computer</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Recipe.run_messages"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.run_messages">[docs]</a>    <span class="k">def</span> <span class="nf">run_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Print the pre and post apply messages only, as if the apply had been</span>
+<span class="sd">        run.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_pre_apply_message</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_post_apply_message</span><span class="p">()</span>
+
+    <span class="c">###############################</span>
+    <span class="c">######## FILE HANDLING ########</span>
+    <span class="c">###############################</span>
+</div>
+<div class="viewcode-block" id="Recipe.get_local_file_perms"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.get_local_file_perms">[docs]</a>    <span class="k">def</span> <span class="nf">get_local_file_perms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Get a string of the permissions set on a local file.</span>
+
+<span class="sd">        :type local_name: string</span>
+<span class="sd">        :param local_name: path to file on local file system</span>
+
+<span class="sd">        :rtype: string</span>
+<span class="sd">        :return: string containing perms of file, ie. &#39;655&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">bit_mode</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IMODE</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">local_name</span><span class="p">)</span><span class="o">.</span><span class="n">st_mode</span><span class="p">)</span>
+        <span class="n">user_perms</span> <span class="o">=</span> <span class="p">(</span><span class="n">bit_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IRWXU</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">6</span>
+        <span class="n">group_perms</span> <span class="o">=</span> <span class="p">(</span><span class="n">bit_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IRWXG</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">3</span>
+        <span class="n">other_perms</span> <span class="o">=</span> <span class="n">bit_mode</span> <span class="o">&amp;</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IRWXO</span>
+        <span class="n">string_perms</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s%s%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">user_perms</span><span class="p">,</span> <span class="n">group_perms</span><span class="p">,</span> <span class="n">other_perms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">string_perms</span>
+</div>
+<div class="viewcode-block" id="Recipe.push_file"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.push_file">[docs]</a>    <span class="k">def</span> <span class="nf">push_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_name</span><span class="p">,</span> <span class="n">remote_name</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Copy a file to a remote server if the file is different or doesn&#39;t</span>
+<span class="sd">        exist.</span>
+
+<span class="sd">        :type local_name: string</span>
+<span class="sd">        :param local_name: path within packages dir of file to upload (path + filename)</span>
+<span class="sd">        :type remote_name: string</span>
+<span class="sd">        :param remote_name: remote path to write file to (path + filename)</span>
+<span class="sd">        :type owner: string</span>
+<span class="sd">        :param owner: owner of the file</span>
+<span class="sd">        :type group: string</span>
+<span class="sd">        :param group: group of the file</span>
+<span class="sd">        :type perms: string</span>
+<span class="sd">        :param perms: permissions for the file, ie. &#39;655&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">local_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s">&quot;package_dir&quot;</span><span class="p">],</span> <span class="n">local_name</span><span class="p">)</span>
+        <span class="n">cuisine</span><span class="o">.</span><span class="n">file_upload</span><span class="p">(</span><span class="n">remote_name</span><span class="p">,</span> <span class="n">local_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">perms</span><span class="p">:</span>
+            <span class="n">perms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_local_file_perms</span><span class="p">(</span><span class="n">local_name</span><span class="p">)</span>
+        <span class="n">cuisine</span><span class="o">.</span><span class="n">file_attribs</span><span class="p">(</span>
+            <span class="n">remote_name</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">perms</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Recipe.push_template"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.push_template">[docs]</a>    <span class="k">def</span> <span class="nf">push_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">templatename</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span> <span class="n">enviro</span><span class="p">,</span>
+                      <span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Process a template file and push its contents to a remote server if</span>
+<span class="sd">        it&#39;s different than what&#39;s already there.</span>
+
+<span class="sd">        :type templatename: string</span>
+<span class="sd">        :param templatename: path within packages dir of template file to process (path + filename)</span>
+<span class="sd">        :type out_path: string</span>
+<span class="sd">        :param out_path: path on remote server to write file to (path + filename)</span>
+<span class="sd">        :type enviro: dict</span>
+<span class="sd">        :param enviro: environment dictionary for template engine</span>
+<span class="sd">        :type owner: string</span>
+<span class="sd">        :param owner: owner of the templated file</span>
+<span class="sd">        :type group: string</span>
+<span class="sd">        :param group: group of the templated file</span>
+<span class="sd">        :type perms: string</span>
+<span class="sd">        :param perms: permissions for the templated file, ie. &#39;655&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">mytemplate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mylookup</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="n">templatename</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">buff</span> <span class="o">=</span> <span class="n">mytemplate</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">enviro</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">RecipeException</span><span class="p">(</span>
+                <span class="s">&quot;Error rendering template </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">templatename</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+        <span class="n">cuisine</span><span class="o">.</span><span class="n">file_write</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="n">buff</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">local_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s">&quot;package_dir&quot;</span><span class="p">],</span> <span class="n">templatename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">perms</span><span class="p">:</span>
+            <span class="n">perms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_local_file_perms</span><span class="p">(</span><span class="n">local_name</span><span class="p">)</span>
+        <span class="n">cuisine</span><span class="o">.</span><span class="n">file_attribs</span><span class="p">(</span>
+            <span class="n">out_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">perms</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_push_package_file_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">,</span> <span class="n">template_env</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Implement the file copying and deleting portion of the</span>
+<span class="sd">        push_package_file_set operation.  The calling function sets up the</span>
+<span class="sd">        template environment, then calls this one.</span>
+
+<span class="sd">        :type package_name: string</span>
+<span class="sd">        :param package_name: name of package to process, corresponds to directory in packages directory</span>
+<span class="sd">        :type template_env: dict</span>
+<span class="sd">        :param template_env: environment dictionary for template engine</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">FileMetaDataTracker</span><span class="p">()</span>
+        <span class="n">deleter</span> <span class="o">=</span> <span class="n">FileDeleter</span><span class="p">()</span>
+        <span class="n">work_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s">&quot;package_dir&quot;</span><span class="p">],</span> <span class="n">package_name</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">work_dir</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">):</span>
+            <span class="n">metadata</span><span class="o">.</span><span class="n">check_directory</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span><span class="p">)</span>
+            <span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="n">remote_root</span> <span class="o">=</span> <span class="s">&#39;/&#39;</span><span class="o">+</span><span class="n">root</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+            <span class="n">cuisine</span><span class="o">.</span><span class="n">dir_ensure</span><span class="p">(</span>
+                <span class="n">remote_root</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">perms</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">fq_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remote_root</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s">&quot;file_ignores&quot;</span><span class="p">],</span> <span class="n">filename</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+                        <span class="ow">and</span> <span class="n">filename</span> <span class="o">!=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">tagfile</span>
+                        <span class="ow">and</span> <span class="n">filename</span> <span class="o">!=</span> <span class="n">deleter</span><span class="o">.</span><span class="n">tagfile</span><span class="p">):</span>
+                    <span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                    <span class="n">base_path</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">fq_filename</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s">&#39;.tmplt&#39;</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">push_template</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">package_name</span><span class="p">,</span>
+                                                        <span class="n">fq_filename</span><span class="p">),</span>
+                                           <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">,</span> <span class="n">base_path</span><span class="p">),</span>
+                                           <span class="n">template_env</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">push_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">work_dir</span><span class="p">,</span> <span class="n">fq_filename</span><span class="p">),</span>
+                                       <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">,</span> <span class="n">fq_filename</span><span class="p">),</span>
+                                       <span class="n">owner</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">perms</span><span class="p">)</span>
+            <span class="n">deleter</span><span class="o">.</span><span class="n">check_directory</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">remote_root</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Recipe.push_package_file_set"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.push_package_file_set">[docs]</a>    <span class="k">def</span> <span class="nf">push_package_file_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">package_name</span><span class="p">,</span> <span class="n">computer_name</span><span class="p">,</span> <span class="n">aux_env</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Copy a set of files to a remote server, maintaining the same directory</span>
+<span class="sd">        structure and processing any templates encountered. This copies the</span>
+<span class="sd">        files to the root of the destination, so that things like /etc/hosts or</span>
+<span class="sd">        /etc/nginx/nginx.conf get put in the right place.</span>
+
+<span class="sd">        First create a directory with the same name as package_name in your</span>
+<span class="sd">        root packages directory.  Then create a directory structure under that</span>
+<span class="sd">        that mirrors the target machine and all files will get copied there in</span>
+<span class="sd">        the correct place.</span>
+
+<span class="sd">        For template file processing, a default environment dictionary will be</span>
+<span class="sd">        passed in consisting of::</span>
+
+<span class="sd">          {&quot;computer&quot;: host_env[&quot;computers&quot;][computer_name]}</span>
+
+<span class="sd">        Template files have a .tmplt extension.</span>
+
+<span class="sd">        If aux_env is given, it will be added to the default dictionary using</span>
+<span class="sd">        dict.update() after the default dictionary is constructed.  This means</span>
+<span class="sd">        that if you pass in an aux_env dictionary with a key called &quot;computer&quot;,</span>
+<span class="sd">        that that key will over-write the default key of that name.</span>
+
+<span class="sd">        If a file named fck_metadata.txt is encountered in a directory, then</span>
+<span class="sd">        it&#39;s expected to have contents of lines consisting of</span>
+<span class="sd">        &lt;path&gt;:&lt;owner&gt;:&lt;group&gt;:&lt;perms&gt; that specifies the owner, group, and</span>
+<span class="sd">        permissions for the path specified (directory-relative).</span>
+
+<span class="sd">        If a file named fck_delete.txt is encountered in a directory, then it&#39;s</span>
+<span class="sd">        expected to have contents of lines containing names of files to delete,</span>
+<span class="sd">        one per line.  This way you can clean out a directory as well as copy</span>
+<span class="sd">        files to it.</span>
+
+<span class="sd">        :type package_name: string</span>
+
+<span class="sd">        :param package_name: name of package to process, corresponds to directory in packages directory</span>
+<span class="sd">        :type template_env: dict</span>
+<span class="sd">        :param template_env: environment dictionary for template engine</span>
+<span class="sd">        :type aux_env: dict</span>
+<span class="sd">        :param aux_env: additional key/value pairs for the template environment</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">template_env</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;computer&quot;</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">environment</span><span class="p">[</span><span class="s">&quot;computers&quot;</span><span class="p">][</span><span class="n">computer_name</span><span class="p">]}</span>
+        <span class="k">if</span> <span class="n">aux_env</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">template_env</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">aux_env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_package_file_set</span><span class="p">(</span><span class="n">package_name</span><span class="p">,</span> <span class="n">template_env</span><span class="p">)</span>
+
+    <span class="c">##############################</span>
+    <span class="c">######## GIT HANDLING ########</span>
+    <span class="c">##############################</span>
+</div>
+<div class="viewcode-block" id="Recipe.push_git_repo"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.push_git_repo">[docs]</a>    <span class="k">def</span> <span class="nf">push_git_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computer</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">git_url</span><span class="p">,</span> <span class="n">target_path</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Make a local clone of the repo in git_url into the temp directory</span>
+<span class="sd">        specified in the settings file, then rsync it to the remote path.</span>
+
+<span class="sd">        :type computer: string</span>
+<span class="sd">        :param computer: computer name to push to</span>
+<span class="sd">        :type user: string</span>
+<span class="sd">        :param user: user to own the files in the repo</span>
+<span class="sd">        :type group: string</span>
+<span class="sd">        :param group: group to own the files in the repo</span>
+<span class="sd">        :type git_url: string</span>
+<span class="sd">        :param git_url: git url of repo (probably from github)</span>
+<span class="sd">        :type target_path: string</span>
+<span class="sd">        :param target_path: root path on remote server to copy git repo to</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">rsync_command</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;rsync -qrlptz --delete --delete-excluded &#39;</span>
+                         <span class="s">&#39;--exclude=.svn --exclude=.git&#39;</span><span class="p">)</span>
+        <span class="n">tmp_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">settings</span><span class="p">[</span><span class="s">&quot;tmp_dir&quot;</span><span class="p">],</span>
+                                <span class="s">&#39;push_git_repo/repo/&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">):</span>
+            <span class="n">local</span><span class="p">(</span><span class="s">&#39;git clone </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">git_url</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">local</span><span class="p">(</span><span class="s">&#39;cd </span><span class="si">%s</span><span class="s"> &amp;&amp; git pull&#39;</span> <span class="o">%</span> <span class="n">tmp_path</span><span class="p">)</span>
+        <span class="n">local</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> root@</span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+              <span class="p">(</span><span class="n">rsync_command</span><span class="p">,</span> <span class="n">tmp_path</span><span class="p">,</span> <span class="n">computer</span><span class="p">,</span> <span class="n">target_path</span><span class="p">))</span>
+        <span class="n">cuisine</span><span class="o">.</span><span class="n">sudo</span><span class="p">(</span><span class="s">&#39;chown -R </span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">target_path</span><span class="p">))</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">tmp_path</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Recipe.clone_git_repo"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.clone_git_repo">[docs]</a>    <span class="k">def</span> <span class="nf">clone_git_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">git_url</span><span class="p">,</span> <span class="n">target_path</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Clone a git repo on a remote server.</span>
+
+<span class="sd">        :type git_url: string</span>
+<span class="sd">        :param git_url: git url of repo (probably from github)</span>
+<span class="sd">        :type target_path: string</span>
+<span class="sd">        :param target_path: root path on remote server to clone git repo into</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">cuisine</span><span class="o">.</span><span class="n">sudo</span><span class="p">(</span><span class="s">&#39;sudo -Hi -u </span><span class="si">%s</span><span class="s"> git clone </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span>
+                     <span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">git_url</span><span class="p">,</span> <span class="n">target_path</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Recipe.update_git_repo"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.update_git_repo">[docs]</a>    <span class="k">def</span> <span class="nf">update_git_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">git_url</span><span class="p">,</span> <span class="n">target_path</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Update an existing git repo on a remote server.</span>
+
+<span class="sd">        :type git_url: string</span>
+<span class="sd">        :param git_url: git url of repo (probably from github)</span>
+<span class="sd">        :type target_path: string</span>
+<span class="sd">        :param target_path: root path on remote server to update git repo in</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">cuisine</span><span class="o">.</span><span class="n">sudo</span><span class="p">(</span><span class="s">&#39;cd </span><span class="si">%s</span><span class="s"> &amp;&amp; sudo -u </span><span class="si">%s</span><span class="s"> git pull&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">target_path</span><span class="p">,</span> <span class="n">user</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Recipe.is_git_repo"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.is_git_repo">[docs]</a>    <span class="k">def</span> <span class="nf">is_git_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_path</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Make sure the target path exists on the remote computer and is</span>
+<span class="sd">        really a git repo.</span>
+
+<span class="sd">        :type git_url: string</span>
+<span class="sd">        :param git_url: git url of repo (probably from github)</span>
+<span class="sd">        :type target_path: string</span>
+<span class="sd">        :param target_path: root path on remote server to check git repo</span>
+
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        :return: True if repo already existed, False if not</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cuisine</span><span class="o">.</span><span class="n">dir_exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_path</span><span class="p">,</span> <span class="s">&#39;.git&#39;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">cuisine</span><span class="o">.</span><span class="n">sudo</span><span class="p">(</span><span class="s">&#39;cd </span><span class="si">%s</span><span class="s"> &amp;&amp; git status&#39;</span> <span class="o">%</span> <span class="n">target_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ret</span><span class="o">.</span><span class="n">succeeded</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="Recipe.ensure_git_repo"><a class="viewcode-back" href="../../recipe_template.html#frycook.recipe_template.Recipe.ensure_git_repo">[docs]</a>    <span class="k">def</span> <span class="nf">ensure_git_repo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">git_url</span><span class="p">,</span> <span class="n">target_path</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Make sure a git repo exists in the target path on the remote</span>
+<span class="sd">        computer.</span>
+
+<span class="sd">        :type git_url: string</span>
+<span class="sd">        :param git_url: git url of repo (probably from github)</span>
+<span class="sd">        :type target_path: string</span>
+<span class="sd">        :param target_path: root path on remote server to check git repo</span>
+
+<span class="sd">        :rtype: boolean</span>
+<span class="sd">        :return: True if repo already existed, False if not</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cuisine</span><span class="o">.</span><span class="n">dir_exists</span><span class="p">(</span><span class="n">target_path</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clone_git_repo</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">git_url</span><span class="p">,</span> <span class="n">target_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Frycook 0.3.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, James Yates Farrimond.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
