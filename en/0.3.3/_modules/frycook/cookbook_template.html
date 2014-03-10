@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>frycook.cookbook_template &mdash; Frycook 0.3.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Frycook 0.3.3 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Frycook 0.3.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for frycook.cookbook_template</h1><div class="highlight"><pre>
+<span class="c"># Copyright (c) James Yates Farrimond. All rights reserved.</span>
+<span class="c">#</span>
+<span class="c"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c"># Modification, are permitted provided that the following conditions are met:</span>
+<span class="c">#</span>
+<span class="c"># Redistributions of source code must retain the above copyright notice, this</span>
+<span class="c"># list of conditions and the following disclaimer.</span>
+<span class="c">#</span>
+<span class="c"># Redistributions in binary form must reproduce the above copyright notice,</span>
+<span class="c"># this list of conditions and the following disclaimer in the documentation</span>
+<span class="c"># and/or other materials provided with the distribution.</span>
+<span class="c">#</span>
+<span class="c"># THIS SOFTWARE IS PROVIDED BY JAMES YATES FARRIMOND &#39;&#39;AS IS&#39;&#39; AND ANY EXPRESS</span>
+<span class="c"># OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES</span>
+<span class="c"># OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO</span>
+<span class="c"># EVENT SHALL JAMES YATES FARRIMOND OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,</span>
+<span class="c"># INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES</span>
+<span class="c"># (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</span>
+<span class="c"># LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND</span>
+<span class="c"># ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</span>
+<span class="c"># (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS</span>
+<span class="c"># SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+<span class="c">#</span>
+<span class="c"># The views and conclusions contained in the software and documentation are</span>
+<span class="c"># those of the authors and should not be interpreted as representing official</span>
+<span class="c"># policies, either expressed or implied, of James Yates Farrimond.</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Cookbooks are sets of recipes to apply to a server to create systems made up of</span>
+<span class="sd">subsystems.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="Cookbook"><a class="viewcode-back" href="../../cookbook_template.html#frycook.cookbook_template.Cookbook">[docs]</a><span class="k">class</span> <span class="nc">Cookbook</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The Cookbook class is the base class for all cookbooks to be created</span>
+<span class="sd">    from.  If you over-ride any of the built-in functions, be sure to</span>
+<span class="sd">    call the base class functions so that all the good stuff still</span>
+<span class="sd">    happens.  You will probably not need to sub-class any of the base</span>
+<span class="sd">    functions in your cookbooks, though.  They will all be called by</span>
+<span class="sd">    frycooker as necessary.  All you need to do is to fill the</span>
+<span class="sd">    class-level variable recipe_list with class objects for recipes that</span>
+<span class="sd">    you want to run when applying the cookbook.  The recipes will be</span>
+<span class="sd">    applied in the order they&#39;re defined in the list.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">      from frycook import Cookbook</span>
+
+<span class="sd">      from recipes import RecipeNginx</span>
+<span class="sd">      from recipes import RecipeExampleCom</span>
+
+<span class="sd">      class CookbookWeb(Cookbook):</span>
+<span class="sd">          recipe_list = [RecipeNginx,</span>
+<span class="sd">                         RecipeExampleCom]</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">recipe_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">ok_to_be_rude</span><span class="p">,</span> <span class="n">no_prompt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initialize the cookbook object with the settings and environment</span>
+<span class="sd">        dictionaries.</span>
+
+<span class="sd">        :type settings: dict</span>
+<span class="sd">        :param settings: settings dictionary</span>
+<span class="sd">        :type environment: dict</span>
+<span class="sd">        :param environment: metadata dictionary</span>
+<span class="sd">        :type ok_to_be_rude: boolean</span>
+<span class="sd">        :param ok_to_be_rude: is it ok to interrupt your users?</span>
+<span class="sd">        :type no_prompt: boolean</span>
+<span class="sd">        :param no_prompt: should we prompt the user?</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recipes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ok_to_be_rude</span> <span class="o">=</span> <span class="n">ok_to_be_rude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_prompt</span> <span class="o">=</span> <span class="n">no_prompt</span>
+        <span class="k">for</span> <span class="n">recipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recipe_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">recipes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">recipe</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">ok_to_be_rude</span><span class="p">,</span> <span class="n">no_prompt</span><span class="p">))</span>
+
+    <span class="c">#######################</span>
+    <span class="c">######## APPLY ########</span>
+    <span class="c">#######################</span>
+
+<div class="viewcode-block" id="Cookbook.handle_pre_apply_messages"><a class="viewcode-back" href="../../cookbook_template.html#frycook.cookbook_template.Cookbook.handle_pre_apply_messages">[docs]</a>    <span class="k">def</span> <span class="nf">handle_pre_apply_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run the pre_apply_message functions for all the recipes defined in</span>
+<span class="sd">        recipe_list. Override this if there are cookbook-level messages you</span>
+<span class="sd">        would like to add.  Be sure to call the base if you override this.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">recipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recipes</span><span class="p">:</span>
+            <span class="n">recipe</span><span class="o">.</span><span class="n">handle_pre_apply_message</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Cookbook.handle_post_apply_messages"><a class="viewcode-back" href="../../cookbook_template.html#frycook.cookbook_template.Cookbook.handle_post_apply_messages">[docs]</a>    <span class="k">def</span> <span class="nf">handle_post_apply_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run the post_apply_message functions for all the recipes defined in</span>
+<span class="sd">        recipe_list. Override this if there are cookbook-level messages you</span>
+<span class="sd">        would like to add.  Be sure to call the base if you override this.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">recipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recipes</span><span class="p">:</span>
+            <span class="n">recipe</span><span class="o">.</span><span class="n">handle_post_apply_message</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Cookbook.pre_apply_checks"><a class="viewcode-back" href="../../cookbook_template.html#frycook.cookbook_template.Cookbook.pre_apply_checks">[docs]</a>    <span class="k">def</span> <span class="nf">pre_apply_checks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computer</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run the pre_apply_checks functions for all the recipes defined in</span>
+<span class="sd">        recipe_list. Override this if there&#39;s something you need to check above</span>
+<span class="sd">        and beyond the recipe-level data.  Be sure to call the base if you</span>
+<span class="sd">        override this.</span>
+
+<span class="sd">        :type computer: string</span>
+<span class="sd">        :param computer: name of computer to apply recipe checks to</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">recipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recipes</span><span class="p">:</span>
+            <span class="n">recipe</span><span class="o">.</span><span class="n">pre_apply_checks</span><span class="p">(</span><span class="n">computer</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Cookbook.apply"><a class="viewcode-back" href="../../cookbook_template.html#frycook.cookbook_template.Cookbook.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computer</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run the apply functions for all the recipes defined in recipe_list.</span>
+<span class="sd">        Override this if there&#39;s something you need to do besides just running</span>
+<span class="sd">        all the recipes.  Be sure to call the base class if you override this.</span>
+
+<span class="sd">        :type computer: string</span>
+<span class="sd">        :param computer: name of computer to apply recipe to</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">recipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recipes</span><span class="p">:</span>
+            <span class="n">recipe</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">computer</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Cookbook.run_apply"><a class="viewcode-back" href="../../cookbook_template.html#frycook.cookbook_template.Cookbook.run_apply">[docs]</a>    <span class="k">def</span> <span class="nf">run_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">computer</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run the apply process for the computer.  This is usually just called</span>
+<span class="sd">        from frycooker.</span>
+
+<span class="sd">        :type computer: string</span>
+<span class="sd">        :param computer: name of computer to apply recipe to</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_apply_checks</span><span class="p">(</span><span class="n">computer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">computer</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Cookbook.run_messages"><a class="viewcode-back" href="../../cookbook_template.html#frycook.cookbook_template.Cookbook.run_messages">[docs]</a>    <span class="k">def</span> <span class="nf">run_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run the handle_pre_apply_messages and handle_post_apply_messages</span>
+<span class="sd">        functions for all the recipes defined in recipe_list. This is useful to</span>
+<span class="sd">        display all the possible messages to the user without actually applying</span>
+<span class="sd">        the cookbook.  This is usually just called from frycooker.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_pre_apply_messages</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_post_apply_messages</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">Frycook 0.3.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, James Yates Farrimond.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

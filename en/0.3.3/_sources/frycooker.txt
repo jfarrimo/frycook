@@ -1,0 +1,5 @@
+frycooker
+=========
+
+.. automodule:: frycooker
+   :members:
