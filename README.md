@@ -7,8 +7,8 @@ latest documentation
 
 Documentation for specific versions is here:
 
-[0.3.4](http://jfarrimo.github.io/frycook/en/0.3.4/index.html)
-[0.3.3](http://jfarrimo.github.io/frycook/en/0.3.3/index.html)
+* [0.3.4](http://jfarrimo.github.io/frycook/en/0.3.4/index.html)
+* [0.3.3](http://jfarrimo.github.io/frycook/en/0.3.3/index.html)
 
 ---
 
