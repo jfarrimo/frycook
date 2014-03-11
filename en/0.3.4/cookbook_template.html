@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cookbook_template.py &mdash; Frycook 0.3.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.3.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Frycook 0.3.4 documentation" href="index.html" />
+    <link rel="up" title="frycook" href="frycook.html" />
+    <link rel="next" title="frycooker.py" href="frycooker.html" />
+    <link rel="prev" title="recipe_template.py" href="recipe_template.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="frycooker.html" title="frycooker.py"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="recipe_template.html" title="recipe_template.py"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Frycook 0.3.4 documentation</a> &raquo;</li>
+          <li><a href="frycook.html" accesskey="U">frycook</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-frycook.cookbook_template">
+<span id="cookbook-template-py"></span><h1>cookbook_template.py<a class="headerlink" href="#module-frycook.cookbook_template" title="Permalink to this headline">¶</a></h1>
+<p>Cookbooks are sets of recipes to apply to a server to create systems made up of
+subsystems.</p>
+<div class="section" id="cookbook">
+<h2>Cookbook<a class="headerlink" href="#cookbook" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="frycook.cookbook_template.Cookbook">
+<em class="property">class </em><tt class="descclassname">frycook.cookbook_template.</tt><tt class="descname">Cookbook</tt><big>(</big><em>settings</em>, <em>environment</em>, <em>ok_to_be_rude</em>, <em>no_prompt</em><big>)</big><a class="reference internal" href="_modules/frycook/cookbook_template.html#Cookbook"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.cookbook_template.Cookbook" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Cookbook class is the base class for all cookbooks to be created
+from.  If you over-ride any of the built-in functions, be sure to
+call the base class functions so that all the good stuff still
+happens.  You will probably not need to sub-class any of the base
+functions in your cookbooks, though.  They will all be called by
+frycooker as necessary.  All you need to do is to fill the
+class-level variable recipe_list with class objects for recipes that
+you want to run when applying the cookbook.  The recipes will be
+applied in the order they&#8217;re defined in the list.</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">frycook</span> <span class="kn">import</span> <span class="n">Cookbook</span>
+
+<span class="kn">from</span> <span class="nn">recipes</span> <span class="kn">import</span> <span class="n">RecipeNginx</span>
+<span class="kn">from</span> <span class="nn">recipes</span> <span class="kn">import</span> <span class="n">RecipeExampleCom</span>
+
+<span class="k">class</span> <span class="nc">CookbookWeb</span><span class="p">(</span><span class="n">Cookbook</span><span class="p">):</span>
+    <span class="n">recipe_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">RecipeNginx</span><span class="p">,</span>
+                   <span class="n">RecipeExampleCom</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="frycook.cookbook_template.Cookbook.apply">
+<tt class="descname">apply</tt><big>(</big><em>computer</em><big>)</big><a class="reference internal" href="_modules/frycook/cookbook_template.html#Cookbook.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.cookbook_template.Cookbook.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the apply functions for all the recipes defined in recipe_list.
+Override this if there&#8217;s something you need to do besides just running
+all the recipes.  Be sure to call the base class if you override this.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>computer</strong> (<em>string</em>) &#8211; name of computer to apply recipe to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.cookbook_template.Cookbook.handle_post_apply_messages">
+<tt class="descname">handle_post_apply_messages</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/frycook/cookbook_template.html#Cookbook.handle_post_apply_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.cookbook_template.Cookbook.handle_post_apply_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the post_apply_message functions for all the recipes defined in
+recipe_list. Override this if there are cookbook-level messages you
+would like to add.  Be sure to call the base if you override this.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.cookbook_template.Cookbook.handle_pre_apply_messages">
+<tt class="descname">handle_pre_apply_messages</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/frycook/cookbook_template.html#Cookbook.handle_pre_apply_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.cookbook_template.Cookbook.handle_pre_apply_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the pre_apply_message functions for all the recipes defined in
+recipe_list. Override this if there are cookbook-level messages you
+would like to add.  Be sure to call the base if you override this.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.cookbook_template.Cookbook.pre_apply_checks">
+<tt class="descname">pre_apply_checks</tt><big>(</big><em>computer</em><big>)</big><a class="reference internal" href="_modules/frycook/cookbook_template.html#Cookbook.pre_apply_checks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.cookbook_template.Cookbook.pre_apply_checks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the pre_apply_checks functions for all the recipes defined in
+recipe_list. Override this if there&#8217;s something you need to check above
+and beyond the recipe-level data.  Be sure to call the base if you
+override this.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>computer</strong> (<em>string</em>) &#8211; name of computer to apply recipe checks to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.cookbook_template.Cookbook.run_apply">
+<tt class="descname">run_apply</tt><big>(</big><em>computer</em><big>)</big><a class="reference internal" href="_modules/frycook/cookbook_template.html#Cookbook.run_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.cookbook_template.Cookbook.run_apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the apply process for the computer.  This is usually just called
+from frycooker.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>computer</strong> (<em>string</em>) &#8211; name of computer to apply recipe to</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="frycook.cookbook_template.Cookbook.run_messages">
+<tt class="descname">run_messages</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/frycook/cookbook_template.html#Cookbook.run_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.cookbook_template.Cookbook.run_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the handle_pre_apply_messages and handle_post_apply_messages
+functions for all the recipes defined in recipe_list. This is useful to
+display all the possible messages to the user without actually applying
+the cookbook.  This is usually just called from frycooker.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">cookbook_template.py</a><ul>
+<li><a class="reference internal" href="#cookbook">Cookbook</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="recipe_template.html"
+                        title="previous chapter">recipe_template.py</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="frycooker.html"
+                        title="next chapter">frycooker.py</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/cookbook_template.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="frycooker.html" title="frycooker.py"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="recipe_template.html" title="recipe_template.py"
+             >previous</a> |</li>
+        <li><a href="index.html">Frycook 0.3.4 documentation</a> &raquo;</li>
+          <li><a href="frycook.html" >frycook</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, James Yates Farrimond.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

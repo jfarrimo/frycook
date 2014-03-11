@@ -1,0 +1,5 @@
+frycooker_internals.py
+======================
+
+.. automodule:: frycook.frycooker_internals
+   :members:
