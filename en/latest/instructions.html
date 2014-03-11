@@ -132,7 +132,7 @@ explain all the pieces and how they work together.</p>
     comp_dev.json          # included environment file for computer named dev
     environment.json       # environment file
     requirements.txt       # python pip requirements file
-    runner.sh              # wrapper for frycooker that sets PYTHONPATH
+    runner.sh              # wrapper for frycooker.py that sets PYTHONPATH
     settings.json          # settings file
     cookbooks              # directory to hold the cookbooks package
       __init__.py          # define the cookbook list here and import all cookbook classes
@@ -181,7 +181,7 @@ corresponds to an os-level package that needs to be installed or configured.</p>
 <div class="section" id="recipe-list">
 <h2>recipe list<a class="headerlink" href="#recipe-list" title="Permalink to this headline">¶</a></h2>
 <p>There should be a recipe list in the <tt class="docutils literal"><span class="pre">__init__.py</span></tt> file for the packge.
-This lists all the avilable recipes that cookbooks and frycooker can
+This lists all the avilable recipes that cookbooks and frycooker.py can
 reference.</p>
 <p>Here&#8217;s the sample <tt class="docutils literal"><span class="pre">__init__.py</span></tt> file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">fail2ban</span> <span class="kn">import</span> <span class="n">RecipeFail2ban</span>
@@ -286,7 +286,7 @@ systems made up of subsystems.</p>
 </div>
 <p>There should be a cookbook list in the <tt class="docutils literal"><span class="pre">__init__.py</span></tt> file for the
 cookbooks packge.  This lists all the cookbooks available to the
-frycooker program.</p>
+frycooker.py program.</p>
 <p>Here&#8217;s the <tt class="docutils literal"><span class="pre">__init__.py</span></tt> file for the sample cookbooks module:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">base</span> <span class="kn">import</span> <span class="n">CookbookBase</span>
 <span class="kn">from</span> <span class="nn">web</span> <span class="kn">import</span> <span class="n">CookbookWeb</span>
@@ -397,7 +397,7 @@ during template handling</p>
 package files</p>
 <p>For any key containing the strings <tt class="docutils literal"><span class="pre">&quot;dir&quot;</span></tt> or <tt class="docutils literal"><span class="pre">&quot;path&quot;</span></tt>, if you include a
 tilde <tt class="docutils literal"><span class="pre">~</span></tt> in the value, it will be replaced with the home directory of
-the user running frycooker, just like in bash.  For this example, that
+the user running frycooker.p, just like in bash.  For this example, that
 would be the <tt class="docutils literal"><span class="pre">&quot;package_dir&quot;</span></tt> and <tt class="docutils literal"><span class="pre">&quot;module_dir&quot;</span></tt> keys.</p>
 <p>Example settings.json file:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
@@ -415,23 +415,24 @@ all the components when software is being setup on the computers.  It is
 read in from a set of files into a single dictionary that is passed
 around to the parts of the frycook framework.  The environment
 dictionary contains all the metadata about the computers and the
-environment they live in that frycooker, the recipes, and the cookbooks
-need to function.  Most of its data is directly relevant to specific
-recipes and is filled in depending on the recipes&#8217; needs.  It&#8217;s a
-dictionary with three main sections that should always be there:</p>
+environment they live in that frycooker.py, the recipes, and the
+cookbooks need to function.  Most of its data is directly relevant to
+specific recipes and is filled in depending on the recipes&#8217; needs.  It&#8217;s
+a dictionary with three main sections that should always be there:</p>
 <p><tt class="docutils literal"><span class="pre">&quot;users&quot;</span></tt>: a list of the users that recipes could reference, with such
 things as public ssh keys</p>
-<p><tt class="docutils literal"><span class="pre">&quot;computers&quot;</span></tt>: a list of computers in the system, with such things as ip
-addresses</p>
+<p><tt class="docutils literal"><span class="pre">&quot;computers&quot;</span></tt>: a list of computers in the system, with such things as
+ip addresses</p>
 <p><tt class="docutils literal"><span class="pre">&quot;groups&quot;</span></tt>: groups of computers that will be addressed as a unit</p>
 <p>Just like for the settings dictionary, any key containing <tt class="docutils literal"><span class="pre">&quot;dir&quot;</span></tt> or
 <tt class="docutils literal"><span class="pre">&quot;path&quot;</span></tt> and including a tilde <tt class="docutils literal"><span class="pre">~</span></tt> in the value will have the tilde
-replaced with the home directory of the user running frycooker.</p>
+replaced with the home directory of the user running frycooker.py.</p>
 <p>Each computer in the <tt class="docutils literal"><span class="pre">&quot;computers&quot;</span></tt> section is also expected to have a
 <tt class="docutils literal"><span class="pre">&quot;components&quot;</span></tt> section listing all the cookbooks and recipes that that
-computer uses.  This is used by frycooker to easily apply all relevant
-cookbooks and recipes to computers.  It&#8217;s also a good way to keep track
-of what components make up that computer when it&#8217;s fully functional.</p>
+computer uses.  This is used by frycooker.py to easily apply all
+relevant cookbooks and recipes to computers.  It&#8217;s also a good way to
+keep track of what components make up that computer when it&#8217;s fully
+functional.</p>
 <p>Each component in the list has a <tt class="docutils literal"><span class="pre">&quot;type&quot;</span></tt> key identifying if it&#8217;s a
 cookbook or a recipe, and a <tt class="docutils literal"><span class="pre">&quot;name&quot;</span></tt> key identifying the name of the
 cookbook or recipe.</p>
@@ -529,30 +530,30 @@ large environments into multiple files.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="frycooker">
-<h1>Frycooker<a class="headerlink" href="#frycooker" title="Permalink to this headline">¶</a></h1>
-<p>Frycooker is the program that takes all your carefully coded recipes and
-cookbooks and applies them to computers.</p>
+<div class="section" id="frycooker-py">
+<h1>Frycooker.py<a class="headerlink" href="#frycooker-py" title="Permalink to this headline">¶</a></h1>
+<p>Frycooker.py is the program that takes all your carefully coded recipes
+and cookbooks and applies them to computers.</p>
 <p>The recipes and cookbooks modules should be accessible via the
 <tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt> so they can be imported.  In the sample globule we ensure
-this with the <tt class="docutils literal"><span class="pre">runner.sh</span></tt> wrapper script which sets up the python path,
-then invokes frycooker:</p>
+this with the <tt class="docutils literal"><span class="pre">runner.sh</span></tt> wrapper script which sets up the python
+path, then invokes frycooker.py:</p>
 <div class="highlight-python"><div class="highlight"><pre>#!/bin/bash
 
 export PYTHONPATH=.
-frycooker $*
+frycooker.py $*
 </pre></div>
 </div>
 <div class="section" id="recipes-and-cookbooks-vs-apply">
 <h2>recipes and cookbooks vs. apply<a class="headerlink" href="#recipes-and-cookbooks-vs-apply" title="Permalink to this headline">¶</a></h2>
 <p>There are two ways to update computers.  The first way is to specify
-recipes and cookbooks on the frycooker command line (using the &#8216;-r&#8217; and
-&#8216;-c&#8217; command-line options) and have those be applied to all the desired
-computers, in the order that they&#8217;re specified.  This way is nice to use
-when you have specific, small changes to apply.</p>
+recipes and cookbooks on the frycooker.py command line (using the &#8216;-r&#8217;
+and &#8216;-c&#8217; command-line options) and have those be applied to all the
+desired computers, in the order that they&#8217;re specified.  This way is
+nice to use when you have specific, small changes to apply.</p>
 <p>The second way to update a computer is to use the <em>apply</em> option in
-frycooker (&#8216;-a&#8217; command-line option).  With this option frycooker looks
-at the <tt class="docutils literal"><span class="pre">&quot;components&quot;</span></tt> list in the environment for each specified
+frycooker.py (&#8216;-a&#8217; command-line option).  With this option frycooker.py
+looks at the <tt class="docutils literal"><span class="pre">&quot;components&quot;</span></tt> list in the environment for each specified
 computer to determine what recipes and cookbooks apply to each computer,
 then applies them.  This way is nice to use when you just want to bring
 a computer into compliance with all of its components and don&#8217;t want to
@@ -565,30 +566,31 @@ changes have already been applied.</p>
 <h2>computers vs. groups<a class="headerlink" href="#computers-vs-groups" title="Permalink to this headline">¶</a></h2>
 <p>When choosing which computers to run frycook against, you have the
 option of giving a list of computers or of specifying a group and having
-frycooker run against all computers in that group.  Groups are specified
-in the <tt class="docutils literal"><span class="pre">&quot;groups&quot;</span></tt> key in the environment json files.  Frycooker will use
-any combination of groups and computers that are specified on its
-command line.  If there are identically named computers and groups,
-the computer will be selected instead of the group.</p>
+frycooker.py run against all computers in that group.  Groups are
+specified in the <tt class="docutils literal"><span class="pre">&quot;groups&quot;</span></tt> key in the environment json files.
+Frycooker.py will use any combination of groups and computers that are
+specified on its command line.  If there are identically named computers
+and groups, the computer will be selected instead of the group.</p>
 </div>
 <div class="section" id="messages">
 <h2>messages<a class="headerlink" href="#messages" title="Permalink to this headline">¶</a></h2>
 <p>Messages are text string that are printed out to the end-user of
-frycooker either before or after a recipe or cookbook is run.  Frycooker
-agregates all message for the run and prints all the pre-apply messages
-before anything is run and all the post-apply messages after everything
-else has been run.  If you&#8217;re curious as to what messages a frycooker
-run will print, you can tell it to just print the messages for you
-without applying any of the recipes or cookbooks.</p>
+frycooker.py either before or after a recipe or cookbook is run.
+Frycooker.py agregates all message for the run and prints all the
+pre-apply messages before anything is run and all the post-apply
+messages after everything else has been run.  If you&#8217;re curious as to
+what messages a frycooker.py run will print, you can tell it to just
+print the messages for you without applying any of the recipes or
+cookbooks.</p>
 </div>
 <div class="section" id="dry-run">
 <h2>dry run<a class="headerlink" href="#dry-run" title="Permalink to this headline">¶</a></h2>
-<p>You can do a dry run with frycooker to see what the final environment
+<p>You can do a dry run with frycooker.py to see what the final environment
 dictionary will look like and what all computers things will be applied
 to.  This is especially nice when you have lots of <tt class="docutils literal"><span class="pre">import</span></tt> directives
 in your environment json files, or if you are applying things to a group
 of machines.  This way you know how the environment imports are handled
-and which computers frycooker thinks are in the group.</p>
+and which computers frycooker.py thinks are in the group.</p>
 </div>
 </div>
 
@@ -623,7 +625,7 @@ and which computers frycooker thinks are in the group.</p>
 </li>
 <li><a class="reference internal" href="#settings">Settings</a></li>
 <li><a class="reference internal" href="#environment">Environment</a></li>
-<li><a class="reference internal" href="#frycooker">Frycooker</a><ul>
+<li><a class="reference internal" href="#frycooker-py">Frycooker.py</a><ul>
 <li><a class="reference internal" href="#recipes-and-cookbooks-vs-apply">recipes and cookbooks vs. apply</a></li>
 <li><a class="reference internal" href="#computers-vs-groups">computers vs. groups</a></li>
 <li><a class="reference internal" href="#messages">messages</a></li>

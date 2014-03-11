@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Frycook 0.3.3 documentation" href="index.html" />
-    <link rel="next" title="recipe_template" href="recipe.html" />
+    <link rel="next" title="frycook" href="frycook.html" />
     <link rel="prev" title="Intro" href="instructions.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="recipe.html" title="recipe_template"
+          <a href="frycook.html" title="frycook"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="instructions.html" title="Intro"
@@ -62,9 +62,9 @@ other than the basic operating system load.</p>
 <div class="section" id="initial-server-build">
 <h1>Initial Server Build<a class="headerlink" href="#initial-server-build" title="Permalink to this headline">¶</a></h1>
 <p>The first thing you&#8217;ll want to do is to install the python requirements
-on the machine you&#8217;ll be running frycooker on.  They&#8217;re contained in the
-requirements.txt file in the setup directory of the sample globule.  I
-generally use a virtualenv for things like this, but it will work just
+on the machine you&#8217;ll be running frycooker.py on.  They&#8217;re contained in
+the requirements.txt file in the setup directory of the sample globule.
+I generally use a virtualenv for things like this, but it will work just
 fine if installed globally as well:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ cd sample/setup
 $ pip install -r requirements.txt
@@ -79,23 +79,24 @@ it to apply the components to the server and it will do its thing:</p>
 $ ./runner.sh -a -p -O dev
 </pre></div>
 </div>
-<p>Several things are worth noting here.  First, we&#8217;re funning frycooker
+<p>Several things are worth noting here.  First, we&#8217;re funning frycooker.py
 using the runner.sh wrapper script.  It sets the PYTHONPATH environment
-variable, then invokes frycooker.</p>
+variable, then invokes frycooker.py.</p>
 <p>The second thing to note is the set of command-line arguments we used.
-The <tt class="docutils literal"><span class="pre">-a</span></tt> argument tells frycooker to apply the components defined in the
-environment to the server.  The <tt class="docutils literal"><span class="pre">-p</span></tt> argument tells frycooker to update
-the package manager on the server we&#8217;re loading before applying the
-recipes and cookbooks (in this case, it&#8217;s the equivalent of running
-<tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span></tt>).  The <tt class="docutils literal"><span class="pre">-O</span></tt> argument tells frycooker that the
-cookbooks and recipes are allowed to be as disruptive as necessary when
-running on the target server.  Finally, the <tt class="docutils literal"><span class="pre">dev</span></tt> argument tells
-frycooker to run against the computer named dev in the environment.</p>
-<p>The last noteworthy thing is that frycooker will expect to be able to
-resolve the <tt class="docutils literal"><span class="pre">dev</span></tt> name to an ip address to ssh to and apply the recipes
-and cookbooks.  Therefore you&#8217;ll want to either have a hosts entry for
-it or have added it to your dns server configuration before running
-this.</p>
+The <tt class="docutils literal"><span class="pre">-a</span></tt> argument tells frycooker.py to apply the components defined
+in the environment to the server.  The <tt class="docutils literal"><span class="pre">-p</span></tt> argument tells
+frycooker.py to update the package manager on the server we&#8217;re loading
+before applying the recipes and cookbooks (in this case, it&#8217;s the
+equivalent of running <tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span></tt>).  The <tt class="docutils literal"><span class="pre">-O</span></tt> argument
+tells frycooker.py that the cookbooks and recipes are allowed to be as
+disruptive as necessary when running on the target server.  Finally, the
+<tt class="docutils literal"><span class="pre">dev</span></tt> argument tells frycooker.py to run against the computer named
+dev in the environment.</p>
+<p>The last noteworthy thing is that frycooker.py will expect to be able to
+resolve the <tt class="docutils literal"><span class="pre">dev</span></tt> name to an ip address to ssh to and apply the
+recipes and cookbooks.  Therefore you&#8217;ll want to either have a hosts
+entry for it or have added it to your dns server configuration before
+running this.</p>
 </div>
 <div class="section" id="continued-maintenance">
 <h1>Continued Maintenance<a class="headerlink" href="#continued-maintenance" title="Permalink to this headline">¶</a></h1>
@@ -113,7 +114,7 @@ $ ./runner.sh -r example_com dev
 </div>
 <p>Note that here we&#8217;ve used the <tt class="docutils literal"><span class="pre">-r</span></tt> command-line parameter to specify a
 single recipe to run.  We&#8217;ve also specified the <tt class="docutils literal"><span class="pre">dev</span></tt> server to run it
-against.  We always have to specify a server when running frycooker.</p>
+against.  We always have to specify a server when running frycooker.py.</p>
 <p>If you wanted to apply a whole cookbok instead of a single recipe, you&#8217;d
 do it like this:</p>
 <div class="highlight-python"><div class="highlight"><pre>$ cd sample/setup
@@ -152,8 +153,8 @@ exercise left up to the reader.</p>
   <p class="topless"><a href="instructions.html"
                         title="previous chapter">Intro</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="recipe.html"
-                        title="next chapter">recipe_template</a></p>
+  <p class="topless"><a href="frycook.html"
+                        title="next chapter">frycook</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/tutorial.txt"
@@ -186,7 +187,7 @@ exercise left up to the reader.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="recipe.html" title="recipe_template"
+          <a href="frycook.html" title="frycook"
              >next</a> |</li>
         <li class="right" >
           <a href="instructions.html" title="Intro"

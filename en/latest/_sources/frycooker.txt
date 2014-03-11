@@ -1,5 +1,5 @@
-frycooker
-=========
+frycooker.py
+============
 
 .. automodule:: frycooker
    :members:

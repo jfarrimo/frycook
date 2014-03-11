@@ -52,7 +52,7 @@
 <h1>Welcome to Frycook!<a class="headerlink" href="#welcome-to-frycook" title="Permalink to this headline">¶</a></h1>
 <p>Frycook is a quick and dirty alternative to Chef.  When a giant kitchen
 full of equipment and a full staff headed by a master chef are <em>WAY</em>
-more than you need, a frycook will do the trick nicely.  It&#8217;as also nice
+more than you need, a frycook will do the trick nicely.  It&#8217;s also nice
 when you&#8217;d rather do things in Python than have to learn Ruby or some
 other proprietary DSL.</p>
 <p>Frycook is a thin layer on top of fabric, cuisine, and mako.  Frycook
@@ -61,8 +61,8 @@ and metadata files you generate to describe your environment and how to
 build it.  I call this set of recipes and metadata a <em>globule</em>.  There
 is a sample globule in the sample directory that handles a base server
 setup and web domain setup for a simple web server, based on Ubuntu
-12.04.  The frycooker script that comes with the frycook package takes
-care of applying the recipes to your computers.</p>
+12.04.  The frycooker.py script that comes with the frycook package
+takes care of applying the recipes to your computers.</p>
 </div>
 <div class="section" id="instructions">
 <h1>Instructions<a class="headerlink" href="#instructions" title="Permalink to this headline">¶</a></h1>
@@ -91,7 +91,7 @@ care of applying the recipes to your computers.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="instructions.html#settings">Settings</a></li>
 <li class="toctree-l1"><a class="reference internal" href="instructions.html#environment">Environment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="instructions.html#frycooker">Frycooker</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="instructions.html#frycooker-py">Frycooker.py</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="instructions.html#recipes-and-cookbooks-vs-apply">recipes and cookbooks vs. apply</a></li>
 <li class="toctree-l2"><a class="reference internal" href="instructions.html#computers-vs-groups">computers vs. groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="instructions.html#messages">messages</a></li>
@@ -115,17 +115,21 @@ care of applying the recipes to your computers.</p>
 <h1>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="recipe_template.html">recipe_template.py</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="recipe_template.html#recipe">Recipe</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recipe_template.html#recipeexception">RecipeException</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recipe_template.html#filemetadatatracker">FileMetaDataTracker</a></li>
-<li class="toctree-l2"><a class="reference internal" href="recipe_template.html#filedeleter">FileDeleter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="frycook.html">frycook</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="recipe_template.html">recipe_template.py</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="recipe_template.html#recipe">Recipe</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recipe_template.html#recipeexception">RecipeException</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recipe_template.html#filemetadatatracker">FileMetaDataTracker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="recipe_template.html#filedeleter">FileDeleter</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cookbook_template.html">cookbook_template.py</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cookbook_template.html#cookbook">Cookbook</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cookbook_template.html">cookbook_template.py</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cookbook_template.html#cookbook">Cookbook</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="frycooker.html">frycooker.py</a></li>
 </ul>
 </div>
 </div>
@@ -184,7 +188,7 @@ for my environment.  I couldn&#8217;t think of a better name, so I ended up
 calling this directory structure and its contents a globule (frycooks
 deal with lots of grease).  The package you install has the base recipe
 and cookbook classes and a program to process everything (called,
-appropriately, frycooker).</p>
+appropriately, frycooker.py).</p>
 </div>
 <div class="section" id="copyright-notice">
 <h1>Copyright Notice<a class="headerlink" href="#copyright-notice" title="Permalink to this headline">¶</a></h1>

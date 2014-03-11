@@ -10,9 +10,9 @@ Initial Server Build
 ====================
 
 The first thing you'll want to do is to install the python requirements
-on the machine you'll be running frycooker on.  They're contained in the
-requirements.txt file in the setup directory of the sample globule.  I
-generally use a virtualenv for things like this, but it will work just
+on the machine you'll be running frycooker.py on.  They're contained in
+the requirements.txt file in the setup directory of the sample globule.
+I generally use a virtualenv for things like this, but it will work just
 fine if installed globally as well::
 
     $ cd sample/setup
@@ -27,25 +27,26 @@ it to apply the components to the server and it will do its thing::
     $ cd sample/setup
     $ ./runner.sh -a -p -O dev
 
-Several things are worth noting here.  First, we're funning frycooker
+Several things are worth noting here.  First, we're funning frycooker.py
 using the runner.sh wrapper script.  It sets the PYTHONPATH environment
-variable, then invokes frycooker.
+variable, then invokes frycooker.py.
 
 The second thing to note is the set of command-line arguments we used.
-The ``-a`` argument tells frycooker to apply the components defined in the
-environment to the server.  The ``-p`` argument tells frycooker to update
-the package manager on the server we're loading before applying the
-recipes and cookbooks (in this case, it's the equivalent of running
-``sudo apt-get update``).  The ``-O`` argument tells frycooker that the
-cookbooks and recipes are allowed to be as disruptive as necessary when
-running on the target server.  Finally, the ``dev`` argument tells
-frycooker to run against the computer named dev in the environment.
+The ``-a`` argument tells frycooker.py to apply the components defined
+in the environment to the server.  The ``-p`` argument tells
+frycooker.py to update the package manager on the server we're loading
+before applying the recipes and cookbooks (in this case, it's the
+equivalent of running ``sudo apt-get update``).  The ``-O`` argument
+tells frycooker.py that the cookbooks and recipes are allowed to be as
+disruptive as necessary when running on the target server.  Finally, the
+``dev`` argument tells frycooker.py to run against the computer named
+dev in the environment.
 
-The last noteworthy thing is that frycooker will expect to be able to
-resolve the ``dev`` name to an ip address to ssh to and apply the recipes
-and cookbooks.  Therefore you'll want to either have a hosts entry for
-it or have added it to your dns server configuration before running
-this.
+The last noteworthy thing is that frycooker.py will expect to be able to
+resolve the ``dev`` name to an ip address to ssh to and apply the
+recipes and cookbooks.  Therefore you'll want to either have a hosts
+entry for it or have added it to your dns server configuration before
+running this.
 
 Continued Maintenance
 =====================
@@ -64,7 +65,7 @@ you'll do that::
 
 Note that here we've used the ``-r`` command-line parameter to specify a
 single recipe to run.  We've also specified the ``dev`` server to run it
-against.  We always have to specify a server when running frycooker.
+against.  We always have to specify a server when running frycooker.py.
 
 If you wanted to apply a whole cookbok instead of a single recipe, you'd
 do it like this::

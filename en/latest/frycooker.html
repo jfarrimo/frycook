@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>frycooker &mdash; Frycook 0.3.3 documentation</title>
+    <title>frycooker.py &mdash; Frycook 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Frycook 0.3.3 documentation" href="index.html" /> 
+    <link rel="top" title="Frycook 0.3.3 documentation" href="index.html" />
+    <link rel="prev" title="cookbook_template.py" href="cookbook_template.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,6 +36,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="cookbook_template.html" title="cookbook_template.py"
+             accesskey="P">previous</a> |</li>
         <li><a href="index.html">Frycook 0.3.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -44,8 +48,216 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="frycooker">
-<h1>frycooker<a class="headerlink" href="#frycooker" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-frycooker">
+<span id="frycooker-py"></span><h1>frycooker.py<a class="headerlink" href="#module-frycooker" title="Permalink to this headline">¶</a></h1>
+<p>Frycooker is the program that takes all your carefully coded recipes and
+cookbooks and applies them to computers.</p>
+<dl class="exception">
+<dt id="frycooker.InvalidTarget">
+<em class="property">exception </em><tt class="descclassname">frycooker.</tt><tt class="descname">InvalidTarget</tt><a class="reference internal" href="_modules/frycooker.html#InvalidTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.InvalidTarget" title="Permalink to this definition">¶</a></dt>
+<dd><p>An InvalidTarget exception is raised for exceptional conditions
+encountered while generating target lists.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.apply_recipes_cookbooks">
+<tt class="descclassname">frycooker.</tt><tt class="descname">apply_recipes_cookbooks</tt><big>(</big><em>enviro</em>, <em>settings</em>, <em>args</em>, <em>host_list</em>, <em>run_list</em><big>)</big><a class="reference internal" href="_modules/frycooker.html#apply_recipes_cookbooks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.apply_recipes_cookbooks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply all specified recipes and cookbooks to the requested hosts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>enviro</strong> (<em>dictionary</em>) &#8211; environment dictionary</li>
+<li><strong>settings</strong> (<em>dictionary</em>) &#8211; settings dictionary</li>
+<li><strong>args</strong> (<em>args object</em>) &#8211; object containing attributes for all possible command-line parameters</li>
+<li><strong>host_list</strong> (<em>list of strings</em>) &#8211; list of hosts to run against</li>
+<li><strong>run_list</strong> (<em>dictionary</em>) &#8211; dictionary of lists</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.generate_run_list">
+<tt class="descclassname">frycooker.</tt><tt class="descname">generate_run_list</tt><big>(</big><em>enviro</em>, <em>args</em><big>)</big><a class="reference internal" href="_modules/frycooker.html#generate_run_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.generate_run_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the lists of computers, recipes, cookbooks, and run list to run
+against.  A run list is a dictionary containing a list of recipes
+and cookbooks to run against each specified computer.  Typically the
+run list will just specify the same recipes and cookbooks for each
+computer, unless a list of computers was given and the apply (-a)
+command-line argument was specified.  In that case each computer
+could have different things run against them.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>enviro</strong> (<em>dictionary</em>) &#8211; environment to read group lists and computer components from</li>
+<li><strong>args</strong> (<em>args object</em>) &#8211; object containing attributes for all possible command-line parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">tuple of (dictionary, list, list, list)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">(run list, host list, recipe list, cookbook list)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.generate_target_list">
+<tt class="descclassname">frycooker.</tt><tt class="descname">generate_target_list</tt><big>(</big><em>enviro</em>, <em>args</em><big>)</big><a class="reference internal" href="_modules/frycooker.html#generate_target_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.generate_target_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of computers to run against from the command-line
+arguments.  Translate group names into lists of computers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>enviro</strong> (<em>dictionary</em>) &#8211; environment to read group lists from</li>
+<li><strong>args</strong> (<em>args object</em>) &#8211; object containing attributes for all possible command-line parameters</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">list of strings</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">list of computer names to run against</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.get_args">
+<tt class="descclassname">frycooker.</tt><tt class="descname">get_args</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/frycooker.html#get_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.get_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the command-line arguments, using python&#8217;s argparse library.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">argparse args object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">object containing attributes for all possible command-line arguments</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.load_enviro">
+<tt class="descclassname">frycooker.</tt><tt class="descname">load_enviro</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/frycooker.html#load_enviro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.load_enviro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the environment json file, loading additionaly imported
+environment files and massaging environment paths in the
+process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; filename of environment file to read</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary representation of environment</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.load_settings">
+<tt class="descclassname">frycooker.</tt><tt class="descname">load_settings</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/frycooker.html#load_settings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.load_settings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the settings json file, massaging its environment paths in the
+process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; filename of settings file to read</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dictionary</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary representation of settings</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.main">
+<tt class="descclassname">frycooker.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/frycooker.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function for the frycooker program.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.massage_enviro_paths">
+<tt class="descclassname">frycooker.</tt><tt class="descname">massage_enviro_paths</tt><big>(</big><em>env</em><big>)</big><a class="reference internal" href="_modules/frycooker.html#massage_enviro_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.massage_enviro_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively iterate through all the keys in the environment
+dictionary and look for any that contain the strings &#8216;path&#8217; or &#8216;dir&#8217;
+in them.  For the values corresponding to the keys that do, replace
+any instances of the &#8216;~&#8217; character with the running user&#8217;s home
+directory path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>env</strong> (<em>dictionary</em>) &#8211; environment dictionary</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.output_post_apply_messages">
+<tt class="descclassname">frycooker.</tt><tt class="descname">output_post_apply_messages</tt><big>(</big><em>recipe_list</em>, <em>cookbook_list</em>, <em>enviro</em>, <em>settings</em>, <em>args</em><big>)</big><a class="reference internal" href="_modules/frycooker.html#output_post_apply_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.output_post_apply_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ouptput all the post-apply messages for the specified recipes and
+cookbooks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>recipe_list</strong> (<em>list</em>) &#8211; list of recipes to process</li>
+<li><strong>cookbook_list</strong> (<em>list</em>) &#8211; list of cookbooks to process</li>
+<li><strong>enviro</strong> (<em>dictionary</em>) &#8211; environment dictionary</li>
+<li><strong>settings</strong> (<em>dictionary</em>) &#8211; settings dictionary</li>
+<li><strong>args</strong> (<em>args object</em>) &#8211; object containing attributes for all possible command-line parameters</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="frycooker.output_pre_apply_messages">
+<tt class="descclassname">frycooker.</tt><tt class="descname">output_pre_apply_messages</tt><big>(</big><em>recipe_list</em>, <em>cookbook_list</em>, <em>enviro</em>, <em>settings</em>, <em>args</em><big>)</big><a class="reference internal" href="_modules/frycooker.html#output_pre_apply_messages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycooker.output_pre_apply_messages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ouptput all the pre-apply messages for the specified recipes and
+cookbooks.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>recipe_list</strong> (<em>list</em>) &#8211; list of recipes to process</li>
+<li><strong>cookbook_list</strong> (<em>list</em>) &#8211; list of cookbooks to process</li>
+<li><strong>enviro</strong> (<em>dictionary</em>) &#8211; environment dictionary</li>
+<li><strong>settings</strong> (<em>dictionary</em>) &#8211; settings dictionary</li>
+<li><strong>args</strong> (<em>args object</em>) &#8211; object containing attributes for all possible command-line parameters</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -54,6 +266,9 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cookbook_template.html"
+                        title="previous chapter">cookbook_template.py</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/frycooker.txt"
@@ -85,6 +300,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="cookbook_template.html" title="cookbook_template.py"
+             >previous</a> |</li>
         <li><a href="index.html">Frycook 0.3.3 documentation</a> &raquo;</li> 
       </ul>
     </div>

@@ -8,7 +8,7 @@ Welcome to Frycook!
 
 Frycook is a quick and dirty alternative to Chef.  When a giant kitchen
 full of equipment and a full staff headed by a master chef are *WAY*
-more than you need, a frycook will do the trick nicely.  It'as also nice
+more than you need, a frycook will do the trick nicely.  It's also nice
 when you'd rather do things in Python than have to learn Ruby or some
 other proprietary DSL.
 
@@ -18,8 +18,8 @@ and metadata files you generate to describe your environment and how to
 build it.  I call this set of recipes and metadata a *globule*.  There
 is a sample globule in the sample directory that handles a base server
 setup and web domain setup for a simple web server, based on Ubuntu
-12.04.  The frycooker script that comes with the frycook package takes
-care of applying the recipes to your computers.
+12.04.  The frycooker.py script that comes with the frycook package
+takes care of applying the recipes to your computers.
 
 Instructions
 ============
@@ -41,8 +41,8 @@ API
 
 .. toctree::
 
-   recipe_template
-   cookbook_template
+   frycook
+   frycooker
 
 Indices and tables
 ==================
@@ -104,7 +104,7 @@ for my environment.  I couldn't think of a better name, so I ended up
 calling this directory structure and its contents a globule (frycooks
 deal with lots of grease).  The package you install has the base recipe
 and cookbook classes and a program to process everything (called,
-appropriately, frycooker).
+appropriately, frycooker.py).
 
 Copyright Notice
 ================
