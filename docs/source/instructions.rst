@@ -85,7 +85,7 @@ Here's an example globule::
         comp_dev.json          # included environment file for computer named dev
         environment.json       # environment file
         requirements.txt       # python pip requirements file
-        runner.sh              # wrapper for frycooker that sets PYTHONPATH
+        runner.sh              # wrapper for frycooker.py that sets PYTHONPATH
         settings.json          # settings file
         cookbooks              # directory to hold the cookbooks package
           __init__.py          # define the cookbook list here and import all cookbook classes
@@ -135,7 +135,7 @@ recipe list
 -----------
 
 There should be a recipe list in the ``__init__.py`` file for the packge.
-This lists all the avilable recipes that cookbooks and frycooker can
+This lists all the avilable recipes that cookbooks and frycooker.py can
 reference.
 
 Here's the sample ``__init__.py`` file::
@@ -249,7 +249,7 @@ Example::
 
 There should be a cookbook list in the ``__init__.py`` file for the
 cookbooks packge.  This lists all the cookbooks available to the
-frycooker program.
+frycooker.py program.
 
 Here's the ``__init__.py`` file for the sample cookbooks module::
 
@@ -371,7 +371,7 @@ package files
 
 For any key containing the strings ``"dir"`` or ``"path"``, if you include a
 tilde ``~`` in the value, it will be replaced with the home directory of
-the user running frycooker, just like in bash.  For this example, that
+the user running frycooker.p, just like in bash.  For this example, that
 would be the ``"package_dir"`` and ``"module_dir"`` keys.
 
 Example settings.json file::
@@ -390,28 +390,29 @@ all the components when software is being setup on the computers.  It is
 read in from a set of files into a single dictionary that is passed
 around to the parts of the frycook framework.  The environment
 dictionary contains all the metadata about the computers and the
-environment they live in that frycooker, the recipes, and the cookbooks
-need to function.  Most of its data is directly relevant to specific
-recipes and is filled in depending on the recipes' needs.  It's a
-dictionary with three main sections that should always be there:
+environment they live in that frycooker.py, the recipes, and the
+cookbooks need to function.  Most of its data is directly relevant to
+specific recipes and is filled in depending on the recipes' needs.  It's
+a dictionary with three main sections that should always be there:
 
 ``"users"``: a list of the users that recipes could reference, with such
 things as public ssh keys
 
-``"computers"``: a list of computers in the system, with such things as ip
-addresses
+``"computers"``: a list of computers in the system, with such things as
+ip addresses
 
 ``"groups"``: groups of computers that will be addressed as a unit
 
 Just like for the settings dictionary, any key containing ``"dir"`` or
 ``"path"`` and including a tilde ``~`` in the value will have the tilde
-replaced with the home directory of the user running frycooker.
+replaced with the home directory of the user running frycooker.py.
 
 Each computer in the ``"computers"`` section is also expected to have a
 ``"components"`` section listing all the cookbooks and recipes that that
-computer uses.  This is used by frycooker to easily apply all relevant
-cookbooks and recipes to computers.  It's also a good way to keep track
-of what components make up that computer when it's fully functional.
+computer uses.  This is used by frycooker.py to easily apply all
+relevant cookbooks and recipes to computers.  It's also a good way to
+keep track of what components make up that computer when it's fully
+functional.
 
 Each component in the list has a ``"type"`` key identifying if it's a
 cookbook or a recipe, and a ``"name"`` key identifying the name of the
@@ -511,34 +512,34 @@ comp_dev.json::
       }
     }
 
-Frycooker
-=========
+Frycooker.py
+============
 
-Frycooker is the program that takes all your carefully coded recipes and
-cookbooks and applies them to computers.
+Frycooker.py is the program that takes all your carefully coded recipes
+and cookbooks and applies them to computers.
 
 The recipes and cookbooks modules should be accessible via the
 ``PYTHONPATH`` so they can be imported.  In the sample globule we ensure
-this with the ``runner.sh`` wrapper script which sets up the python path,
-then invokes frycooker::
+this with the ``runner.sh`` wrapper script which sets up the python
+path, then invokes frycooker.py::
 
     #!/bin/bash
 
     export PYTHONPATH=.
-    frycooker $*
+    frycooker.py $*
 
 recipes and cookbooks vs. apply
 -------------------------------
 
 There are two ways to update computers.  The first way is to specify
-recipes and cookbooks on the frycooker command line (using the '-r' and
-'-c' command-line options) and have those be applied to all the desired
-computers, in the order that they're specified.  This way is nice to use
-when you have specific, small changes to apply.
+recipes and cookbooks on the frycooker.py command line (using the '-r'
+and '-c' command-line options) and have those be applied to all the
+desired computers, in the order that they're specified.  This way is
+nice to use when you have specific, small changes to apply.
 
 The second way to update a computer is to use the *apply* option in
-frycooker ('-a' command-line option).  With this option frycooker looks
-at the ``"components"`` list in the environment for each specified
+frycooker.py ('-a' command-line option).  With this option frycooker.py
+looks at the ``"components"`` list in the environment for each specified
 computer to determine what recipes and cookbooks apply to each computer,
 then applies them.  This way is nice to use when you just want to bring
 a computer into compliance with all of its components and don't want to
@@ -552,29 +553,30 @@ computers vs. groups
 
 When choosing which computers to run frycook against, you have the
 option of giving a list of computers or of specifying a group and having
-frycooker run against all computers in that group.  Groups are specified
-in the ``"groups"`` key in the environment json files.  Frycooker will use
-any combination of groups and computers that are specified on its
-command line.  If there are identically named computers and groups,
-the computer will be selected instead of the group.
+frycooker.py run against all computers in that group.  Groups are
+specified in the ``"groups"`` key in the environment json files.
+Frycooker.py will use any combination of groups and computers that are
+specified on its command line.  If there are identically named computers
+and groups, the computer will be selected instead of the group.
 
 messages
 --------
 
 Messages are text string that are printed out to the end-user of
-frycooker either before or after a recipe or cookbook is run.  Frycooker
-agregates all message for the run and prints all the pre-apply messages
-before anything is run and all the post-apply messages after everything
-else has been run.  If you're curious as to what messages a frycooker
-run will print, you can tell it to just print the messages for you
-without applying any of the recipes or cookbooks.
+frycooker.py either before or after a recipe or cookbook is run.
+Frycooker.py agregates all message for the run and prints all the
+pre-apply messages before anything is run and all the post-apply
+messages after everything else has been run.  If you're curious as to
+what messages a frycooker.py run will print, you can tell it to just
+print the messages for you without applying any of the recipes or
+cookbooks.
 
 dry run
 -------
 
-You can do a dry run with frycooker to see what the final environment
+You can do a dry run with frycooker.py to see what the final environment
 dictionary will look like and what all computers things will be applied
 to.  This is especially nice when you have lots of ``import`` directives
 in your environment json files, or if you are applying things to a group
 of machines.  This way you know how the environment imports are handled
-and which computers frycooker thinks are in the group.
+and which computers frycooker.py thinks are in the group.

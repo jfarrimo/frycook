@@ -1,4 +1,4 @@
 #!/bin/bash
 
 export PYTHONPATH=.
-frycooker $*
+frycooker.py $*
