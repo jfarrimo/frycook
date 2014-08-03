@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>recipe_template.py &mdash; Frycook 0.3.4 documentation</title>
+    <title>recipe_template.py &mdash; Frycook 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.3.4',
+        URL_ROOT:    './',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +23,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Frycook 0.3.4 documentation" href="index.html" />
-    <link rel="up" title="frycook" href="frycook.html" />
-    <link rel="next" title="cookbook_template.py" href="cookbook_template.html" />
-    <link rel="prev" title="frycook" href="frycook.html" /> 
+    <link rel="top" title="Frycook 0.3.3 documentation" href="index.html" />
+    <link rel="prev" title="Intro" href="tutorial.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,13 +37,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="cookbook_template.html" title="cookbook_template.py"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="frycook.html" title="frycook"
+          <a href="tutorial.html" title="Intro"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Frycook 0.3.4 documentation</a> &raquo;</li>
-          <li><a href="frycook.html" accesskey="U">frycook</a> &raquo;</li> 
+        <li><a href="index.html">Frycook 0.3.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -95,28 +87,6 @@ managing git repos on remote servers:</p>
 <span class="n">ensure_git_repo</span><span class="p">()</span>
 </pre></div>
 </div>
-<dl class="method">
-<dt id="frycook.recipe_template.Recipe.append_line_to_file">
-<tt class="descname">append_line_to_file</tt><big>(</big><em>tag</em>, <em>add_line</em>, <em>filepath</em><big>)</big><a class="headerlink" href="#frycook.recipe_template.Recipe.append_line_to_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append a line to a file on the remote filesystem if it&#8217;s not
-there already.  Look for the tag to see if the line is there
-already, in case the existing line has different spacing or
-tabbing than the new line.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tag</strong> (<em>string</em>) &#8211; tag to look for in existing lines</li>
-<li><strong>add_line</strong> (<em>string</em>) &#8211; line to append to file</li>
-<li><strong>filepath</strong> (<em>string</em>) &#8211; fully-qualified path to remote file</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="method">
 <dt id="frycook.recipe_template.Recipe.apply">
 <tt class="descname">apply</tt><big>(</big><em>computer</em><big>)</big><a class="reference internal" href="_modules/frycook/recipe_template.html#Recipe.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#frycook.recipe_template.Recipe.apply" title="Permalink to this definition">¶</a></dt>
@@ -375,7 +345,8 @@ it&#8217;s different than what&#8217;s already there.</p>
 <dd><p>Run the apply sequence of functions.  This is typically called by
 frycooker.</p>
 <p>Sequence:</p>
-<div class="highlight-python"><pre>pre_apply_checks() -&gt; apply()</pre>
+<div class="highlight-python"><div class="highlight"><pre>pre_apply_checks() -&gt; apply()
+</pre></div>
 </div>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -544,14 +515,11 @@ it.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="frycook.html"
-                        title="previous chapter">frycook</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="cookbook_template.html"
-                        title="next chapter">cookbook_template.py</a></p>
+  <p class="topless"><a href="tutorial.html"
+                        title="previous chapter">Intro</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/recipe_template.txt"
+    <li><a href="_sources/recipe.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -581,18 +549,14 @@ it.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="cookbook_template.html" title="cookbook_template.py"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="frycook.html" title="frycook"
+          <a href="tutorial.html" title="Intro"
              >previous</a> |</li>
-        <li><a href="index.html">Frycook 0.3.4 documentation</a> &raquo;</li>
-          <li><a href="frycook.html" >frycook</a> &raquo;</li> 
+        <li><a href="index.html">Frycook 0.3.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, James Yates Farrimond.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>
