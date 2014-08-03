@@ -28,7 +28,7 @@
 from distutils.core import setup
 
 setup(name='frycook',
-      version='0.3.4',
+      version='0.3.5',
       description='frycook system builder',
       author='Jay Farrimond',
       author_email='jay@farrimond.com',

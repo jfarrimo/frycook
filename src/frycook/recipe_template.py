@@ -454,7 +454,6 @@ class Recipe(object):
         files to it.
 
         :type package_name: string
-
         :param package_name: name of package to process, corresponds to directory in packages directory
         :type template_env: dict
         :param template_env: environment dictionary for template engine
@@ -466,6 +465,33 @@ class Recipe(object):
         if aux_env is not None:
             template_env.update(aux_env)
         self._push_package_file_set(package_name, template_env)
+
+    def append_line_to_file(self, tag, add_line, filepath):
+        '''
+        Append a line to a file on the remote filesystem if it's not
+        there already.  Look for the tag to see if the line is there
+        already, in case the existing line has different spacing or
+        tabbing than the new line.
+
+        :type tag: string
+        :param tag: tag to look for in existing lines
+        :type add_line: string
+        :param add_line: line to append to file
+        :type filepath: string
+        :param filepath: fully-qualified path to remote file
+        '''
+        old_contents = cuisine.file_read(filepath)
+        eol = cuisine.text_detect_eol(old_contents)
+        old_contents = old_contents.split(eol)
+        has_line = False
+        for line in old_contents:
+            print line
+            if line.find(tag) != -1:
+                has_line = True
+                continue
+        if not has_line:
+            old_contents.append(add_line)
+            cuisine.file_write(filepath, eol.join(old_contents) + eol)
 
     ##############################
     ######## GIT HANDLING ########
