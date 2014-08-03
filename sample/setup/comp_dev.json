@@ -1,0 +1,13 @@
+{
+  "dev": {
+    "domain_name": "fubu.example",
+    "host_group": "dev",
+    "public_ifaces": ["eth0", "eth1"],
+    "public_ips": {"192.168.56.10": "dev.fubu.example",
+                   "192.168.56.11": "dev.fubu.example"},
+    "private_ifaces": ["eth2"],
+    "private_ips": {"192.168.1.126": "dev"},
+    "components": [{"type": "cookbook", "name": "base"},
+                   {"type": "cookbook", "name": "web"}]
+  }
+}

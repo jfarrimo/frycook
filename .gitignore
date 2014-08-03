@@ -1,0 +1,7 @@
+*~
+*pyc
+docs/build
+src/build
+src/dist
+src/frycookerc
+.DS_Store

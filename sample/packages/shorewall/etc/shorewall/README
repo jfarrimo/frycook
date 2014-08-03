@@ -1,0 +1,3 @@
+/etc/shorewall configuration files.
+
+Add "rules.<hostname>", "policy.<hostname>", and/or "shorewall.init.<hostname>" files for customer versions for a host.

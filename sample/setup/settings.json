@@ -1,0 +1,5 @@
+{
+"package_dir": "~/Dropbox/dev/frycook/sample/packages/",
+"module_dir": "/tmp/mako_modules",
+"file_ignores": ".*~"
+}
