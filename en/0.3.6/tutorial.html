@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Intro &mdash; Frycook 0.3.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Frycook 0.3.4 documentation" href="index.html" />
+    <link rel="next" title="frycook" href="frycook.html" />
+    <link rel="prev" title="Intro" href="instructions.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="frycook.html" title="frycook"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="instructions.html" title="Intro"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Frycook 0.3.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="intro">
+<h1>Intro<a class="headerlink" href="#intro" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial we&#8217;ll use the sample globule to create a simple web
+server using Nginx and running on Ubuntu 12.04 server.  It assumes you
+already have a functioning Ubuntu 12.04 server with nothing installed
+other than the basic operating system load.</p>
+</div>
+<div class="section" id="initial-server-build">
+<h1>Initial Server Build<a class="headerlink" href="#initial-server-build" title="Permalink to this headline">¶</a></h1>
+<p>The first thing you&#8217;ll want to do is to install the python requirements
+on the machine you&#8217;ll be running frycooker.py on.  They&#8217;re contained in
+the requirements.txt file in the setup directory of the sample globule.
+I generally use a virtualenv for things like this, but it will work just
+fine if installed globally as well:</p>
+<div class="highlight-python"><pre>$ cd sample/setup
+$ pip install -r requirements.txt</pre>
+</div>
+<p>When starting with a new server, you&#8217;ll just want to apply all the
+cookbooks and recipes that it needs at once. Since those are defined in
+the server&#8217;s environment under its components section, frycook knows
+everything it needs to do to load the new server.  You just have to tell
+it to apply the components to the server and it will do its thing:</p>
+<div class="highlight-python"><pre>$ cd sample/setup
+$ ./runner.sh -a -p -O dev</pre>
+</div>
+<p>Several things are worth noting here.  First, we&#8217;re funning frycooker.py
+using the runner.sh wrapper script.  It sets the PYTHONPATH environment
+variable, then invokes frycooker.py.</p>
+<p>The second thing to note is the set of command-line arguments we used.
+The <tt class="docutils literal"><span class="pre">-a</span></tt> argument tells frycooker.py to apply the components defined
+in the environment to the server.  The <tt class="docutils literal"><span class="pre">-p</span></tt> argument tells
+frycooker.py to update the package manager on the server we&#8217;re loading
+before applying the recipes and cookbooks (in this case, it&#8217;s the
+equivalent of running <tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span></tt>).  The <tt class="docutils literal"><span class="pre">-O</span></tt> argument
+tells frycooker.py that the cookbooks and recipes are allowed to be as
+disruptive as necessary when running on the target server.  Finally, the
+<tt class="docutils literal"><span class="pre">dev</span></tt> argument tells frycooker.py to run against the computer named
+dev in the environment.</p>
+<p>The last noteworthy thing is that frycooker.py will expect to be able to
+resolve the <tt class="docutils literal"><span class="pre">dev</span></tt> name to an ip address to ssh to and apply the
+recipes and cookbooks.  Therefore you&#8217;ll want to either have a hosts
+entry for it or have added it to your dns server configuration before
+running this.</p>
+</div>
+<div class="section" id="continued-maintenance">
+<h1>Continued Maintenance<a class="headerlink" href="#continued-maintenance" title="Permalink to this headline">¶</a></h1>
+<p>After you have been running your new server for a while, you&#8217;ll probably
+want to make changes to it.  You&#8217;ll do this by updating your recipes as
+necessary, then running them against the server.  If you&#8217;ve just made a
+small change to a single recipe, you&#8217;ll want to apply it to the server
+without re-running all of the cookboks and recipes that make up the
+server.  For the sake of this tutorial, let&#8217;s assume you have changed
+the example_com recipe and want to apply it to the server. Here&#8217;s how
+you&#8217;ll do that:</p>
+<div class="highlight-python"><pre>$ cd sample/setup
+$ ./runner.sh -r example_com dev</pre>
+</div>
+<p>Note that here we&#8217;ve used the <tt class="docutils literal"><span class="pre">-r</span></tt> command-line parameter to specify a
+single recipe to run.  We&#8217;ve also specified the <tt class="docutils literal"><span class="pre">dev</span></tt> server to run it
+against.  We always have to specify a server when running frycooker.py.</p>
+<p>If you wanted to apply a whole cookbok instead of a single recipe, you&#8217;d
+do it like this:</p>
+<div class="highlight-python"><pre>$ cd sample/setup
+$ ./runner.sh -c web dev</pre>
+</div>
+<p>In this case we&#8217;re applying the web cookbook, as specified with the <tt class="docutils literal"><span class="pre">-c</span></tt>
+argument.</p>
+<p>You could also, of course, just re-apply everything to the server if
+you&#8217;ve made a bunch of changes:</p>
+<div class="highlight-python"><pre>$ cd sample/setup
+$ ./runner.sh -a -p dev</pre>
+</div>
+<p>Noe that I didn&#8217;t use the <tt class="docutils literal"><span class="pre">-O</span></tt> parameter here so that it would be nice
+to the server and not disrupt users any more than necessary.</p>
+<p>That outlines the major functions you&#8217;ll perform with frycook.  This
+tutorial didn&#8217;t go into the details of creating recipes.  That&#8217;s an
+exercise left up to the reader.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Intro</a></li>
+<li><a class="reference internal" href="#initial-server-build">Initial Server Build</a></li>
+<li><a class="reference internal" href="#continued-maintenance">Continued Maintenance</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="instructions.html"
+                        title="previous chapter">Intro</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="frycook.html"
+                        title="next chapter">frycook</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/tutorial.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="frycook.html" title="frycook"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="instructions.html" title="Intro"
+             >previous</a> |</li>
+        <li><a href="index.html">Frycook 0.3.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, James Yates Farrimond.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
