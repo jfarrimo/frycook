@@ -211,8 +211,7 @@ class Recipe(object):
         self.ok_to_be_rude = ok_to_be_rude
         self.no_prompt = no_prompt
         self.mylookup = TemplateLookup(
-            directories=[self.settings["package_dir"]],
-            module_directory=self.settings["module_dir"])
+            directories=[self.settings["package_dir"]])
 
     #######################
     ######## APPLY ########

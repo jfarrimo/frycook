@@ -326,7 +326,7 @@ dictionary entries prepared by the recipe.  Once processed, they are
 copied with their filenames having having the ``.tmplt`` extension
 removed.
 
-Example:
+Example::
 
     hosts.tmplt in package -> hosts on server
 
@@ -363,22 +363,18 @@ has the following keys:
 ``"package_dir"``: root of the packages hierarchy for the file copying
 routines to look in
 
-``"module_dir"``: temporary directory for holding compiled mako modules
-during template handling
-
 ``"file_ignores"``: regex pattern for filenames to ignore while copying
 package files
 
 For any key containing the strings ``"dir"`` or ``"path"``, if you include a
 tilde ``~`` in the value, it will be replaced with the home directory of
 the user running frycooker.p, just like in bash.  For this example, that
-would be the ``"package_dir"`` and ``"module_dir"`` keys.
+would be the ``"package_dir"`` key.
 
 Example settings.json file::
 
     {
         "package_dir": "~/Dropbox/dev/frycook/sample/packages/",
-        "module_dir": "/tmp/mako_modules",
         "file_ignores": ".*~"
     }
 
