@@ -36,4 +36,4 @@ built.
 from cookbook_template import Cookbook  # noqa
 from recipe_template import Recipe, RecipeException  # noqa
 
-__version__ = '0.3.6'
+__version__ = '0.3.7'

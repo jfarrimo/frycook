@@ -481,6 +481,7 @@ class Recipe(object):
         '''
         old_contents = cuisine.file_read(filepath)
         eol = cuisine.text_detect_eol(old_contents)
+        old_contents = old_contents.rstrip(eol)
         old_contents = old_contents.split(eol)
         has_line = False
         for line in old_contents:
@@ -491,6 +492,27 @@ class Recipe(object):
         if not has_line:
             old_contents.append(add_line)
             cuisine.file_write(filepath, eol.join(old_contents) + eol)
+
+    def find_replace_in_file(self, old_text, new_text, filepath):
+        '''
+        Find and replace text in a file on the remote filesystem.
+
+        :type old_text: string
+        :param tag: text to replace
+        :type new_text: string
+        :param add_line: text to replace with
+        :type filepath: string
+        :param filepath: fully-qualified path to remote file
+        '''
+        old_contents = cuisine.file_read(filepath)
+        eol = cuisine.text_detect_eol(old_contents)
+        old_contents = old_contents.split(eol)
+        new_contents = []
+        for line in old_contents:
+            print line
+            new_line = line.replace(old_text, new_text)
+            new_contents.append(new_line)
+        cuisine.file_write(filepath, eol.join(new_contents))
 
     ##############################
     ######## GIT HANDLING ########
