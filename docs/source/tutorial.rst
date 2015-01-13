@@ -11,7 +11,7 @@ Initial Server Build
 
 The first thing you'll want to do is to install the python requirements
 on the machine you'll be running frycooker.py on.  They're contained in
-the requirements.txt file in the setup directory of the sample globule.
+the ``requirements.txt`` file in the setup directory of the sample globule.
 I generally use a virtualenv for things like this, but it will work just
 fine if installed globally as well::
 
@@ -27,8 +27,8 @@ it to apply the components to the server and it will do its thing::
     $ cd sample/setup
     $ ./runner.sh -a -p -O dev
 
-Several things are worth noting here.  First, we're funning frycooker.py
-using the runner.sh wrapper script.  It sets the PYTHONPATH environment
+Several things are worth noting here.  First, we're running frycooker.py
+using the ``runner.sh`` wrapper script.  It sets the PYTHONPATH environment
 variable, then invokes frycooker.py.
 
 The second thing to note is the set of command-line arguments we used.
