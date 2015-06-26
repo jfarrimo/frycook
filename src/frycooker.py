@@ -38,7 +38,9 @@ cookbooks and applies them to computers.
 import argparse
 import json
 import os
+import shutil
 import sys
+import tempfile
 
 import cuisine
 from fabric.api import env
@@ -84,6 +86,9 @@ def get_args():
                         default=False, dest='package_update',
                         help='update the package manager before '
                         'applying recipes/cookbooks')
+    parser.add_argument('-P', '--param', dest='params', action='append',
+                        help='extra parameters to pass in to recipes and '
+                        'cookbooks (key:value) (can specify multiple times)')
     parser.add_argument('-r', '--recipe', dest='recipes', action='append',
                         choices=recipe_names,
                         help='recipe to process (can specify multiple times)')
@@ -118,18 +123,26 @@ def massage_enviro_paths(env):
             env[k] = v.replace('~', os.environ['HOME'])
 
 
-def load_settings(filename):
+def load_settings(filename, params):
     '''
     Load the settings json file, massaging its environment paths in the
     process.
 
     :type filename: string
     :param filename: filename of settings file to read
+    :type args: args object
+    :param args: object containing attributes for all possible command-line parameters
 
     :rtype: dictionary
     :return: dictionary representation of settings
     '''
     settings = json.load(open(filename))
+    settings["params"] = {}
+    if params:
+        for p in params:
+            parts = p.split(':')
+            if len(parts) == 2:
+                settings["params"][parts[0]] = parts[1]
     massage_enviro_paths(settings)
     return settings
 
@@ -340,10 +353,12 @@ def main():
     '''
     args = get_args()
 
-    settings = load_settings(args.settings)
+    settings = load_settings(args.settings, args.params)
     enviro = load_enviro(args.environment)
 
     try:
+        tmp_dir = tempfile.mkdtemp(dir=settings["tmp_dir"])
+        settings["tmp_dir"] = tmp_dir
         run_list, host_list, recipes, cookbooks = generate_run_list(enviro, args)
 
         if args.dryrun:
@@ -359,10 +374,13 @@ def main():
             apply_recipes_cookbooks(enviro, settings, args, host_list, run_list)
         output_post_apply_messages(recipes, cookbooks, enviro, settings, args)
 
+        shutil.rmtree(tmp_dir)
+
         print "actions completed successfully"
     except Exception, e:
         print "EXITING EARLY DUE TO AN EXCEPTION:"
         print e
+        shutil.rmtree(tmp_dir)
         sys.exit(2)
 
 

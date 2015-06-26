@@ -11,6 +11,8 @@ class RecipePostfix(Recipe):
             cuisine.package_ensure('mailutils')
 
         tmp_env = {"name": computer}
+        if "name" in self.settings["params"]:
+            tmp_env["name"] = self.settings["params"]["name"]
         self.push_package_file_set('postfix', computer, tmp_env)
 
         cuisine.sudo("/usr/bin/newaliases")

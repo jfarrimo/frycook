@@ -576,3 +576,14 @@ to.  This is especially nice when you have lots of ``import`` directives
 in your environment json files, or if you are applying things to a group
 of machines.  This way you know how the environment imports are handled
 and which computers frycooker.py thinks are in the group.
+
+params
+------
+
+You can pass values into your recipes from the command-line using the
+``--param`` command-line argument.  You can include multiple of these.
+Frycooker will expect the arguments to be of the format
+``<key>:<value>``.  These will be parsed and place into a dictionary in
+the ``self.settings`` value in the recipe objects it creates, in a
+sub-dictionary called ``params``.  You can see an example of how this is
+used in the postfix recipe in the sample globule.
