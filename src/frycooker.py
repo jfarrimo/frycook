@@ -50,6 +50,10 @@ import cookbooks
 import recipes
 
 
+def replace_tilde_in_path(path):
+    return path.replace('~', os.environ['HOME'])
+
+
 def get_args():
     '''
     Parse the command-line arguments, using python's argparse library.
@@ -74,6 +78,8 @@ def get_args():
                         'and see which hosts to apply to')
     parser.add_argument('-e', '--environment', default='environment.json',
                         help='environment file')
+    parser.add_argument('-k', '--keyfile',
+                        help='full path to ssh key file to use')
     parser.add_argument('-m', '--messages', action='store_true', default=False,
                         help='do not apply actions, just print messages')
     parser.add_argument('-n', '--no-prompt', action='store_true', default=False,
@@ -94,12 +100,16 @@ def get_args():
                         help='recipe to process (can specify multiple times)')
     parser.add_argument('-s', '--settings', default='settings.json',
                         help='settings file')
+    parser.add_argument('-S', '--sudo', action='store_true', default=False,
+                        help='run all commands on client as sudo')
     parser.add_argument('-u', '--user', default='root',
                         help='user to ssh to host as')
     parser.add_argument('target', nargs='+',
                         help='computer or group to apply setup to')
 
     args = parser.parse_args()
+    if args.keyfile is not None:
+        args.keyfile = replace_tilde_in_path(args.keyfile)
     return args
 
 
@@ -120,7 +130,7 @@ def massage_enviro_paths(env):
         elif (isinstance(k, basestring) and
               isinstance(v, basestring) and
               (k.find('path') > -1 or k.find('dir') > -1)):
-            env[k] = v.replace('~', os.environ['HOME'])
+            env[k] = replace_tilde_in_path(v)
 
 
 def load_settings(filename, params):
@@ -329,6 +339,8 @@ def apply_recipes_cookbooks(enviro, settings, args, host_list, run_list):
         env.host_string = host
         if args.user:
             env.user = args.user
+        if args.keyfile:
+            env.key_filename = args.keyfile
 
         if args.package_update:
             cuisine.package_update()
@@ -357,6 +369,9 @@ def main():
     enviro = load_enviro(args.environment)
 
     try:
+        if args.sudo:
+            cuisine.mode_sudo()
+
         tmp_dir = tempfile.mkdtemp(dir=settings["tmp_dir"])
         settings["tmp_dir"] = tmp_dir
         run_list, host_list, recipes, cookbooks = generate_run_list(enviro, args)
